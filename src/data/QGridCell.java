@@ -7,6 +7,7 @@ public class QGridCell {
 	private CellType cellType;
 	private ArrayList<QGridCell> allowedDestinations;
 	private double cellReward;
+	private double Qvalue;
 	
 	public QGridCell() {
 		super();
