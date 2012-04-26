@@ -1,5 +1,6 @@
 package main;
 
+import gui.GUIElement;
 import gui.MapGUI;
 
 import java.awt.Dimension;
@@ -12,10 +13,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import data.CellType;
 import data.QGridCell;
 
 public class TAIQLearningApp {
@@ -26,20 +29,34 @@ public class TAIQLearningApp {
 	private QGridCell qGridMap[][];
 	public static final int MAPHEIGHT = 20;
 	public static final int MAPWIDTH = 30;
+	private final static String IMAGEPATH = new String("../img/");
 	
 	public TAIQLearningApp() {
 		super();
 		this.appLogger = Logger.getLogger("src.appLogger");
+		this.setupLogger();
 		this.appWindow = new JFrame();
 		this.appWindow.addWindowListener(new AppWindowListener());
 		this.qGridMap = new QGridCell[MAPHEIGHT][MAPWIDTH];
 		for(int i=0; i<TAIQLearningApp.MAPHEIGHT ; i++){
 			for(int j=0 ; j<TAIQLearningApp.MAPWIDTH; j++){
 				this.qGridMap[i][j] = new QGridCell();
+				if(j%3 == 0){
+					this.qGridMap[i][j].setCellType(CellType.AGENT);
+				}
+				if(j%5 == 0){
+					this.qGridMap[i][j].setCellType(CellType.BONUS);
+				}
+				if(j%7 == 0){
+					this.qGridMap[i][j].setCellType(CellType.ENDPOINT);
+				}
+				if(j%11 == 0){
+					this.qGridMap[i][j].setCellType(CellType.WALL);
+				}
 			}
 		}
 		this.mapGUI = new MapGUI(this);
-		this.updateCurrentWindow("Grid World", 640, 500, this.mapGUI.getContentPane());
+		this.updateCurrentWindow("Grid World", 800, 600, this.mapGUI.getContentPane());
 	}
 
 	public MapGUI getMapGUI() {
@@ -110,6 +127,12 @@ public class TAIQLearningApp {
         appWindow.setContentPane(contentPane);
         appWindow.pack();
         appWindow.setVisible(true);
+	}
+	
+	public static ImageIcon importImage(String fileName){
+		System.out.println(IMAGEPATH+fileName);
+		return new ImageIcon(TAIQLearningApp.class.getResource(
+							 IMAGEPATH+fileName));
 	}
 	
 	private class AppWindowListener implements WindowListener{
