@@ -5,6 +5,7 @@ import gui.GraphicalGUI.TurnCommandListener;
 import gui.MapHandler.MapActionListener;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -52,7 +53,12 @@ public class MapGUI {
 	private TAIQLearningApp mainApp;
 	
 	
-	private static final String FOGPATH = new String("Nebbia.png");
+	
+	private static final ImageIcon AGENTICON = TAIQLearningApp.importImage(new String("Agent.png"));
+	private static final ImageIcon PLAINICON = TAIQLearningApp.importImage(new String("SteelFloor3.png"));
+	private static final ImageIcon ENDPOINTICON = TAIQLearningApp.importImage(new String("EndPoint.png"));
+	private static final ImageIcon WALLICON = TAIQLearningApp.importImage(new String("Wall.png"));
+	private static final ImageIcon BONUSICON = TAIQLearningApp.importImage(new String("Box.png"));
 	//private static final ImageIcon FOGICON = GUIElement.importImage(FOGPATH);
 	
 	
@@ -112,7 +118,7 @@ public class MapGUI {
 		
 		Border consolePanelBorder = BorderFactory.createTitledBorder("Console");
 		this.consolePanel = new JPanel();
-		this.infoConsole = new JTextArea();
+		this.infoConsole = new JTextArea(6, 80);
 		this.infoConsole.setEditable(false);
 		this.infoConsole.setLineWrap(true);
 		this.infoConsole.setWrapStyleWord(true);
@@ -121,11 +127,12 @@ public class MapGUI {
 		this.consoleScrollPanel.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		this.consoleScrollPanel.setBorder(consolePanelBorder);
-        
+        this.consoleScrollPanel.setBackground(Color.WHITE);
+		
 		contentPane.add(mapPanel,BorderLayout.CENTER);
         contentPane.add(consoleScrollPanel,BorderLayout.SOUTH);
         contentPane.add(sidePanel,BorderLayout.EAST);
-        
+        refreshMap(TAIQLearningApp.MAPHEIGHT,TAIQLearningApp.MAPWIDTH);
 	}
 
 	public JPanel getContentPane() {
@@ -235,7 +242,7 @@ public class MapGUI {
 	 * @param columnNumber
 	 *            Il numero di colonne di tale matrice.
 	 */
-	public void refreshMap(char[][] charMap, int rowNumber, int columnNumber){
+	public void refreshMap(int rowNumber, int columnNumber){
 		
 		for(int i=rowNumber-1;i>=0;i--){
 			for(int j=0; j<columnNumber; j++){
@@ -272,7 +279,7 @@ public class MapGUI {
 		while(i<diffRow && (startCellGUI.getRow()-i)>=0){
 			j=0;
 			while(j<diffColumn && (startCellGUI.getColumn()+j)<40){				
-				this.refreshSingleCell(startCellGUI.getRow()-i,startCellGUI.getColumn()+j, charMap[i][j], attributesMap[i][j]);
+				this.refreshSingleCell(startCellGUI.getRow()-i,startCellGUI.getColumn()+j, CellType.PLAIN, attributesMap[i][j]);
 				j++;
 			}
 			i++;
@@ -303,23 +310,23 @@ public class MapGUI {
 
 		
 		switch(type){
-		case PLAIN:currentButton.setIcon(WATERICON);
-				 iconDimension = new Dimension(WATERICON.getIconHeight(),WATERICON.getIconWidth());
-				 currentButton.setToolTipText("Acqua");
+		case PLAIN:currentButton.setIcon(PLAINICON);
+				 iconDimension = new Dimension(PLAINICON.getIconHeight(),PLAINICON.getIconWidth());
+				 currentButton.setToolTipText("Floor");
 				 break;
 				 
-		case AGENT:currentButton.setIcon(FOGICON);
-		 		 iconDimension = new Dimension(FOGICON.getIconHeight(),FOGICON.getIconWidth());
-		 		 currentButton.setToolTipText("????");
+		case AGENT:currentButton.setIcon(AGENTICON);
+		 		 iconDimension = new Dimension(AGENTICON.getIconHeight(),AGENTICON.getIconWidth());
+		 		 currentButton.setToolTipText("Agent");
 				 break;
 				 
 		case BONUS:
-		case MALUS:currentButton.setIcon(DEADBODYICON);
-		 		 iconDimension = new Dimension(DEADBODYICON.getIconHeight(),DEADBODYICON.getIconWidth());
-		 		 currentButton.setToolTipText("Terreno\ncon\nCarogna");
+		case MALUS:currentButton.setIcon(BONUSICON);
+		 		 iconDimension = new Dimension(BONUSICON.getIconHeight(),BONUSICON.getIconWidth());
+		 		 currentButton.setToolTipText("Bonus");
 		 		 break;
 		 		 
-		case STARTPOINT:if(attribute %2 == 0){ 
+		/*case STARTPOINT:if(attribute %2 == 0){ 
 				 	currentButton.setIcon(HERBIVOROUSICON);
 				 	iconDimension = new Dimension(HERBIVOROUSICON.getIconHeight(),HERBIVOROUSICON.getIconWidth());
 				 	currentButton.setToolTipText("Terreno\ncon\nErbivoro");
@@ -330,23 +337,23 @@ public class MapGUI {
 					 iconDimension = new Dimension(CARNIVOROUSICON.getIconHeight(),CARNIVOROUSICON.getIconWidth());
 					 currentButton.setToolTipText("Terreno\ncon\nErbivoro");
 					 break;
-				 }
+				 }*/
 		
 		
-		case ENDPOINT:currentButton.setIcon(TERRAINICON);
-		 		 iconDimension = new Dimension(TERRAINICON.getIconHeight(),TERRAINICON.getIconWidth());
-		 		 currentButton.setToolTipText("Terreno");
+		case ENDPOINT:currentButton.setIcon(ENDPOINTICON);
+		 		 iconDimension = new Dimension(ENDPOINTICON.getIconHeight(),ENDPOINTICON.getIconWidth());
+		 		 currentButton.setToolTipText("Goal");
 		 		 break;
 		 		 
-		case WALL:currentButton.setIcon(GRASSICON);
-		 		 iconDimension = new Dimension(GRASSICON.getIconHeight(),GRASSICON.getIconWidth());
-		 		 currentButton.setToolTipText("Terreno\ncon\nVegetazione");
+		case WALL:currentButton.setIcon(WALLICON);
+		 		 iconDimension = new Dimension(WALLICON.getIconHeight(),WALLICON.getIconWidth());
+		 		 currentButton.setToolTipText("Wall");
 		 		 break;
 			
 		default:break;
 		}
 		
-		actionCommand = new String(currPosition.getX()+","+currPosition.getY()+","+type+","+attribute);
+		//actionCommand = new String(currPosition.getX()+","+currPosition.getY()+","+type+","+attribute);
 		currentButton.setBorderPainted(false);
 		currentButton.setPreferredSize(iconDimension);
 		currentButton.setContentAreaFilled(false);

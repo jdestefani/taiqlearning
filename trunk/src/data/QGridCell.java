@@ -7,8 +7,13 @@ public class QGridCell {
 	private CellType cellType;
 	private ArrayList<QGridCell> allowedDestinations;
 	private double cellReward;
-	private double Qvalue;
 	
+	public double getCellReward() {
+		return cellReward;
+	}
+	public void setCellReward(double cellReward) {
+		this.cellReward = cellReward;
+	}
 	public QGridCell() {
 		super();
 		this.cellType = CellType.PLAIN;
