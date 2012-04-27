@@ -3,6 +3,8 @@ package main;
 import gui.GUIElement;
 import gui.MapGUI;
 
+import io.GridFileHandler;
+
 import java.awt.Dimension;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -24,6 +26,7 @@ import data.QGridCell;
 public class TAIQLearningApp {
 	
 	private MapGUI mapGUI;
+	private GridFileHandler fileHandler;
 	private JFrame appWindow;
 	private Logger appLogger;
 	private QGridCell qGridMap[][];
@@ -56,8 +59,29 @@ public class TAIQLearningApp {
 			}
 		}
 		this.mapGUI = new MapGUI(this);
+		this.fileHandler = new GridFileHandler(this);
 		this.updateCurrentWindow("Grid World", 800, 600, this.mapGUI.getContentPane());
 	}
+	
+	
+
+	public GridFileHandler getFileHandler() {
+		return fileHandler;
+	}
+
+
+
+	public void setFileHandler(GridFileHandler fileHandler) {
+		this.fileHandler = fileHandler;
+	}
+
+
+
+	public static String getImagepath() {
+		return IMAGEPATH;
+	}
+
+
 
 	public MapGUI getMapGUI() {
 		return mapGUI;

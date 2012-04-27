@@ -7,5 +7,9 @@ public enum CellType {
 	MALUS,
 	STARTPOINT,
 	ENDPOINT,
-	AGENT
+	AGENT,
+	PORTAL1,
+	PORTAL2,
+	PORTAL3,
+	PORTAL4;
 }

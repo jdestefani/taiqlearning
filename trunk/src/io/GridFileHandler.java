@@ -20,6 +20,7 @@ public class GridFileHandler {
 	public static String MAPPATH = new String("");
 	public static String cellSeparator = new String(" ");
 	public static String valueSeparator = new String(",");
+	public static String lineSeparator = System.getProperty("line.separator");
 	
 	public GridFileHandler(TAIQLearningApp mainApp) {
 		super();
@@ -31,6 +32,7 @@ public class GridFileHandler {
 		Scanner lineScanner = null;
 		try {
 			lineScanner = new Scanner(mapFile);
+			lineScanner.useDelimiter(lineSeparator);
 		} catch (FileNotFoundException e) {
 			Logger.getLogger("src.appLogger").severe("File" + filename + "not found!");
 			e.printStackTrace();
@@ -44,17 +46,19 @@ public class GridFileHandler {
 		CellType currType;
 		
 		try{
-		while(lineScanner.hasNextLine()){
-			cellScanner = new Scanner(lineScanner.nextLine());
+		while(lineScanner.hasNext()){
+			cellScanner = new Scanner(lineScanner.next());
 			cellScanner.useDelimiter(cellSeparator);
 			
+			j=0;
 			while(cellScanner.hasNext()){
 			valueScanner = new Scanner(cellScanner.next());
 			valueScanner.useDelimiter(valueSeparator);
 			
 			String cellTypeString = valueScanner.next();
+			System.out.println(cellTypeString);
 			
-			if(cellTypeString.length() != 1){
+			if(cellTypeString.length() >2){
 				Logger.getLogger("src.AppLogger").severe("Error while reading cell type");
 				return null;
 			}
@@ -68,7 +72,20 @@ public class GridFileHandler {
 					 break;
 			case 'W':currType = CellType.WALL;
 					 break;
-					 
+			case 'F':currType = CellType.PLAIN;
+					 break;
+			case 'P':switch(cellTypeString.charAt(1)){
+					  		case '1':currType = CellType.PORTAL1;
+					  				 break;
+					  		case '2':currType = CellType.PORTAL2;
+			  				 	     break;
+					  		case '3':currType = CellType.PORTAL3;
+			  				 		 break;
+					  		case '4':currType = CellType.PORTAL4;
+			  				 		 break;
+					  		default :Logger.getLogger("src.AppLogger").severe("Error while reading cell type");
+							 return null;
+					 }
 			default :Logger.getLogger("src.AppLogger").severe("Error while reading cell type");
 					 return null;
 			}
@@ -84,9 +101,9 @@ public class GridFileHandler {
 			}
 			
 			gridMap[i][j] = new QGridCell(currType, currReward);
-			i++;
+			j++;
 			}
-		j++;
+		i++;
 		}
 		}
 		finally{
@@ -113,35 +130,54 @@ public class GridFileHandler {
 			e1.printStackTrace();
 			return false;
 		}
-		char currSymb = 0;
+		String currSymb = null;
 		Double currReward = null;
 		
-		for(int i=0; i<TAIQLearningApp.MAPHEIGHT ; i++){
-			for(int j=0 ; j<TAIQLearningApp.MAPWIDTH; j++){
-				switch(this.mainApp.getqGridMap()[i][j].getCellType()){
-				case AGENT:currSymb = 'A';
-						   break;
-				case BONUS:currSymb = 'B';
-						   break;
-				case ENDPOINT:currSymb = 'E';
-							  break;
-				case WALL:currSymb = 'W';
-						  break;
-				default:break;
+		try{
+			for(int i=0; i<TAIQLearningApp.MAPHEIGHT ; i++){
+				for(int j=0 ; j<TAIQLearningApp.MAPWIDTH; j++){
+					switch(this.mainApp.getqGridMap()[i][j].getCellType()){
+					case AGENT:currSymb = new String("A");
+						   	   break;
+					case BONUS:currSymb = new String("B");
+						   	   break;
+					case ENDPOINT:currSymb = new String("E");
+							   break;
+					case WALL:currSymb = new String("W");
+						  	   break;
+					case PLAIN:currSymb = new String("F");
+						   	   break;
+					case PORTAL1:currSymb = new String("P1");
+				   	   		   break;
+					case PORTAL2:currSymb = new String("P2");
+		   	   		   		   break;
+					case PORTAL3:currSymb = new String("P3");
+		   	   		   		   break;
+					case PORTAL4:currSymb = new String("P4");
+		   	   		   		   break;
+					default:break;
 				}
-				currReward = this.mainApp.getqGridMap()[i][j].getCellReward();
+					currReward = this.mainApp.getqGridMap()[i][j].getCellReward();
+					try {
+						out.append(new String(currSymb+valueSeparator+currReward.toString()+cellSeparator));
+					} catch (IOException e) {
+						e.printStackTrace();
+						return false;
+					}
+				}
 				try {
-					out.append(new String(currSymb+valueSeparator+currReward.toString()+cellSeparator));
+					out.append(lineSeparator);
 				} catch (IOException e) {
 					e.printStackTrace();
 					return false;
 				}
 			}
+		}finally{
 			try {
-				out.append("\n");
+				out.close();
 			} catch (IOException e) {
+				Logger.getLogger("src.appLogger").info("Error in closing file!");
 				e.printStackTrace();
-				return false;
 			}
 		}
 		

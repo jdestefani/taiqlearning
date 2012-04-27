@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class QGridCell {
 
 	private CellType cellType;
-	private ArrayList<QGridCell> allowedDestinations;
+	private ArrayList<QGridCell> reachableCells;
 	private double cellReward;
 	
 	public double getCellReward() {
@@ -17,20 +17,20 @@ public class QGridCell {
 	public QGridCell() {
 		super();
 		this.cellType = CellType.PLAIN;
-		allowedDestinations = new ArrayList<QGridCell>();
+		reachableCells = new ArrayList<QGridCell>();
 		cellReward = 0.0;
 	}
 	public QGridCell(CellType cellType) {
 		super();
 		this.cellType = cellType;
-		allowedDestinations = new ArrayList<QGridCell>();
+		reachableCells = new ArrayList<QGridCell>();
 		cellReward = 0.0;
 	}
 	
 	public QGridCell(CellType cellType, double cellReward) {
 		super();
 		this.cellType = cellType;
-		allowedDestinations = new ArrayList<QGridCell>();
+		reachableCells = new ArrayList<QGridCell>();
 		this.cellReward = cellReward;
 	}
 	public CellType getCellType() {
@@ -39,13 +39,19 @@ public class QGridCell {
 	public void setCellType(CellType cellType) {
 		this.cellType = cellType;
 	}
-	public ArrayList<QGridCell> getAllowedDestinations() {
-		return allowedDestinations;
+	public ArrayList<QGridCell> getReachableCells() {
+		return reachableCells;
 	}
-	public void setAllowedDestinations(ArrayList<QGridCell> allowedDestinations) {
-		this.allowedDestinations = allowedDestinations;
+	public void setReachableCells(ArrayList<QGridCell> reachableCells) {
+		this.reachableCells = reachableCells;
 	}
 	
+	public void addReachableCell(QGridCell reachableCell){
+		this.reachableCells.add(reachableCell);
+	}
 	
+	public void removeReachableCell(QGridCell reachableCell){
+		this.reachableCells.remove(reachableCell);
+	}
 	
 }
