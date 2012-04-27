@@ -4,6 +4,8 @@ import gui.GraphicalGUI.GraphicalGUIListener;
 import gui.GraphicalGUI.TurnCommandListener;
 import gui.MapHandler.MapActionListener;
 
+import io.GridFileHandler;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,6 +13,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -18,6 +21,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -25,6 +29,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 import data.CellType;
+import data.QGridCell;
 
 import main.TAIQLearningApp;
 
@@ -42,6 +47,7 @@ public class MapGUI {
 	
 	private JButton[][] map;
 	
+	private JButton saveMapButton;
 	private JButton loadMapButton;
 	private JButton learnPathButton;
 	private JButton displayQButton;
@@ -59,6 +65,10 @@ public class MapGUI {
 	private static final ImageIcon ENDPOINTICON = TAIQLearningApp.importImage(new String("EndPoint.png"));
 	private static final ImageIcon WALLICON = TAIQLearningApp.importImage(new String("Wall.png"));
 	private static final ImageIcon BONUSICON = TAIQLearningApp.importImage(new String("Box.png"));
+	private static final ImageIcon PORTAL1ICON = TAIQLearningApp.importImage(new String("Portal1.png"));
+	private static final ImageIcon PORTAL2ICON = TAIQLearningApp.importImage(new String("Portal2.png"));
+	private static final ImageIcon PORTAL3ICON = TAIQLearningApp.importImage(new String("Portal3.png"));
+	private static final ImageIcon PORTAL4ICON = TAIQLearningApp.importImage(new String("Portal4.png"));
 	//private static final ImageIcon FOGICON = GUIElement.importImage(FOGPATH);
 	
 	
@@ -81,13 +91,16 @@ public class MapGUI {
 		this.actionPanel.setBorder(actionPanelBorder);
 		this.actionPanel.setLayout(new BoxLayout(actionPanel, BoxLayout.Y_AXIS));
 		
+		this.saveMapButton = new JButton("Save Map");
+		this.saveMapButton.addActionListener(new ActionButtonListener(this.mainApp));
 		this.loadMapButton = new JButton("Load Map");
-		this.loadMapButton.addActionListener(new ActionButtonListener());
+		this.loadMapButton.addActionListener(new ActionButtonListener(this.mainApp));
 		this.learnPathButton = new JButton("Learn Path");
-		this.learnPathButton.addActionListener(new ActionButtonListener());
+		this.learnPathButton.addActionListener(new ActionButtonListener(this.mainApp));
 		this.displayQButton = new JButton("Display Q values");
-		this.displayQButton.addActionListener(new ActionButtonListener());
+		this.displayQButton.addActionListener(new ActionButtonListener(this.mainApp));
 		
+		this.actionPanel.add(saveMapButton);
 		this.actionPanel.add(loadMapButton);
 		this.actionPanel.add(learnPathButton);
 		this.actionPanel.add(displayQButton);
@@ -244,9 +257,9 @@ public class MapGUI {
 	 */
 	public void refreshMap(int rowNumber, int columnNumber){
 		
-		for(int i=rowNumber-1;i>=0;i--){
+		for(int i=0;i<rowNumber;i++){
 			for(int j=0; j<columnNumber; j++){
-				this.refreshSingleCell(rowNumber-1-i,j, this.mainApp.getqGridMap()[i][j].getCellType(), 0);
+				this.refreshSingleCell(i,j, this.mainApp.getqGridMap()[i][j].getCellType(), 0);
 			}
 		}
 	}
@@ -349,7 +362,28 @@ public class MapGUI {
 		 		 iconDimension = new Dimension(WALLICON.getIconHeight(),WALLICON.getIconWidth());
 		 		 currentButton.setToolTipText("Wall");
 		 		 break;
-			
+		
+		case PORTAL1:currentButton.setIcon(PORTAL1ICON);
+		 		iconDimension = new Dimension(PORTAL1ICON.getIconHeight(),PORTAL1ICON.getIconWidth());
+		 		currentButton.setToolTipText("Portal-Type 1");
+		 		break;
+		
+		case PORTAL2:currentButton.setIcon(PORTAL2ICON);
+ 		iconDimension = new Dimension(PORTAL2ICON.getIconHeight(),PORTAL2ICON.getIconWidth());
+ 		currentButton.setToolTipText("Portal-Type 2");
+ 		break;
+
+		case PORTAL3:currentButton.setIcon(PORTAL3ICON);
+ 		iconDimension = new Dimension(PORTAL3ICON.getIconHeight(),PORTAL3ICON.getIconWidth());
+ 		currentButton.setToolTipText("Portal-Type 3");
+ 		break;
+
+		case PORTAL4:currentButton.setIcon(PORTAL4ICON);
+ 		iconDimension = new Dimension(PORTAL4ICON.getIconHeight(),PORTAL4ICON.getIconWidth());
+ 		currentButton.setToolTipText("Portal-Type 4");
+ 		break;
+
+		 		
 		default:break;
 		}
 		
@@ -363,13 +397,47 @@ public class MapGUI {
 
 	
 	class ActionButtonListener implements ActionListener{
+		
+		private TAIQLearningApp mainApp;
+		
+		
+		public ActionButtonListener(TAIQLearningApp mainApp) {
+			super();
+			this.mainApp = mainApp;
+		}
+
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String listenedCommand = e.getActionCommand();
 			String response = null;
 			
+			if(listenedCommand.equals("Save Map")){
+				if(!(this.mainApp.getFileHandler().writeMapToFile("test.map"))){
+					Logger.getLogger("src.appLogger").severe("Error in writing file");
+					JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),
+						    "Error","Error in writing file. See log for details.",JOptionPane.ERROR_MESSAGE);
+				}
+				else{
+					JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),"Map saving",
+						    "Map saved correctly to test.map.",JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+			
 			if(listenedCommand.equals("Load Map")){
+				QGridCell[][] grid = null;
+				grid = GridFileHandler.readMapFromFile("test.map");
+				if(grid == null){
+					Logger.getLogger("src.appLogger").severe("Error in reading file");
+					JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),
+						    "Error","Error in reading file. See log for details.",JOptionPane.ERROR_MESSAGE);
+				}
+				else{
+				this.mainApp.setqGridMap(grid);
+				this.mainApp.getMapGUI().refreshMap(TAIQLearningApp.MAPHEIGHT,TAIQLearningApp.MAPWIDTH);
+				JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),"Map Loading",
+					    "Map loaded correcty from test.map.",JOptionPane.INFORMATION_MESSAGE);
+				}
 			}
 			
 			if(listenedCommand.equals("Learn Path")){	
