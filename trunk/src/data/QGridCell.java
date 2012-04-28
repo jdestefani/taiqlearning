@@ -3,45 +3,98 @@ package data;
 import java.util.ArrayList;
 
 public class QGridCell {
-
+	
+	private int rowIndex;
+	private int columnIndex;
 	private CellType cellType;
 	private ArrayList<QGridCell> reachableCells;
 	private double cellReward;
 	
-	public double getCellReward() {
-		return cellReward;
-	}
-	public void setCellReward(double cellReward) {
-		this.cellReward = cellReward;
-	}
 	public QGridCell() {
 		super();
+		this.rowIndex = 0;
+		this.columnIndex = 0;
 		this.cellType = CellType.PLAIN;
-		reachableCells = new ArrayList<QGridCell>();
-		cellReward = 0.0;
-	}
-	public QGridCell(CellType cellType) {
-		super();
-		this.cellType = cellType;
-		reachableCells = new ArrayList<QGridCell>();
-		cellReward = 0.0;
+		this.reachableCells = new ArrayList<QGridCell>();
+		this.cellReward = 0.0;
 	}
 	
-	public QGridCell(CellType cellType, double cellReward) {
+	public QGridCell(CellType aCellType) {
 		super();
-		this.cellType = cellType;
-		reachableCells = new ArrayList<QGridCell>();
-		this.cellReward = cellReward;
+		this.rowIndex = 0;
+		this.columnIndex = 0;
+		this.cellType = aCellType;
+		this.reachableCells = new ArrayList<QGridCell>();
+		this.cellReward = 0.0;
 	}
+	
+	public QGridCell(CellType aCellType, double aCellReward) {
+		super();
+		this.rowIndex = 0;
+		this.columnIndex = 0;
+		this.cellType = aCellType;
+		this.reachableCells = new ArrayList<QGridCell>();
+		this.cellReward = aCellReward;
+	}
+	
+	public QGridCell(int aRowIndex, int aColumnIndex) throws IndexOutOfBoundsException {
+		super();
+		verifyIndexes(aRowIndex, aColumnIndex);
+		this.rowIndex = aRowIndex;
+		this.columnIndex = aColumnIndex;
+		this.cellType = CellType.PLAIN;
+		this.reachableCells = new ArrayList<QGridCell>();
+		this.cellReward = 0.0;
+	}
+
+	public QGridCell(int aRowIndex, int aColumnIndex, CellType aCellType) throws IndexOutOfBoundsException {
+		super();
+		verifyIndexes(aRowIndex, aColumnIndex);
+		this.rowIndex = aRowIndex;
+		this.columnIndex = aColumnIndex;
+		this.cellType = aCellType;
+		this.reachableCells = new ArrayList<QGridCell>();
+		this.cellReward = 0.0;
+	}
+	
+	public QGridCell(int aRowIndex, int aColumnIndex, CellType aCellType, double aCellReward) throws IndexOutOfBoundsException {
+		super();
+		verifyIndexes(aRowIndex, aColumnIndex);
+		this.rowIndex = aRowIndex;
+		this.columnIndex = aColumnIndex;
+		this.cellType = aCellType;
+		this.reachableCells = new ArrayList<QGridCell>();
+		this.cellReward = aCellReward;
+	}
+
+	public int getRowIndex() {
+		return rowIndex;
+	}
+	
+	int getColumnIndex() {
+		return columnIndex;
+	}
+
 	public CellType getCellType() {
 		return cellType;
 	}
+	
 	public void setCellType(CellType cellType) {
 		this.cellType = cellType;
 	}
+	
+	public double getCellReward() {
+		return cellReward;
+	}
+	
+	public void setCellReward(double cellReward) {
+		this.cellReward = cellReward;
+	}
+	
 	public ArrayList<QGridCell> getReachableCells() {
 		return reachableCells;
 	}
+	
 	public void setReachableCells(ArrayList<QGridCell> reachableCells) {
 		this.reachableCells = reachableCells;
 	}
@@ -54,4 +107,13 @@ public class QGridCell {
 		this.reachableCells.remove(reachableCell);
 	}
 	
+	public static void verifyIndexes(int aRowIndex,int aColumnIndex){
+		if(aRowIndex < 0 || aRowIndex > QGrid.MAPHEIGHT){
+			throw new IndexOutOfBoundsException("Row index out of bounds.");
+		}
+		if(aColumnIndex < 0 || aColumnIndex > QGrid.MAPWIDTH){
+			throw new IndexOutOfBoundsException("Row index out of bounds.");
+		}
+		
+	}
 }
