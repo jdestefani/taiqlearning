@@ -29,6 +29,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 import data.CellType;
+import data.QGrid;
 import data.QGridCell;
 
 import main.TAIQLearningApp;
@@ -108,18 +109,18 @@ public class MapGUI {
 		this.sidePanel.add(actionPanel);
 		
        
-		this.map = new JButton[TAIQLearningApp.MAPHEIGHT][TAIQLearningApp.MAPWIDTH];
+		this.map = new JButton[QGrid.MAPHEIGHT][QGrid.MAPWIDTH];
 		//this.cellActionListener = new MapActionListener();
 		
 		Border gridBorder = BorderFactory.createLoweredBevelBorder();
 		
 		this.cellGrid = new JPanel();
 		this.cellGrid.setOpaque(true); 
-		this.cellGrid.setLayout(new GridLayout(TAIQLearningApp.MAPHEIGHT,TAIQLearningApp.MAPWIDTH,0,0));
+		this.cellGrid.setLayout(new GridLayout(QGrid.MAPHEIGHT,QGrid.MAPWIDTH,0,0));
 		this.cellGrid.setBorder(gridBorder);
 		
-		for(int i=0; i<TAIQLearningApp.MAPHEIGHT ; i++){
-			for(int j=0 ; j<TAIQLearningApp.MAPWIDTH; j++){
+		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
+			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
 				this.map[i][j] = new JButton();
 				this.cellGrid.add(this.map[i][j]);
 				this.map[i][j].addActionListener(this.cellActionListener);
@@ -145,7 +146,7 @@ public class MapGUI {
 		contentPane.add(mapPanel,BorderLayout.CENTER);
         contentPane.add(consoleScrollPanel,BorderLayout.SOUTH);
         contentPane.add(sidePanel,BorderLayout.EAST);
-        refreshMap(TAIQLearningApp.MAPHEIGHT,TAIQLearningApp.MAPWIDTH);
+        refreshMap(QGrid.MAPHEIGHT,QGrid.MAPWIDTH);
 	}
 
 	public JPanel getContentPane() {
@@ -259,7 +260,7 @@ public class MapGUI {
 		
 		for(int i=0;i<rowNumber;i++){
 			for(int j=0; j<columnNumber; j++){
-				this.refreshSingleCell(i,j, this.mainApp.getqGridMap()[i][j].getCellType(), 0);
+				this.refreshSingleCell(i,j, this.mainApp.getqGridMap().getCell(i, j).getCellType(), 0);
 			}
 		}
 	}
@@ -415,12 +416,10 @@ public class MapGUI {
 			if(listenedCommand.equals("Save Map")){
 				if(!(this.mainApp.getFileHandler().writeMapToFile("test.map"))){
 					Logger.getLogger("src.appLogger").severe("Error in writing file");
-					JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),
-						    "Error","Error in writing file. See log for details.",JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),"Error in writing file. See log for details.","Error",JOptionPane.ERROR_MESSAGE);
 				}
 				else{
-					JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),"Map saving",
-						    "Map saved correctly to test.map.",JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),"Map saved correctly to test.map.","Map saving",JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 			
@@ -429,14 +428,12 @@ public class MapGUI {
 				grid = GridFileHandler.readMapFromFile("test.map");
 				if(grid == null){
 					Logger.getLogger("src.appLogger").severe("Error in reading file");
-					JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),
-						    "Error","Error in reading file. See log for details.",JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),"Error in reading file. See log for details.","Error",JOptionPane.ERROR_MESSAGE);
 				}
 				else{
-				this.mainApp.setqGridMap(grid);
-				this.mainApp.getMapGUI().refreshMap(TAIQLearningApp.MAPHEIGHT,TAIQLearningApp.MAPWIDTH);
-				JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),"Map Loading",
-					    "Map loaded correcty from test.map.",JOptionPane.INFORMATION_MESSAGE);
+				this.mainApp.setqGridMap(new QGrid(grid));
+				this.mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT,QGrid.MAPWIDTH);
+				JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),"Map loaded correcty from test.map.", "Map Loading",JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 			

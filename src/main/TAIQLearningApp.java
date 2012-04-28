@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import data.CellType;
+import data.QGrid;
 import data.QGridCell;
 
 public class TAIQLearningApp {
@@ -29,9 +30,7 @@ public class TAIQLearningApp {
 	private GridFileHandler fileHandler;
 	private JFrame appWindow;
 	private Logger appLogger;
-	private QGridCell qGridMap[][];
-	public static final int MAPHEIGHT = 20;
-	public static final int MAPWIDTH = 30;
+	private QGrid qGridMap;
 	private final static String IMAGEPATH = new String("../img/");
 	
 	public TAIQLearningApp() {
@@ -40,24 +39,7 @@ public class TAIQLearningApp {
 		this.setupLogger();
 		this.appWindow = new JFrame();
 		this.appWindow.addWindowListener(new AppWindowListener());
-		this.qGridMap = new QGridCell[MAPHEIGHT][MAPWIDTH];
-		for(int i=0; i<TAIQLearningApp.MAPHEIGHT ; i++){
-			for(int j=0 ; j<TAIQLearningApp.MAPWIDTH; j++){
-				this.qGridMap[i][j] = new QGridCell();
-				if(j%3 == 0){
-					this.qGridMap[i][j].setCellType(CellType.AGENT);
-				}
-				if(j%5 == 0){
-					this.qGridMap[i][j].setCellType(CellType.BONUS);
-				}
-				if(j%7 == 0){
-					this.qGridMap[i][j].setCellType(CellType.ENDPOINT);
-				}
-				if(j%11 == 0){
-					this.qGridMap[i][j].setCellType(CellType.WALL);
-				}
-			}
-		}
+		this.qGridMap = new QGrid();
 		this.mapGUI = new MapGUI(this);
 		this.fileHandler = new GridFileHandler(this);
 		this.updateCurrentWindow("Grid World", 800, 600, this.mapGUI.getContentPane());
@@ -107,20 +89,24 @@ public class TAIQLearningApp {
 		this.appLogger = appLogger;
 	}
 
-	public QGridCell[][] getqGridMap() {
+
+	public QGrid getqGridMap() {
 		return qGridMap;
 	}
 
-	public void setqGridMap(QGridCell[][] qGridMap) {
+
+	public void setqGridMap(QGrid qGridMap) {
 		this.qGridMap = qGridMap;
 	}
 
+
+
 	public static int getMapheight() {
-		return MAPHEIGHT;
+		return QGrid.MAPHEIGHT;
 	}
 
 	public static int getMapwidth() {
-		return MAPWIDTH;
+		return QGrid.MAPWIDTH;
 	}
 
 	/**

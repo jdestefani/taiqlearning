@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import main.TAIQLearningApp;
 import data.CellType;
+import data.QGrid;
 import data.QGridCell;
 
 public class GridFileHandler {
@@ -39,7 +40,7 @@ public class GridFileHandler {
 		}
 		Scanner cellScanner = null;
 		Scanner valueScanner = null;
-		QGridCell gridMap[][] = new QGridCell[TAIQLearningApp.MAPHEIGHT][TAIQLearningApp.MAPWIDTH];
+		QGridCell gridMap[][] = new QGridCell[QGrid.MAPHEIGHT][QGrid.MAPWIDTH];
 		int i = 0;
 		int j = 0;
 		double currReward;
@@ -59,7 +60,7 @@ public class GridFileHandler {
 			System.out.println(cellTypeString);
 			
 			if(cellTypeString.length() >2){
-				Logger.getLogger("src.AppLogger").severe("Error while reading cell type");
+				Logger.getLogger("src.AppLogger").severe("Cell["+i+"]["+j+"]: Error while reading cell type");
 				return null;
 			}
 			
@@ -83,10 +84,11 @@ public class GridFileHandler {
 			  				 		 break;
 					  		case '4':currType = CellType.PORTAL4;
 			  				 		 break;
-					  		default :Logger.getLogger("src.AppLogger").severe("Error while reading cell type");
-							 return null;
+					  		default :Logger.getLogger("src.AppLogger").severe("Cell["+i+"]["+j+"]: Error while reading cell type");
+					  				 return null;
 					 }
-			default :Logger.getLogger("src.AppLogger").severe("Error while reading cell type");
+					 break;
+			default :Logger.getLogger("src.AppLogger").severe("Cell["+i+"]["+j+"]: Error while reading cell type");
 					 return null;
 			}
 			
@@ -96,7 +98,7 @@ public class GridFileHandler {
 			currReward = Double.parseDouble(rewardString);
 			}
 			catch(NumberFormatException e){
-				Logger.getLogger("src.AppLogger").severe("Error while reading cell reward");
+				Logger.getLogger("src.AppLogger").severe("Cell["+i+"]["+j+"]: Error while reading cell reward");
 				return null;
 			}
 			
@@ -132,11 +134,20 @@ public class GridFileHandler {
 		}
 		String currSymb = null;
 		Double currReward = null;
+		QGridCell currCell = null;
 		
 		try{
-			for(int i=0; i<TAIQLearningApp.MAPHEIGHT ; i++){
-				for(int j=0 ; j<TAIQLearningApp.MAPWIDTH; j++){
-					switch(this.mainApp.getqGridMap()[i][j].getCellType()){
+			for(int i=0; i<QGrid.MAPHEIGHT ; i++){
+				for(int j=0 ; j<QGrid.MAPWIDTH; j++){
+					
+					try{
+						currCell = this.mainApp.getqGridMap().getCell(i, j);
+					}catch (IndexOutOfBoundsException e) {
+						Logger.getLogger("src.appLogger").severe(e.getMessage());
+						return false;
+					}
+					
+					switch(currCell.getCellType()){
 					case AGENT:currSymb = new String("A");
 						   	   break;
 					case BONUS:currSymb = new String("B");
@@ -157,7 +168,7 @@ public class GridFileHandler {
 		   	   		   		   break;
 					default:break;
 				}
-					currReward = this.mainApp.getqGridMap()[i][j].getCellReward();
+					currReward = currCell.getCellReward();
 					try {
 						out.append(new String(currSymb+valueSeparator+currReward.toString()+cellSeparator));
 					} catch (IOException e) {
