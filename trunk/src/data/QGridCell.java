@@ -9,6 +9,7 @@ public class QGridCell {
 	private CellType cellType;
 	private ArrayList<QGridCell> reachableCells;
 	private double cellReward;
+	private double cellQValue;
 	
 	public QGridCell() {
 		super();
@@ -17,6 +18,7 @@ public class QGridCell {
 		this.cellType = CellType.PLAIN;
 		this.reachableCells = new ArrayList<QGridCell>();
 		this.cellReward = 0.0;
+		this.cellQValue = 0.0;
 	}
 	
 	public QGridCell(CellType aCellType) {
@@ -26,6 +28,7 @@ public class QGridCell {
 		this.cellType = aCellType;
 		this.reachableCells = new ArrayList<QGridCell>();
 		this.cellReward = 0.0;
+		this.cellQValue = 0.0;
 	}
 	
 	public QGridCell(CellType aCellType, double aCellReward) {
@@ -35,6 +38,7 @@ public class QGridCell {
 		this.cellType = aCellType;
 		this.reachableCells = new ArrayList<QGridCell>();
 		this.cellReward = aCellReward;
+		this.cellQValue = 0.0;
 	}
 	
 	public QGridCell(int aRowIndex, int aColumnIndex) throws IndexOutOfBoundsException {
@@ -45,6 +49,7 @@ public class QGridCell {
 		this.cellType = CellType.PLAIN;
 		this.reachableCells = new ArrayList<QGridCell>();
 		this.cellReward = 0.0;
+		this.cellQValue = 0.0;
 	}
 
 	public QGridCell(int aRowIndex, int aColumnIndex, CellType aCellType) throws IndexOutOfBoundsException {
@@ -55,6 +60,7 @@ public class QGridCell {
 		this.cellType = aCellType;
 		this.reachableCells = new ArrayList<QGridCell>();
 		this.cellReward = 0.0;
+		this.cellQValue = 0.0;
 	}
 	
 	public QGridCell(int aRowIndex, int aColumnIndex, CellType aCellType, double aCellReward) throws IndexOutOfBoundsException {
@@ -65,13 +71,14 @@ public class QGridCell {
 		this.cellType = aCellType;
 		this.reachableCells = new ArrayList<QGridCell>();
 		this.cellReward = aCellReward;
+		this.cellQValue = 0.0;
 	}
 
 	public int getRowIndex() {
 		return rowIndex;
 	}
 	
-	int getColumnIndex() {
+	public int getColumnIndex() {
 		return columnIndex;
 	}
 
@@ -91,6 +98,14 @@ public class QGridCell {
 		this.cellReward = cellReward;
 	}
 	
+	public double getCellQValue() {
+		return cellQValue;
+	}
+
+	public void setCellQValue(double cellQValue) {
+		this.cellQValue = cellQValue;
+	}
+
 	public ArrayList<QGridCell> getReachableCells() {
 		return reachableCells;
 	}

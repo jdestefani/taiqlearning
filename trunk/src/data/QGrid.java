@@ -31,6 +31,11 @@ public class QGrid {
 				}
 			}
 		}
+		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
+			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
+				addDefaultReachableCells(i, j);
+			}
+		}
 	}
 
 	public QGrid(QGridCell[][] aGrid) throws IndexOutOfBoundsException,NullPointerException {
@@ -155,11 +160,12 @@ public class QGrid {
 	}
 	
 	private boolean addDefaultReachableCells(int rowNumber, int columnNumber){
-		if(rowNumber < 0 || rowNumber > QGrid.MAPHEIGHT){
+		QGridCell reachableCell;
+		if(rowNumber < 0 || rowNumber > QGrid.MAPHEIGHT - 1){
 			return false;
 		}
 		
-		if(columnNumber < 0 || columnNumber > QGrid.MAPWIDTH){
+		if(columnNumber < 0 || columnNumber > QGrid.MAPWIDTH - 1){
 			return false;
 		}
 		
@@ -168,25 +174,25 @@ public class QGrid {
 			if(columnNumber == 0 ){
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber][columnNumber+1]);
 			}
-			if(columnNumber > 0 && columnNumber < QGrid.MAPWIDTH){
+			if(columnNumber > 0 && columnNumber < QGrid.MAPWIDTH - 1){
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber][columnNumber+1]);
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber][columnNumber-1]);
 			}
-			if(columnNumber == QGrid.MAPWIDTH ){
+			if(columnNumber == QGrid.MAPWIDTH - 1){
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber][columnNumber-1]);
 			}
 		}
 		
-		if(rowNumber == QGrid.MAPHEIGHT){
+		if(rowNumber == QGrid.MAPHEIGHT - 1){
 			this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber-1][columnNumber]);
 			if(columnNumber == 0 ){
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber][columnNumber+1]);
 			}
-			if(columnNumber > 0 && columnNumber < QGrid.MAPWIDTH){
+			if(columnNumber > 0 && columnNumber < QGrid.MAPWIDTH - 1){
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber][columnNumber+1]);
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber][columnNumber-1]);
 			}
-			if(columnNumber == QGrid.MAPWIDTH ){
+			if(columnNumber == QGrid.MAPWIDTH - 1){
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber][columnNumber-1]);
 			}
 		}
@@ -194,24 +200,36 @@ public class QGrid {
 		if(columnNumber == 0){
 			this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber][columnNumber+1]);
 			
-			if(rowNumber > 0 && rowNumber < QGrid.MAPHEIGHT){
+			if(rowNumber == 0 ){
+				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber+1][columnNumber]);
+			}
+			if(rowNumber > 0 && rowNumber < QGrid.MAPHEIGHT - 1){ 
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber-1][columnNumber]);
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber+1][columnNumber]);
+			}
+			if(rowNumber == QGrid.MAPHEIGHT - 1 ){
+				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber-1][columnNumber]);
 			}
 		
 		}
 		
-		if(columnNumber == QGrid.MAPWIDTH){
+		if(columnNumber == QGrid.MAPWIDTH - 1 ){
 			this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber][columnNumber-1]);
 			
-			if(rowNumber > 0 && rowNumber < QGrid.MAPHEIGHT){
+			if(rowNumber == 0 ){
+				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber+1][columnNumber]);
+			}
+			if(rowNumber > 0 && rowNumber < QGrid.MAPHEIGHT - 1){
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber-1][columnNumber]);
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber+1][columnNumber]);
+			}
+			if(rowNumber == QGrid.MAPHEIGHT - 1 ){
+				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber-1][columnNumber]);
 			}
 		
 		}
 		
-		if((rowNumber > 0 && rowNumber < QGrid.MAPHEIGHT) && (columnNumber > 0 && columnNumber < QGrid.MAPWIDTH) ){
+		if((rowNumber > 0 && rowNumber < QGrid.MAPHEIGHT - 1) && (columnNumber > 0 && columnNumber < QGrid.MAPWIDTH - 1) ){
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber-1][columnNumber]);
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber+1][columnNumber]);
 				this.grid[rowNumber][columnNumber].addReachableCell(this.grid[rowNumber][columnNumber-1]);

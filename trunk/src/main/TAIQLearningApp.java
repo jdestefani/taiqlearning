@@ -1,6 +1,5 @@
 package main;
 
-import gui.GUIElement;
 import gui.MapGUI;
 
 import io.GridFileHandler;
