@@ -1,9 +1,5 @@
 package gui;
 
-import gui.GraphicalGUI.GraphicalGUIListener;
-import gui.GraphicalGUI.TurnCommandListener;
-import gui.MapHandler.MapActionListener;
-
 import io.GridFileHandler;
 
 import java.awt.BorderLayout;
@@ -44,6 +40,9 @@ public class MapGUI {
 	private JScrollPane consoleScrollPanel;
 	private JPanel sidePanel;
 	private JPanel actionPanel;
+	private JPanel mapActionPanel;
+	private JPanel displayActionPanel;
+	private JPanel learnActionPanel;
 	
 	
 	private JButton[][] map;
@@ -51,11 +50,13 @@ public class MapGUI {
 	private JButton saveMapButton;
 	private JButton loadMapButton;
 	private JButton learnPathButton;
+	private JButton displayMapButton;
 	private JButton displayQButton;
+	private JButton displayRButton;
 	
 	private JTextArea infoConsole;
 	
-	private MapActionListener cellActionListener;
+	private CellButtonListener cellActionListener;
 	
 	private TAIQLearningApp mainApp;
 	
@@ -63,6 +64,7 @@ public class MapGUI {
 	
 	private static final ImageIcon AGENTICON = TAIQLearningApp.importImage(new String("Agent.png"));
 	private static final ImageIcon PLAINICON = TAIQLearningApp.importImage(new String("SteelFloor3.png"));
+	private static final ImageIcon PLAINQRICON = TAIQLearningApp.importImage(new String("SteelFloor2.png"));
 	private static final ImageIcon ENDPOINTICON = TAIQLearningApp.importImage(new String("EndPoint.png"));
 	private static final ImageIcon WALLICON = TAIQLearningApp.importImage(new String("Wall.png"));
 	private static final ImageIcon BONUSICON = TAIQLearningApp.importImage(new String("Box.png"));
@@ -70,6 +72,7 @@ public class MapGUI {
 	private static final ImageIcon PORTAL2ICON = TAIQLearningApp.importImage(new String("Portal2.png"));
 	private static final ImageIcon PORTAL3ICON = TAIQLearningApp.importImage(new String("Portal3.png"));
 	private static final ImageIcon PORTAL4ICON = TAIQLearningApp.importImage(new String("Portal4.png"));
+	private static final String ATTRIBUTEDELIMITER = new String(",");
 	//private static final ImageIcon FOGICON = GUIElement.importImage(FOGPATH);
 	
 	
@@ -92,20 +95,47 @@ public class MapGUI {
 		this.actionPanel.setBorder(actionPanelBorder);
 		this.actionPanel.setLayout(new BoxLayout(actionPanel, BoxLayout.Y_AXIS));
 		
+		Border mapActionPanelBorder = BorderFactory.createTitledBorder("Map");
+		this.mapActionPanel = new JPanel();
+		this.mapActionPanel.setBorder(mapActionPanelBorder);
+		this.mapActionPanel.setLayout(new BoxLayout(mapActionPanel, BoxLayout.Y_AXIS));
+		
+		Border learnActionPanelBorder = BorderFactory.createTitledBorder("Learn");
+		this.learnActionPanel = new JPanel();
+		this.learnActionPanel.setBorder(learnActionPanelBorder);
+		this.learnActionPanel.setLayout(new BoxLayout(learnActionPanel, BoxLayout.Y_AXIS));
+
+		Border displayActionPanelBorder = BorderFactory.createTitledBorder("Display");
+		this.displayActionPanel = new JPanel();
+		this.displayActionPanel.setBorder(displayActionPanelBorder);
+		this.displayActionPanel.setLayout(new BoxLayout(displayActionPanel, BoxLayout.Y_AXIS));
+
+		
 		this.saveMapButton = new JButton("Save Map");
 		this.saveMapButton.addActionListener(new ActionButtonListener(this.mainApp));
 		this.loadMapButton = new JButton("Load Map");
 		this.loadMapButton.addActionListener(new ActionButtonListener(this.mainApp));
 		this.learnPathButton = new JButton("Learn Path");
 		this.learnPathButton.addActionListener(new ActionButtonListener(this.mainApp));
+		this.displayMapButton = new JButton("Display map");
+		this.displayMapButton.addActionListener(new ActionButtonListener(this.mainApp));
+		this.displayRButton = new JButton("Display r values");
+		this.displayRButton.addActionListener(new ActionButtonListener(this.mainApp));
 		this.displayQButton = new JButton("Display Q values");
 		this.displayQButton.addActionListener(new ActionButtonListener(this.mainApp));
 		
-		this.actionPanel.add(saveMapButton);
-		this.actionPanel.add(loadMapButton);
-		this.actionPanel.add(learnPathButton);
-		this.actionPanel.add(displayQButton);
 		
+		this.mapActionPanel.add(saveMapButton);
+		this.mapActionPanel.add(loadMapButton);
+		this.learnActionPanel.add(learnPathButton);
+		this.displayActionPanel.add(displayMapButton);
+		this.displayActionPanel.add(displayRButton);
+		this.displayActionPanel.add(displayQButton);
+		
+		
+		this.actionPanel.add(mapActionPanel);
+		this.actionPanel.add(learnActionPanel);
+		this.actionPanel.add(displayActionPanel);
 		this.sidePanel.add(actionPanel);
 		
        
@@ -118,6 +148,7 @@ public class MapGUI {
 		this.cellGrid.setOpaque(true); 
 		this.cellGrid.setLayout(new GridLayout(QGrid.MAPHEIGHT,QGrid.MAPWIDTH,0,0));
 		this.cellGrid.setBorder(gridBorder);
+		this.cellActionListener = new CellButtonListener(this.mainApp);
 		
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
 			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
@@ -236,15 +267,35 @@ public class MapGUI {
 	public void setDisplayQButton(JButton displayQButton) {
 		this.displayQButton = displayQButton;
 	}
-
-	public MapActionListener getCellActionListener() {
+	
+	public CellButtonListener getCellActionListener() {
 		return cellActionListener;
 	}
 
-	public void setCellActionListener(MapActionListener cellActionListener) {
+	public void setCellActionListener(CellButtonListener cellActionListener) {
 		this.cellActionListener = cellActionListener;
 	}
-	
+
+	public void setMainApp(TAIQLearningApp mainApp) {
+		this.mainApp = mainApp;
+	}
+
+	public JButton getSaveMapButton() {
+		return saveMapButton;
+	}
+
+	public void setSaveMapButton(JButton saveMapButton) {
+		this.saveMapButton = saveMapButton;
+	}
+
+	public JTextArea getInfoConsole() {
+		return infoConsole;
+	}
+
+	public void setInfoConsole(JTextArea infoConsole) {
+		this.infoConsole = infoConsole;
+	}
+
 	/**
 	 * Refresh della mappa completa.
 	 * 
@@ -260,11 +311,32 @@ public class MapGUI {
 		
 		for(int i=0;i<rowNumber;i++){
 			for(int j=0; j<columnNumber; j++){
-				this.refreshSingleCell(i,j, this.mainApp.getqGridMap().getCell(i, j).getCellType(), 0);
+				this.refreshSingleCell(i,j, this.mainApp.getqGridMap().getCell(i, j).getCellType(),this.mainApp.getqGridMap().getCell(i, j).getCellReward()) ;
+				
+				
 			}
 		}
 	}
 	
+	public void refreshMapReward(int rowNumber, int columnNumber){
+		
+		for(int i=0;i<rowNumber;i++){
+			for(int j=0; j<columnNumber; j++){
+				this.refreshSingleCellQReward(i,j,this.mainApp.getqGridMap().getCell(i, j).getCellReward()) ;
+				
+			}
+		}
+	}
+	
+	public void refreshMapQ(int rowNumber, int columnNumber){
+		
+		for(int i=0;i<rowNumber;i++){
+			for(int j=0; j<columnNumber; j++){
+				this.refreshSingleCellQReward(i,j,this.mainApp.getqGridMap().getCell(i, j).getCellQValue()) ;
+				
+			}
+		}
+	}
 	
 	/**
 	 * Refresh parziale della mappa
@@ -283,9 +355,9 @@ public class MapGUI {
 	 * @param diffColumn
 	 *            Il numero di righe da ridisegnare a partire dalla cella di partenza.
 	 */
-	public void refreshPartialMap(char[][] charMap, int[][] attributesMap, Coordinates startCell,int diffRow, int diffColumn){
+	//public void refreshPartialMap(char[][] charMap, int[][] attributesMap, Coordinates startCell,int diffRow, int diffColumn){
 		
-		Coordinates startCellGUI = new Coordinates(0,0);
+		/*Coordinates startCellGUI = new Coordinates(0,0);
 		
 		startCellGUI.XYtoRC(startCell.getRow(), startCell.getColumn());
 		
@@ -300,7 +372,7 @@ public class MapGUI {
 			
 		}
 		
-	}
+	}*/
 	
 	/**
 	 * Refresh della singola cella.
@@ -315,15 +387,14 @@ public class MapGUI {
 	 *            L'eventuale attributo numerico associato alla cella,
 	 *            altrimenti 0 se non presente.
 	 */
-	public void refreshSingleCell(int row, int column,CellType type,int attribute){
+	public void refreshSingleCell(int aRow, int aColumn,CellType aType,double aAttribute){
 		
-		JButton currentButton = this.map[row][column];
+		JButton currentButton = this.map[aRow][aColumn];
 		Dimension iconDimension = null;
 		String actionCommand = null;
-		Coordinates currPosition = new Coordinates(row,column);
-
+		Double rewardValue = new Double(aAttribute);
 		
-		switch(type){
+		switch(aType){
 		case PLAIN:currentButton.setIcon(PLAINICON);
 				 iconDimension = new Dimension(PLAINICON.getIconHeight(),PLAINICON.getIconWidth());
 				 currentButton.setToolTipText("Floor");
@@ -388,7 +459,30 @@ public class MapGUI {
 		default:break;
 		}
 		
-		//actionCommand = new String(currPosition.getX()+","+currPosition.getY()+","+type+","+attribute);
+		actionCommand = new String(aRow+ATTRIBUTEDELIMITER+aColumn+ATTRIBUTEDELIMITER+rewardValue.toString());
+		currentButton.setText("");
+		currentButton.setBorderPainted(false);
+		currentButton.setPreferredSize(iconDimension);
+		currentButton.setContentAreaFilled(false);
+		currentButton.setActionCommand(actionCommand);
+	}
+	
+	public void refreshSingleCellQReward(int aRow, int aColumn,double aAttribute){
+		
+		JButton currentButton = this.map[aRow][aColumn];
+		Dimension iconDimension = null;
+		String actionCommand = null;
+		Double rewardValue = new Double(aAttribute);
+		
+		currentButton.setIcon(PLAINQRICON);
+		currentButton.setBackground(Color.WHITE);
+		iconDimension = new Dimension(PLAINICON.getIconHeight(),PLAINICON.getIconWidth());
+		currentButton.setText(rewardValue.toString());
+		currentButton.setHorizontalTextPosition(JButton.CENTER);
+		currentButton.setVerticalTextPosition(JButton.CENTER);
+		currentButton.setForeground(Color.WHITE);
+		
+		actionCommand = new String(aRow+ATTRIBUTEDELIMITER+aColumn+ATTRIBUTEDELIMITER+rewardValue.toString());
 		currentButton.setBorderPainted(false);
 		currentButton.setPreferredSize(iconDimension);
 		currentButton.setContentAreaFilled(false);
@@ -407,6 +501,9 @@ public class MapGUI {
 			this.mainApp = mainApp;
 		}
 
+		public boolean isMapDisplayed(){
+			return this.mainApp.getMapGUI().getMap()[0][0].getText().equals("");
+		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -440,6 +537,18 @@ public class MapGUI {
 			if(listenedCommand.equals("Learn Path")){	
 			}
 			
+			if(listenedCommand.equals("Display map")){
+				if(!isMapDisplayed()){
+				this.mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT,QGrid.MAPWIDTH );
+				}
+			}
+			
+			if(listenedCommand.equals("Display r values")){
+				if(isMapDisplayed()){
+				this.mainApp.getMapGUI().refreshMapReward(QGrid.MAPHEIGHT,QGrid.MAPWIDTH );
+				}
+			}
+			
 			if(listenedCommand.equals("Display Q values")){	
 			}
 			
@@ -447,7 +556,39 @@ public class MapGUI {
 			}
 			
 		}
-}
+	}
+	
+	class CellButtonListener implements ActionListener{
+		
+		private TAIQLearningApp mainApp;
+		private int row;
+		private int column;
+		
+		
+		public CellButtonListener(TAIQLearningApp mainApp) {
+			super();
+			this.mainApp = mainApp;
+		}
 
-}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String listenedCommand = e.getActionCommand(); 
+			parseActionCommand(listenedCommand);
+			QGridCell currCell = this.mainApp.getqGridMap().getCell(this.row, this.column);
+			this.mainApp.getMapGUI().getInfoConsole().append("Reachable Cells from" + "("+this.row+","+this.column+"):\n");
+			for(QGridCell reachableCell : currCell.getReachableCells())
+			{
+				this.mainApp.getMapGUI().getInfoConsole().append("("+reachableCell.getRowIndex()+","+reachableCell.getColumnIndex()+") - "+"Reward:"+new Double(reachableCell.getCellReward())+"\n");
+			}
+		}
+		
+		public void parseActionCommand(String actionCommand){
+			String[] firstSplit = actionCommand.split(ATTRIBUTEDELIMITER);
+			this.row = Integer.parseInt(firstSplit[0]);
+			this.column = Integer.parseInt(firstSplit[1]);
+		}
+		
+	}
+    }
 
