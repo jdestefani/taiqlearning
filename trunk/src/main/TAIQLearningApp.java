@@ -5,6 +5,7 @@ import gui.MapGUI;
 import io.GridFileHandler;
 
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
@@ -41,7 +42,8 @@ public class TAIQLearningApp {
 		this.qGridMap = new QGrid();
 		this.mapGUI = new MapGUI(this);
 		this.fileHandler = new GridFileHandler(this);
-		this.updateCurrentWindow("Grid World", 800, 600, this.mapGUI.getContentPane());
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		this.updateCurrentWindow("Grid World", screenSize.width, screenSize.height, this.mapGUI.getContentPane());
 	}
 	
 	

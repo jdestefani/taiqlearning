@@ -103,7 +103,7 @@ public class MapGUI {
 		Border learnActionPanelBorder = BorderFactory.createTitledBorder("Learn");
 		this.learnActionPanel = new JPanel();
 		this.learnActionPanel.setBorder(learnActionPanelBorder);
-		this.learnActionPanel.setLayout(new BoxLayout(learnActionPanel, BoxLayout.Y_AXIS));
+  		this.learnActionPanel.setLayout(new BoxLayout(learnActionPanel, BoxLayout.Y_AXIS));
 
 		Border displayActionPanelBorder = BorderFactory.createTitledBorder("Display");
 		this.displayActionPanel = new JPanel();
@@ -163,12 +163,14 @@ public class MapGUI {
 		
 		Border consolePanelBorder = BorderFactory.createTitledBorder("Console");
 		this.consolePanel = new JPanel();
-		this.infoConsole = new JTextArea(6, 80);
+		this.infoConsole = new JTextArea(7,100);
 		this.infoConsole.setEditable(false);
 		this.infoConsole.setLineWrap(true);
 		this.infoConsole.setWrapStyleWord(true);
 		this.consolePanel.add(infoConsole);
+		this.consolePanel.setBackground(Color.WHITE);
 		this.consoleScrollPanel = new JScrollPane(this.consolePanel);
+		this.consoleScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		this.consoleScrollPanel.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		this.consoleScrollPanel.setBorder(consolePanelBorder);
@@ -311,7 +313,7 @@ public class MapGUI {
 		
 		for(int i=0;i<rowNumber;i++){
 			for(int j=0; j<columnNumber; j++){
-				this.refreshSingleCell(i,j, this.mainApp.getqGridMap().getCell(i, j).getCellType(),this.mainApp.getqGridMap().getCell(i, j).getCellReward()) ;
+				this.refreshSingleCell(i,j, this.mainApp.getqGridMap().getCell(i, j).getCellType(),this.mainApp.getqGridMap().getCell(i, j).getCellReward());
 				
 				
 			}
@@ -472,17 +474,17 @@ public class MapGUI {
 		JButton currentButton = this.map[aRow][aColumn];
 		Dimension iconDimension = null;
 		String actionCommand = null;
-		Double rewardValue = new Double(aAttribute);
+		Double rewardQValue = new Double(aAttribute);
 		
 		currentButton.setIcon(PLAINQRICON);
 		currentButton.setBackground(Color.WHITE);
 		iconDimension = new Dimension(PLAINICON.getIconHeight(),PLAINICON.getIconWidth());
-		currentButton.setText(rewardValue.toString());
+		currentButton.setText(rewardQValue.toString());
 		currentButton.setHorizontalTextPosition(JButton.CENTER);
 		currentButton.setVerticalTextPosition(JButton.CENTER);
 		currentButton.setForeground(Color.WHITE);
 		
-		actionCommand = new String(aRow+ATTRIBUTEDELIMITER+aColumn+ATTRIBUTEDELIMITER+rewardValue.toString());
+		actionCommand = new String(aRow+ATTRIBUTEDELIMITER+aColumn+ATTRIBUTEDELIMITER+rewardQValue.toString());
 		currentButton.setBorderPainted(false);
 		currentButton.setPreferredSize(iconDimension);
 		currentButton.setContentAreaFilled(false);
@@ -579,7 +581,7 @@ public class MapGUI {
 			this.mainApp.getMapGUI().getInfoConsole().append("Reachable Cells from" + "("+this.row+","+this.column+"):\n");
 			for(QGridCell reachableCell : currCell.getReachableCells())
 			{
-				this.mainApp.getMapGUI().getInfoConsole().append("("+reachableCell.getRowIndex()+","+reachableCell.getColumnIndex()+") - "+"Reward:"+new Double(reachableCell.getCellReward())+"\n");
+				this.mainApp.getMapGUI().getInfoConsole().append("("+reachableCell.getRowIndex()+","+reachableCell.getColumnIndex()+") - "+"Reward: "+new Double(reachableCell.getCellReward())+"\n");
 			}
 		}
 		
