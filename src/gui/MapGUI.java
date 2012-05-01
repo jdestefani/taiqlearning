@@ -25,6 +25,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 import data.CellType;
+import data.MapCell;
 import data.QGrid;
 import data.QGridCell;
 
@@ -583,9 +584,10 @@ public class MapGUI {
 			parseActionCommand(listenedCommand);
 			QGridCell currCell = this.mainApp.getqGridMap().getCell(this.row, this.column);
 			this.mainApp.getMapGUI().getInfoConsole().append("Reachable Cells from" + "("+this.row+","+this.column+"):\n");
-			for(QGridCell reachableCell : currCell.getReachableCells())
+			for(MapCell reachableCell : currCell.getReachableCells())
 			{
-				this.mainApp.getMapGUI().getInfoConsole().append("("+reachableCell.getRowIndex()+","+reachableCell.getColumnIndex()+") - "+"Reward: "+new Double(reachableCell.getCellReward())+"\n");
+				QGridCell qCell = (QGridCell)reachableCell;
+				this.mainApp.getMapGUI().getInfoConsole().append("("+reachableCell.getRowIndex()+","+reachableCell.getColumnIndex()+") - "+"Reward: "+new Double(qCell.getCellReward())+"\n");
 			}
 		}
 		
