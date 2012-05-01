@@ -68,6 +68,7 @@ public class MapGUI {
 	private static final ImageIcon ENDPOINTICON = TAIQLearningApp.importImage(new String("EndPoint.png"));
 	private static final ImageIcon WALLICON = TAIQLearningApp.importImage(new String("Wall.png"));
 	private static final ImageIcon BONUSICON = TAIQLearningApp.importImage(new String("Box.png"));
+	private static final ImageIcon MALUSICON = TAIQLearningApp.importImage(new String("MalusIcon.png"));
 	private static final ImageIcon PORTAL1ICON = TAIQLearningApp.importImage(new String("Portal1.png"));
 	private static final ImageIcon PORTAL2ICON = TAIQLearningApp.importImage(new String("Portal2.png"));
 	private static final ImageIcon PORTAL3ICON = TAIQLearningApp.importImage(new String("Portal3.png"));
@@ -398,21 +399,24 @@ public class MapGUI {
 		
 		switch(aType){
 		case PLAIN:currentButton.setIcon(PLAINICON);
-				 iconDimension = new Dimension(PLAINICON.getIconHeight(),PLAINICON.getIconWidth());
-				 currentButton.setToolTipText("Floor");
-				 break;
-				 
+		iconDimension = new Dimension(PLAINICON.getIconHeight(),PLAINICON.getIconWidth());
+		currentButton.setToolTipText("Floor");
+		break;
+
 		case AGENT:currentButton.setIcon(AGENTICON);
-		 		 iconDimension = new Dimension(AGENTICON.getIconHeight(),AGENTICON.getIconWidth());
-		 		 currentButton.setToolTipText("Agent");
-				 break;
-				 
-		case BONUS:
-		case MALUS:currentButton.setIcon(BONUSICON);
-		 		 iconDimension = new Dimension(BONUSICON.getIconHeight(),BONUSICON.getIconWidth());
-		 		 currentButton.setToolTipText("Bonus");
-		 		 break;
-		 		 
+		iconDimension = new Dimension(AGENTICON.getIconHeight(),AGENTICON.getIconWidth());
+		currentButton.setToolTipText("Agent");
+		break;
+
+		case BONUS:currentButton.setIcon(BONUSICON);
+		iconDimension = new Dimension(BONUSICON.getIconHeight(),BONUSICON.getIconWidth());
+		currentButton.setToolTipText("Bonus");
+		break;
+
+		case MALUS:currentButton.setIcon(MALUSICON);
+		iconDimension = new Dimension(MALUSICON.getIconHeight(),MALUSICON.getIconWidth());
+		currentButton.setToolTipText("Malus");
+		break;
 		/*case STARTPOINT:if(attribute %2 == 0){ 
 				 	currentButton.setIcon(HERBIVOROUSICON);
 				 	iconDimension = new Dimension(HERBIVOROUSICON.getIconHeight(),HERBIVOROUSICON.getIconWidth());
@@ -425,39 +429,39 @@ public class MapGUI {
 					 currentButton.setToolTipText("Terreno\ncon\nErbivoro");
 					 break;
 				 }*/
-		
-		
-		case ENDPOINT:currentButton.setIcon(ENDPOINTICON);
-		 		 iconDimension = new Dimension(ENDPOINTICON.getIconHeight(),ENDPOINTICON.getIconWidth());
-		 		 currentButton.setToolTipText("Goal");
-		 		 break;
-		 		 
-		case WALL:currentButton.setIcon(WALLICON);
-		 		 iconDimension = new Dimension(WALLICON.getIconHeight(),WALLICON.getIconWidth());
-		 		 currentButton.setToolTipText("Wall");
-		 		 break;
-		
+
+
+		case ENDPOINT:	currentButton.setIcon(ENDPOINTICON);
+		iconDimension = new Dimension(ENDPOINTICON.getIconHeight(),ENDPOINTICON.getIconWidth());
+		currentButton.setToolTipText("Goal");
+		break;
+
+		case WALL:	currentButton.setIcon(WALLICON);
+		iconDimension = new Dimension(WALLICON.getIconHeight(),WALLICON.getIconWidth());
+		currentButton.setToolTipText("Wall");
+		break;
+
 		case PORTAL1:currentButton.setIcon(PORTAL1ICON);
-		 		iconDimension = new Dimension(PORTAL1ICON.getIconHeight(),PORTAL1ICON.getIconWidth());
-		 		currentButton.setToolTipText("Portal-Type 1");
-		 		break;
-		
+		iconDimension = new Dimension(PORTAL1ICON.getIconHeight(),PORTAL1ICON.getIconWidth());
+		currentButton.setToolTipText("Portal-Type 1");
+		break;
+
 		case PORTAL2:currentButton.setIcon(PORTAL2ICON);
- 		iconDimension = new Dimension(PORTAL2ICON.getIconHeight(),PORTAL2ICON.getIconWidth());
- 		currentButton.setToolTipText("Portal-Type 2");
- 		break;
+		iconDimension = new Dimension(PORTAL2ICON.getIconHeight(),PORTAL2ICON.getIconWidth());
+		currentButton.setToolTipText("Portal-Type 2");
+		break;
 
 		case PORTAL3:currentButton.setIcon(PORTAL3ICON);
- 		iconDimension = new Dimension(PORTAL3ICON.getIconHeight(),PORTAL3ICON.getIconWidth());
- 		currentButton.setToolTipText("Portal-Type 3");
- 		break;
+		iconDimension = new Dimension(PORTAL3ICON.getIconHeight(),PORTAL3ICON.getIconWidth());
+		currentButton.setToolTipText("Portal-Type 3");
+		break;
 
 		case PORTAL4:currentButton.setIcon(PORTAL4ICON);
- 		iconDimension = new Dimension(PORTAL4ICON.getIconHeight(),PORTAL4ICON.getIconWidth());
- 		currentButton.setToolTipText("Portal-Type 4");
- 		break;
+		iconDimension = new Dimension(PORTAL4ICON.getIconHeight(),PORTAL4ICON.getIconWidth());
+		currentButton.setToolTipText("Portal-Type 4");
+		break;
 
-		 		
+
 		default:break;
 		}
 		

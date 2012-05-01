@@ -1,7 +1,10 @@
 package data;
 
+import java.awt.Dimension;
 import java.awt.geom.QuadCurve2D;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Random;
 
 import javax.swing.JButton;
@@ -10,16 +13,21 @@ import javax.swing.JButton;
 public class QGrid {
 
 	private QGridCell[][] grid;
-	private QGridCell[][] portalLocations;
+	private ArrayList<QGridCell>[] portalReachableCells;
 	public static final int MAPWIDTH = 30;
 	public static final int MAPHEIGHT = 20;
 	public static final int PORTALNUMBER = 4;
 	public static final int PORTALREACHABILITY = 2;
+	public static final int BINSIZE = 30;
 	
 	public QGrid() {
 		super();
 		grid = new QGridCell[QGrid.MAPHEIGHT][QGrid.MAPWIDTH];
-		portalLocations = new QGridCell[PORTALNUMBER][PORTALREACHABILITY];
+		
+		portalReachableCells = new ArrayList[PORTALNUMBER];
+		for(int i=0; i<QGrid.PORTALNUMBER ; i++){
+			portalReachableCells[i] = new ArrayList<QGridCell>();
+		}
 		
 		//generateDeterministicTestMap();
 		//generateRandomTestMap();
@@ -30,6 +38,9 @@ public class QGrid {
 				addDefaultReachableCells(i, j);
 			}
 		}
+		
+		placeComponents();
+		addPortalReachableCells();
 	}
 
 	public QGrid(QGridCell[][] aGrid) throws IndexOutOfBoundsException,NullPointerException {
@@ -95,7 +106,7 @@ public class QGrid {
 			}
 			else{
 				for(QGridCell currCell : foundPortals1){
-					this.portalLocations[0][index] = currCell;
+					this.portalReachableCells[0].addAll(currCell.getReachableCells());
 					index++;
 				}
 			}
@@ -131,7 +142,7 @@ public class QGrid {
 			}
 			else{
 				for(QGridCell currCell : foundPortals2){
-					this.portalLocations[1][index] = currCell;
+					this.portalReachableCells[1].addAll(currCell.getReachableCells());
 					index++;
 				}
 			}
@@ -167,7 +178,7 @@ public class QGrid {
 			}
 			else{
 				for(QGridCell currCell : foundPortals3){
-					this.portalLocations[2][index] = currCell;
+					this.portalReachableCells[2].addAll(currCell.getReachableCells());
 					index++;
 				}
 			}
@@ -203,7 +214,7 @@ public class QGrid {
 			}
 			else{
 				for(QGridCell currCell : foundPortals4){
-					this.portalLocations[3][index] = currCell;
+					this.portalReachableCells[3].addAll(currCell.getReachableCells());
 					index++;
 				}
 			}
@@ -560,6 +571,100 @@ public class QGrid {
 		splitMap(intersectRow, aUpperCornerColumn,aLowerCornerRow,intersectColumn);
 		
 	}
+	
+	private void placeComponents(){
+		ArrayList<QGridCell> plainCells = new ArrayList<QGridCell>();
+		ArrayList<Integer> portalOrder = new ArrayList<Integer>(PORTALNUMBER*PORTALREACHABILITY);
+		int binsNumber = 0;
+		int index = 0;
+		int portalIndex = 0;
+		QGridCell currCell = null;
+		Random componentsRng = new Random();
+		
+		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
+			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
+				if(this.getCell(i, j).getCellType() == CellType.PLAIN){
+					plainCells.add(this.getCell(i, j));
+				}
+			}
+		}
+		
+		for(int i=0; i<PORTALREACHABILITY ; i++){
+			for(int j=0 ; j<PORTALNUMBER; j++){
+				portalOrder.add(new Integer(j));
+			}
+		}
+		
+		binsNumber = plainCells.size() / BINSIZE;
+		System.out.println("Bins:" + binsNumber);
+		Collections.shuffle(plainCells);
+		Collections.shuffle(portalOrder);
+		
+		for(index=0; index < binsNumber ; index++){
+			if(index == 0){
+				plainCells.get(index*BINSIZE+componentsRng.nextInt(BINSIZE)).setCellType(CellType.AGENT);
+			}
+			else{
+				do{
+					currCell = plainCells.get(index*BINSIZE+componentsRng.nextInt(BINSIZE));
+				}while(currCell.getCellType() != CellType.PLAIN);
+				
+				if(componentsRng.nextInt(binsNumber) < 0.60*binsNumber){
+					currCell.setCellType(CellType.BONUS);
+				}
+				else{
+					currCell.setCellType(CellType.MALUS);
+				}
+				
+				do{
+					currCell = plainCells.get(index*BINSIZE+componentsRng.nextInt(BINSIZE));
+				}while(currCell.getCellType() != CellType.PLAIN);
+				
+				if(index > 2 && index < 2 + PORTALNUMBER*PORTALREACHABILITY){
+					switch(portalOrder.get(index-2)){
+						case 0: currCell.setCellType(CellType.PORTAL1);
+								this.portalReachableCells[0].addAll(currCell.getReachableCells());
+								break;
+						case 1: currCell.setCellType(CellType.PORTAL2);
+								this.portalReachableCells[1].addAll(currCell.getReachableCells());
+								break;
+						case 2: currCell.setCellType(CellType.PORTAL3);
+								this.portalReachableCells[2].addAll(currCell.getReachableCells());
+								break;
+						case 3: currCell.setCellType(CellType.PORTAL4);
+								this.portalReachableCells[3].addAll(currCell.getReachableCells());
+								break;
+						default: break;
+					}
+				}
+			}
+		}
+		plainCells.get(index*BINSIZE+componentsRng.nextInt(plainCells.size()%BINSIZE)).setCellType(CellType.ENDPOINT);
+	}
+	
+	private void addPortalReachableCells(){
+		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
+			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
+				switch(this.getCell(i,j).getCellType()){
+				
+				case PORTAL1:	this.getCell(i, j).setReachableCells(this.portalReachableCells[0]);
+								break;
+				
+				case PORTAL2:	this.getCell(i, j).setReachableCells(this.portalReachableCells[1]);
+								break;
+				
+				case PORTAL3:	this.getCell(i, j).setReachableCells(this.portalReachableCells[2]);
+								break;
+				
+				case PORTAL4:	this.getCell(i, j).setReachableCells(this.portalReachableCells[3]);
+								break;
+				default : break;
+				}
+				
+			}
+		}
+	}
+	
 	
 	private void checkGrid(QGridCell[][] aGrid) throws IndexOutOfBoundsException,NullPointerException{
 		int rowLength = 0;
