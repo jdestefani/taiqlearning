@@ -54,8 +54,5 @@ public class AStarCell extends MapCell {
 	public void setHeuristicDistanceFromGoal(double heuristicDistanceFromGoal) {
 		this.heuristicDistanceFromGoal = heuristicDistanceFromGoal;
 	}
-	
-	public 
-	
 
 }
