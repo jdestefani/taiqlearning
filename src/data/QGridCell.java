@@ -27,17 +27,18 @@ public class QGridCell {
 		this.columnIndex = 0;
 		this.cellType = aCellType;
 		this.reachableCells = new ArrayList<QGridCell>();
-		this.cellReward = 0.0;
-		this.cellQValue = 0.0;
+		switch(this.cellType){
+		case BONUS: 	this.cellReward = CellType.BONUSREWARD;
+						break;
+		case ENDPOINT: 	this.cellReward = CellType.ENDPOINTREWARD;
+					   	break;
+		case WALL: 		this.cellReward = CellType.WALLREWARD;
+				   		break;
+		case MALUS: 	this.cellReward = CellType.MALUSREWARD;
+						break;
+		default: 		this.cellReward = CellType.PLAINREWARD;
+				 		break;
 	}
-	
-	public QGridCell(CellType aCellType, double aCellReward) {
-		super();
-		this.rowIndex = 0;
-		this.columnIndex = 0;
-		this.cellType = aCellType;
-		this.reachableCells = new ArrayList<QGridCell>();
-		this.cellReward = aCellReward;
 		this.cellQValue = 0.0;
 	}
 	
@@ -59,21 +60,22 @@ public class QGridCell {
 		this.columnIndex = aColumnIndex;
 		this.cellType = aCellType;
 		this.reachableCells = new ArrayList<QGridCell>();
-		this.cellReward = 0.0;
+		switch(this.cellType){
+			case BONUS: 	this.cellReward = CellType.BONUSREWARD;
+							break;
+			case ENDPOINT: 	this.cellReward = CellType.ENDPOINTREWARD;
+						   	break;
+			case WALL: 		this.cellReward = CellType.WALLREWARD;
+					   		break;
+			case MALUS: 	this.cellReward = CellType.MALUSREWARD;
+							break;
+			default: 		this.cellReward = CellType.PLAINREWARD;
+					 		break;
+		}
+		
 		this.cellQValue = 0.0;
 	}
 	
-	public QGridCell(int aRowIndex, int aColumnIndex, CellType aCellType, double aCellReward) throws IndexOutOfBoundsException {
-		super();
-		verifyIndexes(aRowIndex, aColumnIndex);
-		this.rowIndex = aRowIndex;
-		this.columnIndex = aColumnIndex;
-		this.cellType = aCellType;
-		this.reachableCells = new ArrayList<QGridCell>();
-		this.cellReward = aCellReward;
-		this.cellQValue = 0.0;
-	}
-
 	public int getRowIndex() {
 		return rowIndex;
 	}
@@ -88,14 +90,22 @@ public class QGridCell {
 	
 	public void setCellType(CellType cellType) {
 		this.cellType = cellType;
+		switch(cellType){
+		case BONUS: this.cellReward = CellType.BONUSREWARD;
+					break;
+		case ENDPOINT: this.cellReward = CellType.ENDPOINTREWARD;
+					   break;
+		case WALL: this.cellReward = CellType.WALLREWARD;
+				   break;
+		case MALUS: this.cellReward = CellType.MALUSREWARD;
+					break;
+		default: this.cellReward = CellType.PLAINREWARD;
+				 break;
+	}
 	}
 	
 	public double getCellReward() {
 		return cellReward;
-	}
-	
-	public void setCellReward(double cellReward) {
-		this.cellReward = cellReward;
 	}
 	
 	public double getCellQValue() {

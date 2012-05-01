@@ -102,7 +102,7 @@ public class GridFileHandler {
 				return null;
 			}
 			
-			gridMap[i][j] = new QGridCell(currType, currReward);
+			gridMap[i][j] = new QGridCell(currType);
 			j++;
 			}
 		i++;
