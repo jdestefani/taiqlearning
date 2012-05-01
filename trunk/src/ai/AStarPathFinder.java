@@ -59,14 +59,21 @@ public class AStarPathFinder {
 	private void computeHeuristic(AStarCell aCell){
 		aCell.setHeuristicDistanceFromGoal(Math.sqrt(Math.pow(endCell.getRowIndex() - aCell.getRowIndex(), 2) + Math.pow(endCell.getColumnIndex() - aCell.getColumnIndex(), 2)));
 	}
+	
 
 	private void findPath(){
 		Comparator<AStarCell> comparator = new AStarCellComparator();
-        PriorityQueue<AStarCell> queue = new PriorityQueue<AStarCell>(0, comparator);
+        PriorityQueue<AStarCell> searchQueue = new PriorityQueue<AStarCell>(0, comparator);
+        int distanceFromAgent = 1;
         
         for(MapCell currCell : agentCell.getReachableCells()){
-        	
+        	AStarCell aCell = (AStarCell)currCell;
+        	aCell.setDistanceFromAgent(distanceFromAgent);
+        	computeHeuristic(aCell);
+        	searchQueue.add(aCell);
         }
+        //Pop a cell and recall the algorithm on it.
+        //Add to path if correct, remove to path if wrong
 	}
 	
 	public AStarCell getCell(int aRowIndex, int aColumnIndex) throws IndexOutOfBoundsException{
