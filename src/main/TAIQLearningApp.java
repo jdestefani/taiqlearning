@@ -44,7 +44,7 @@ public class TAIQLearningApp {
 		this.appWindow.addWindowListener(new AppWindowListener());
 		this.qGridMap = new QGrid();
 		this.aStarGridMap = new AStarPathFinder(this.qGridMap);
-		//aStarGridMap.findPath();
+		aStarGridMap.findAStarPath();
 		this.mapGUI = new MapGUI(this);
 		this.fileHandler = new GridFileHandler(this);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

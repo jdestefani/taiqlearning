@@ -62,6 +62,8 @@ public class AStarPathFinder {
 			}
 		}
 		
+		updatePortalReachableCells();
+		
 		//Detection of the furthest and closest portals to the agent.
 		computeDistanceFrom(agentCell);
 		
@@ -137,7 +139,7 @@ public class AStarPathFinder {
 		
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
 			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
-				this.getCell(i, j).setCellType(aQGrid[i][j].getCellType());
+				this.getCell(i, j).setCellType(aQGrid[i][j].getCellType());			
 				switch(this.getCell(i, j).getCellType()){
 				case AGENT:agentCell = this.getCell(i, j);
 						   agentCell.setDistanceFromAgent(0);
@@ -151,7 +153,8 @@ public class AStarPathFinder {
 				case PORTAL4:portalCells[3].add(this.getCell(i, j));
 				 			 break;
 				case ENDPOINT:endCell = this.getCell(i, j);
-				   			  break;
+							  System.out.println("End: " + endCell.toString());
+							  break;
 				default:break;
 				}
 			}
@@ -159,9 +162,64 @@ public class AStarPathFinder {
 		
 		
 	}
+	
+	private void updatePortalReachableCells(){
+		
+		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
+			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
+				switch(this.getCell(i, j).getCellType()){
+				case PORTAL1:for(MapCell iterCell : this.getCell(i,j).getReachableCells()){
+								 if(!(portalReachableCells[0].contains(iterCell))){
+									portalReachableCells[0].add(iterCell); 
+								 }
+							 }
+							 break;
+				case PORTAL2:portalCells[1].add(this.getCell(i, j));
+							 for(MapCell iterCell : this.getCell(i,j).getReachableCells()){
+								 if(!(portalReachableCells[1].contains(iterCell))){
+									 portalReachableCells[1].add(iterCell); 
+								 }
+							 }
+				 			 break;
+				case PORTAL3:portalCells[2].add(this.getCell(i, j));
+							 for(MapCell iterCell : this.getCell(i,j).getReachableCells()){
+								 if(!(portalReachableCells[2].contains(iterCell))){
+									 portalReachableCells[2].add(iterCell); 
+								 }
+							 }
+				 			 break;
+				case PORTAL4:portalCells[3].add(this.getCell(i, j));
+							 for(MapCell iterCell : this.getCell(i,j).getReachableCells()){
+								 if(!(portalReachableCells[3].contains(iterCell))){
+									 portalReachableCells[3].add(iterCell); 
+								 }
+							 }
+				 			 break;
+				default:break;
+				}
+			}
+		}
+		
+		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
+			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
+				this.getCell(i, j).addPortalReachableCells(aStarGrid, portalReachableCells);
+			}
+		}
+			
+	}
 
 	private void computeHeuristic(AStarCell aCell){
-		aCell.setHeuristicDistanceFromGoal(euclidianDistance(aCell, endCell));
+		//aCell.setHeuristicDistanceFromGoal(- aCell.getDistanceFromAgent());
+		switch(aCell.getCellType()){
+		case PORTAL1:
+		case PORTAL2:
+		case PORTAL3:
+		case PORTAL4: aCell.setHeuristicDistanceFromGoal(euclidianDistance(aCell, endCell));
+					  break;
+			
+		default: aCell.setHeuristicDistanceFromGoal(euclidianDistance(aCell, endCell));
+		         break;
+		}
 	}
 	
 	private double euclidianDistance(MapCell aCell1, MapCell aCell2){
@@ -171,40 +229,74 @@ public class AStarPathFinder {
 	}
 	
 
-	public void findPath(){
-		Comparator<AStarCell> comparator = new AStarCellComparator();
-        PriorityQueue<AStarCell> searchQueue = new PriorityQueue<AStarCell>(10, comparator);
+	public void findAStarPath(){
+		
+		if(stepsFromAgentToEnd == -1){
+			return;
+		}
+		
+        ArrayList<AStarCell> searchQueue = new ArrayList<AStarCell>();
         int distanceFromAgent = 1;
         
         for(int i=0; i<QGrid.MAPHEIGHT ; i++){
 			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
+				this.getCell(i, j).addPortalReachableCells(aStarGrid, portalReachableCells);
 				this.getCell(i, j).setHasBeenVisited(false);
+				//this.getCell(i, j).setPreviousAPathCell(null);
 			}
 		}
         
-        selectNextCell(agentCell, searchQueue, distanceFromAgent);
+        selectNextCell(agentCell, searchQueue);
         //Add to path if correct, remove to path if wrong
         buildAStarPath();
 	}
 	
-	private void selectNextCell(AStarCell currCell,PriorityQueue<AStarCell> searchQueue, int distanceFromAgent){
+	private void selectNextCell(AStarCell currCell,ArrayList<AStarCell> searchQueue){
+		double minHeuristic = Double.MAX_VALUE;
+		AStarCell nextCell = null;
+		
+		searchQueue.remove(currCell);
 		currCell.visit();
-		aStarPath.add(currCell);
+		//aStarPath.add(currCell);
+		
 		if(currCell.equals(endCell)){
 			return;
 		}
+		if(currCell.getCellType() == CellType.PORTAL1){
+			System.out.println(currCell.toString() + " - Portal 1");
+		}
+		if(currCell.getCellType() == CellType.PORTAL2){
+			System.out.println(currCell.toString() + " - Portal 2");
+		}
+		if(currCell.getCellType() == CellType.PORTAL3){
+			System.out.println(currCell.toString() + " - Portal 3");
+		}
+		if(currCell.getCellType() == CellType.PORTAL4){
+			System.out.println(currCell.toString() + " - Portal 4");
+		}
+			System.out.println(currCell.toString() + " - d: " + currCell.getDistanceFromAgent() + " - h:" +currCell.getHeuristicDistanceFromGoal());
 		
 		for(MapCell iterCell : currCell.getReachableCells()){
         	AStarCell aCell = (AStarCell)iterCell;
-        	//aCell.setDistanceFromAgent(distanceFromAgent);
         	computeHeuristic(aCell);
         	if(!aCell.hasBeenVisited()){
         		searchQueue.add(aCell);
         	}
         }
+		
+		
         //Pop a cell and recall the algorithm on it.
-		searchQueue.peek().setPreviousAPathCell(currCell);
-		selectNextCell(searchQueue.poll(),searchQueue,distanceFromAgent+1);
+		for(AStarCell iterCell: searchQueue){
+			if(!(iterCell.hasBeenVisited()) && iterCell.getCellType() != CellType.AGENT){
+				if(iterCell.getDistanceFromAgent()+iterCell.getHeuristicDistanceFromGoal() < minHeuristic){
+					minHeuristic = iterCell.getDistanceFromAgent()+iterCell.getHeuristicDistanceFromGoal();
+					nextCell = iterCell;
+				}
+			}
+		}
+		
+		nextCell.setPreviousAPathCell(currCell);
+		selectNextCell(nextCell,searchQueue);
 	}
 	
 	private void buildAStarPath(){
@@ -298,33 +390,4 @@ public class AStarPathFinder {
         }*/
 	}
 	
-	class AStarCellComparator implements Comparator<AStarCell>
-	{
-
-		@Override
-		public int compare(AStarCell aCell1, AStarCell aCell2) {
-			{
-				double evaluationFunction1 = aCell1.getDistanceFromAgent()+aCell1.getHeuristicDistanceFromGoal();
-				double evaluationFunction2 = aCell2.getDistanceFromAgent()+aCell2.getHeuristicDistanceFromGoal();
-				
-				//System.out.println(aCell1.toString() + " - " + aCell2.toString());
-				//System.out.println("h1: " + evaluationFunction1 + " - h2:" + evaluationFunction2);
-				
-				//Best choice is the one having the smallest heuristic value
-		        if (evaluationFunction1 < evaluationFunction2)
-		        {
-		            return -1;
-		        }
-		        if (evaluationFunction1 >= evaluationFunction2)
-		        {
-		            return 1;
-		        }
-		        return 0;
-		    }
-		}	
-		 
-		
-		
-	}
-
 }
