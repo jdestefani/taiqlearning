@@ -305,7 +305,6 @@ public class QGrid {
 	}
 	
 	private void generateMazeMap(){
-		Random rngMap = new Random();
 		
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
 			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
@@ -565,7 +564,7 @@ public class QGrid {
 				}
 			}
 		}
-		plainCells.get(index*BINSIZE+componentsRng.nextInt(plainCells.size()%BINSIZE)).setCellType(CellType.ENDPOINT);
+		plainCells.get(index*BINSIZE+componentsRng.nextInt(plainCells.size()%BINSIZE == 0 ? 1 : plainCells.size()%BINSIZE)).setCellType(CellType.ENDPOINT);
 	}
 	
 	private void checkGrid(MapCell[][] aGrid) throws IndexOutOfBoundsException,NullPointerException{

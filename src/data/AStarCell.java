@@ -6,16 +6,19 @@ public class AStarCell extends MapCell {
 	
 	private int distanceFromAgent;
 	private double heuristicDistanceFromGoal;
-	private ArrayList<AStarCell> reachableCells;
+	private boolean hasBeenVisited;
+	private AStarCell previousAPathCell;
 	
 	public AStarCell() {
 		super();
 		this.rowIndex = 0;
 		this.columnIndex = 0;
 		this.cellType = CellType.PLAIN;
-		this.reachableCells = new ArrayList<AStarCell>();
-		this.distanceFromAgent = 0;
+		this.reachableCells = new ArrayList<MapCell>();
+		this.distanceFromAgent = Integer.MAX_VALUE;
 		this.heuristicDistanceFromGoal = 0.0;
+		this.hasBeenVisited = false;
+		previousAPathCell = null;
 	}
 	
 	public AStarCell(CellType aCellType) {
@@ -23,9 +26,11 @@ public class AStarCell extends MapCell {
 		this.rowIndex = 0;
 		this.columnIndex = 0;
 		this.cellType = aCellType;
-		this.reachableCells = new ArrayList<AStarCell>();
-		this.distanceFromAgent = 0;
+		this.reachableCells = new ArrayList<MapCell>();
+		this.distanceFromAgent = Integer.MAX_VALUE;
 		this.heuristicDistanceFromGoal = 0.0;
+		this.hasBeenVisited = false;
+		previousAPathCell = null;
 	}
 	
 	public AStarCell(int aRowIndex, int aColumnIndex) throws IndexOutOfBoundsException {
@@ -34,9 +39,11 @@ public class AStarCell extends MapCell {
 		this.rowIndex = aRowIndex;
 		this.columnIndex = aColumnIndex;
 		this.cellType = CellType.PLAIN;
-		this.reachableCells = new ArrayList<AStarCell>();
-		this.distanceFromAgent = 0;
+		this.reachableCells = new ArrayList<MapCell>();
+		this.distanceFromAgent = Integer.MAX_VALUE;
 		this.heuristicDistanceFromGoal = 0.0;
+		this.hasBeenVisited = false;
+		previousAPathCell = null;
 	}
 
 	public int getDistanceFromAgent() {
@@ -54,5 +61,27 @@ public class AStarCell extends MapCell {
 	public void setHeuristicDistanceFromGoal(double heuristicDistanceFromGoal) {
 		this.heuristicDistanceFromGoal = heuristicDistanceFromGoal;
 	}
+	
+	public void visit(){
+		this.hasBeenVisited = true;
+	}
+
+	public boolean hasBeenVisited() {
+		return hasBeenVisited;
+	}
+
+	public void setHasBeenVisited(boolean hasBeenVisited) {
+		this.hasBeenVisited = hasBeenVisited;
+	}
+
+	public AStarCell getPreviousAPathCell() {
+		return previousAPathCell;
+	}
+
+	public void setPreviousAPathCell(AStarCell previousAPathCell) {
+		this.previousAPathCell = previousAPathCell;
+	}
+	
+	
 
 }

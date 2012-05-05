@@ -24,6 +24,9 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
+import ai.AStarPathFinder;
+
+import data.AStarCell;
 import data.CellType;
 import data.MapCell;
 import data.QGrid;
@@ -48,6 +51,7 @@ public class MapGUI {
 	
 	private JButton[][] map;
 	
+	private JButton generateMapButton;
 	private JButton saveMapButton;
 	private JButton loadMapButton;
 	private JButton learnPathButton;
@@ -112,7 +116,8 @@ public class MapGUI {
 		this.displayActionPanel.setBorder(displayActionPanelBorder);
 		this.displayActionPanel.setLayout(new BoxLayout(displayActionPanel, BoxLayout.Y_AXIS));
 
-		
+		this.generateMapButton = new JButton("Generate Map");
+		this.generateMapButton.addActionListener(new ActionButtonListener(this.mainApp));
 		this.saveMapButton = new JButton("Save Map");
 		this.saveMapButton.addActionListener(new ActionButtonListener(this.mainApp));
 		this.loadMapButton = new JButton("Load Map");
@@ -126,7 +131,7 @@ public class MapGUI {
 		this.displayQButton = new JButton("Display Q values");
 		this.displayQButton.addActionListener(new ActionButtonListener(this.mainApp));
 		
-		
+		this.mapActionPanel.add(generateMapButton);
 		this.mapActionPanel.add(saveMapButton);
 		this.mapActionPanel.add(loadMapButton);
 		this.learnActionPanel.add(learnPathButton);
@@ -182,6 +187,7 @@ public class MapGUI {
         contentPane.add(consoleScrollPanel,BorderLayout.SOUTH);
         contentPane.add(sidePanel,BorderLayout.EAST);
         refreshMap(QGrid.MAPHEIGHT,QGrid.MAPWIDTH);
+        drawAStarPath();
 	}
 
 	public JPanel getContentPane() {
@@ -326,7 +332,7 @@ public class MapGUI {
 		
 		for(int i=0;i<rowNumber;i++){
 			for(int j=0; j<columnNumber; j++){
-				this.refreshSingleCellQReward(i,j,this.mainApp.getqGridMap().getCell(i, j).getCellReward()) ;
+				this.refreshSingleCellQReward(i,j,this.mainApp.getaStarGridMap().getCell(i, j).getDistanceFromAgent()) ;
 				
 			}
 		}
@@ -339,6 +345,16 @@ public class MapGUI {
 				this.refreshSingleCellQReward(i,j,this.mainApp.getqGridMap().getCell(i, j).getCellQValue()) ;
 				
 			}
+		}
+	}
+	
+	public void drawAStarPath(){
+		
+		for(AStarCell currCell : this.mainApp.getaStarGridMap().getaStarPath()){
+			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("A*");
+			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setHorizontalTextPosition(JButton.CENTER);
+			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setVerticalTextPosition(JButton.CENTER);
+			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setForeground(Color.YELLOW);
 		}
 	}
 	
@@ -479,17 +495,18 @@ public class MapGUI {
 		JButton currentButton = this.map[aRow][aColumn];
 		Dimension iconDimension = null;
 		String actionCommand = null;
-		Double rewardQValue = new Double(aAttribute);
+		//Double rewardQValue = new Double(aAttribute);
 		
 		currentButton.setIcon(PLAINQRICON);
 		currentButton.setBackground(Color.WHITE);
 		iconDimension = new Dimension(PLAINICON.getIconHeight(),PLAINICON.getIconWidth());
-		currentButton.setText(rewardQValue.toString());
+		//currentButton.setText(Double.toString(aAttribute));
+		currentButton.setText(Integer.toString((int)aAttribute));
 		currentButton.setHorizontalTextPosition(JButton.CENTER);
 		currentButton.setVerticalTextPosition(JButton.CENTER);
 		currentButton.setForeground(Color.WHITE);
 		
-		actionCommand = new String(aRow+ATTRIBUTEDELIMITER+aColumn+ATTRIBUTEDELIMITER+rewardQValue.toString());
+		actionCommand = new String(aRow+ATTRIBUTEDELIMITER+aColumn+ATTRIBUTEDELIMITER+Double.toString(aAttribute));
 		currentButton.setBorderPainted(false);
 		currentButton.setPreferredSize(iconDimension);
 		currentButton.setContentAreaFilled(false);
@@ -516,6 +533,12 @@ public class MapGUI {
 		public void actionPerformed(ActionEvent e) {
 			String listenedCommand = e.getActionCommand();
 			String response = null;
+			
+			if(listenedCommand.equals("Generate Map")){
+				this.mainApp.setqGridMap(new QGrid());
+				this.mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT, QGrid.MAPWIDTH);
+				this.mainApp.setaStarGridMap(new AStarPathFinder(this.mainApp.getqGridMap()));
+			}
 			
 			if(listenedCommand.equals("Save Map")){
 				if(!(this.mainApp.getFileHandler().writeMapToFile("test.map"))){
