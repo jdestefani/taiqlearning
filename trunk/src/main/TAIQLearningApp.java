@@ -20,6 +20,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import ai.AStarPathFinder;
+
 import data.CellType;
 import data.QGrid;
 import data.QGridCell;
@@ -31,6 +33,7 @@ public class TAIQLearningApp {
 	private JFrame appWindow;
 	private Logger appLogger;
 	private QGrid qGridMap;
+	private AStarPathFinder aStarGridMap;
 	private final static String IMAGEPATH = new String("../img/");
 	
 	public TAIQLearningApp() {
@@ -40,6 +43,8 @@ public class TAIQLearningApp {
 		this.appWindow = new JFrame();
 		this.appWindow.addWindowListener(new AppWindowListener());
 		this.qGridMap = new QGrid();
+		this.aStarGridMap = new AStarPathFinder(this.qGridMap);
+		//aStarGridMap.findPath();
 		this.mapGUI = new MapGUI(this);
 		this.fileHandler = new GridFileHandler(this);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -47,6 +52,18 @@ public class TAIQLearningApp {
 	}
 	
 	
+
+	public AStarPathFinder getaStarGridMap() {
+		return aStarGridMap;
+	}
+
+
+
+	public void setaStarGridMap(AStarPathFinder aStarGridMap) {
+		this.aStarGridMap = aStarGridMap;
+	}
+
+
 
 	public GridFileHandler getFileHandler() {
 		return fileHandler;
@@ -63,8 +80,6 @@ public class TAIQLearningApp {
 	public static String getImagepath() {
 		return IMAGEPATH;
 	}
-
-
 
 	public MapGUI getMapGUI() {
 		return mapGUI;
@@ -101,7 +116,6 @@ public class TAIQLearningApp {
 	}
 
 
-
 	public static int getMapheight() {
 		return QGrid.MAPHEIGHT;
 	}
@@ -133,7 +147,7 @@ public class TAIQLearningApp {
 	public void updateCurrentWindow(String title,int width, int height, JPanel contentPane){
 		appWindow.setTitle("TAIQLearning - "+ title);
 		appWindow.setPreferredSize(new Dimension(width, height));
-		appWindow.setResizable(false);
+		//appWindow.setResizable(false);
         appWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         appWindow.setContentPane(contentPane);
         appWindow.pack();
@@ -141,7 +155,6 @@ public class TAIQLearningApp {
 	}
 	
 	public static ImageIcon importImage(String fileName){
-		System.out.println(IMAGEPATH+fileName);
 		return new ImageIcon(TAIQLearningApp.class.getResource(
 							 IMAGEPATH+fileName));
 	}

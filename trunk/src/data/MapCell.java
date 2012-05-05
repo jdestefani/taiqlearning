@@ -53,7 +53,7 @@ public class MapCell {
 	}
 	
 	public boolean addDefaultReachableCells(MapCell[][] aGrid){
-		MapCell reachableCell;
+		MapCell reachableCell = null;
 		if(rowIndex < 0 || rowIndex > QGrid.MAPHEIGHT - 1){
 			return false;
 		}
@@ -228,6 +228,17 @@ public class MapCell {
 				
 	}
 	
+
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		return super.equals(obj);
+	}
+
+	@Override
+	public String toString() {
+		return new String("("+rowIndex+","+columnIndex+")");
+	}
 
 	public MapCell() {
 		super();
