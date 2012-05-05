@@ -538,6 +538,8 @@ public class MapGUI {
 				this.mainApp.setqGridMap(new QGrid());
 				this.mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT, QGrid.MAPWIDTH);
 				this.mainApp.setaStarGridMap(new AStarPathFinder(this.mainApp.getqGridMap()));
+				this.mainApp.getaStarGridMap().findAStarPath();
+				drawAStarPath();
 			}
 			
 			if(listenedCommand.equals("Save Map")){
@@ -605,12 +607,12 @@ public class MapGUI {
 		public void actionPerformed(ActionEvent e) {
 			String listenedCommand = e.getActionCommand(); 
 			parseActionCommand(listenedCommand);
-			QGridCell currCell = this.mainApp.getqGridMap().getCell(this.row, this.column);
+			AStarCell currCell = this.mainApp.getaStarGridMap().getCell(this.row, this.column);
 			this.mainApp.getMapGUI().getInfoConsole().append("Reachable Cells from" + "("+this.row+","+this.column+"):\n");
 			for(MapCell reachableCell : currCell.getReachableCells())
 			{
-				QGridCell qCell = (QGridCell)reachableCell;
-				this.mainApp.getMapGUI().getInfoConsole().append("("+reachableCell.getRowIndex()+","+reachableCell.getColumnIndex()+") - "+"Reward: "+new Double(qCell.getCellReward())+"\n");
+				AStarCell aCell = (AStarCell)reachableCell;
+				this.mainApp.getMapGUI().getInfoConsole().append("("+reachableCell.getRowIndex()+","+reachableCell.getColumnIndex()+") - "+"h: "+new Double(aCell.getHeuristicDistanceFromGoal()+aCell.getDistanceFromAgent())+"\n");
 			}
 		}
 		
