@@ -24,6 +24,7 @@ public class AStarPathFinder {
 	private AStarCell endCell;
 	private int stepsFromAgentToEnd;
 	private ArrayList<AStarCell> aStarPath;
+	private ArrayList<AStarCell> aStarSet;
 	
 	
 	public AStarPathFinder(QGrid aQGrid) {
@@ -31,6 +32,7 @@ public class AStarPathFinder {
 		
 		
 		stepsFromAgentToEnd = -1;
+		aStarSet = new ArrayList<AStarCell>();
 		aStarPath = new ArrayList<AStarCell>();
 		aStarGrid = new AStarCell[QGrid.MAPHEIGHT][QGrid.MAPWIDTH];
 		
@@ -126,8 +128,16 @@ public class AStarPathFinder {
 		return endCell;
 	}
 
+	public ArrayList<AStarCell> getaStarSet() {
+		return aStarSet;
+	}
+
 	public ArrayList<AStarCell> getaStarPath() {
 		return aStarPath;
+	}
+
+	public int getStepsFromAgentToEnd() {
+		return stepsFromAgentToEnd;
 	}
 
 	public AStarCell getCell(int aRowIndex, int aColumnIndex) throws IndexOutOfBoundsException{
@@ -257,11 +267,12 @@ public class AStarPathFinder {
 		
 		searchQueue.remove(currCell);
 		currCell.visit();
-		//aStarPath.add(currCell);
+		aStarSet.add(currCell);
 		
 		if(currCell.equals(endCell)){
 			return;
 		}
+		
 		if(currCell.getCellType() == CellType.PORTAL1){
 			System.out.println(currCell.toString() + " - Portal 1");
 		}
@@ -281,6 +292,7 @@ public class AStarPathFinder {
         	computeHeuristic(aCell);
         	if(!aCell.hasBeenVisited()){
         		searchQueue.add(aCell);
+        		aCell.setPreviousAPathCell(currCell);
         	}
         }
 		
@@ -295,17 +307,51 @@ public class AStarPathFinder {
 			}
 		}
 		
-		nextCell.setPreviousAPathCell(currCell);
 		selectNextCell(nextCell,searchQueue);
 	}
 	
 	private void buildAStarPath(){
-		AStarCell currCell = endCell;
-		while(currCell.getCellType() != CellType.AGENT){
+		/*AStarCell currCell = agentCell;
+		AStarCell nextCell = null;
+		ArrayList<AStarCell> adjAStarCells = new ArrayList<AStarCell>();
+		ArrayList<AStarCell> visitedCells = new ArrayList<AStarCell>();
+		int minManhattanDistance = Integer.MAX_VALUE;
+		int currDistanceFromAgent = 0;*/
+		
+		 AStarCell currCell = endCell;
+         while(currCell.getCellType() != CellType.AGENT){
+                 aStarPath.add(currCell);
+                 System.out.println(currCell.toString());
+                 currCell = currCell.getPreviousAPathCell();
+         }
+		
+		
+		/*while(currCell.getCellType() != CellType.ENDPOINT){
+			visitedCells.add(currCell);
 			aStarPath.add(currCell);
-			System.out.println(currCell.toString());
-			currCell = currCell.getPreviousAPathCell();
-		}
+			System.out.println(currCell);
+			adjAStarCells = new ArrayList<AStarCell>();
+			System.gc();
+			minManhattanDistance = Integer.MAX_VALUE;
+			nextCell = null;
+			
+			
+			for(MapCell iterCell : currCell.getReachableCells()){
+				if(aStarSet.contains((AStarCell)iterCell) && ((AStarCell)iterCell).getDistanceFromAgent() > currDistanceFromAgent && !visitedCells.contains((AStarCell)iterCell)){
+					adjAStarCells.add(aStarSet.get(aStarSet.indexOf((AStarCell)iterCell)));
+				}
+			}
+			for(MapCell iterCell : adjAStarCells){
+				System.out.println(iterCell + " - h: " + ((AStarCell)iterCell).getDistanceFromAgent()+((AStarCell)iterCell).getHeuristicDistanceFromGoal());
+				if( stepsFromAgentToEnd - ((AStarCell)iterCell).getDistanceFromAgent() < minManhattanDistance ){
+					minManhattanDistance = ((AStarCell)iterCell).getDistanceFromAgent()+((AStarCell)iterCell).getHeuristicDistanceFromGoal();
+					nextCell = ((AStarCell)iterCell);
+				}
+			}
+			aStarSet.remove(currCell);
+			currCell = nextCell;
+			currDistanceFromAgent = nextCell.getDistanceFromAgent();
+		}*/
 	}
 	
 	private void computeDistanceFrom(AStarCell aCell){
