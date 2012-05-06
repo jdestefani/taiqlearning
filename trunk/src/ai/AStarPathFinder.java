@@ -5,6 +5,9 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.logging.Logger;
+
+import main.TAIQLearningApp;
 
 import data.AStarCell;
 import data.CellType;
@@ -14,6 +17,7 @@ import data.QGridCell;
 
 public class AStarPathFinder {
 	
+	private TAIQLearningApp mainApp;
 	private ArrayList<MapCell>[] portalReachableCells;
 	private ArrayList<AStarCell>[] portalCells;
 	private int[] maxDistancePortalIndex;
@@ -27,10 +31,10 @@ public class AStarPathFinder {
 	private ArrayList<AStarCell> aStarSet;
 	
 	
-	public AStarPathFinder(QGrid aQGrid) {
+	public AStarPathFinder(TAIQLearningApp aMainApp,QGrid aQGrid) throws UnreachableEndException {
 		super();
 		
-		
+		mainApp = aMainApp;
 		stepsFromAgentToEnd = -1;
 		aStarSet = new ArrayList<AStarCell>();
 		aStarPath = new ArrayList<AStarCell>();
@@ -69,7 +73,9 @@ public class AStarPathFinder {
 		//Detection of the furthest and closest portals to the agent.
 		computeDistanceFrom(agentCell);
 		
-		System.out.println("Is end reachable?"+(stepsFromAgentToEnd == -1 ? false : true));
+		if(stepsFromAgentToEnd == -1){
+			throw new UnreachableEndException();
+		}
 		
 		for(int i = 0; i<QGrid.PORTALNUMBER ; i++){
 			for(int j=0; j< portalCells[i].size(); j++){
@@ -163,7 +169,6 @@ public class AStarPathFinder {
 				case PORTAL4:portalCells[3].add(this.getCell(i, j));
 				 			 break;
 				case ENDPOINT:endCell = this.getCell(i, j);
-							  System.out.println("End: " + endCell.toString());
 							  break;
 				default:break;
 				}
@@ -219,7 +224,6 @@ public class AStarPathFinder {
 	}
 
 	private void computeHeuristic(AStarCell aCell){
-		//aCell.setHeuristicDistanceFromGoal(- aCell.getDistanceFromAgent());
 		switch(aCell.getCellType()){
 		case PORTAL1:
 		case PORTAL2:
@@ -252,12 +256,14 @@ public class AStarPathFinder {
 			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
 				this.getCell(i, j).addPortalReachableCells(aStarGrid, portalReachableCells);
 				this.getCell(i, j).setHasBeenVisited(false);
-				//this.getCell(i, j).setPreviousAPathCell(null);
+				
 			}
 		}
         
+        //Recursive application of A*
+        this.mainApp.printOnConsoleAndLog("A* Set:");
         selectNextCell(agentCell, searchQueue);
-        //Add to path if correct, remove to path if wrong
+     
         buildAStarPath();
 	}
 	
@@ -265,6 +271,7 @@ public class AStarPathFinder {
 		double minHeuristic = Double.MAX_VALUE;
 		AStarCell nextCell = null;
 		
+		//Remove cell from the candidate set and add it to the set of cells explored by A*
 		searchQueue.remove(currCell);
 		currCell.visit();
 		aStarSet.add(currCell);
@@ -273,20 +280,9 @@ public class AStarPathFinder {
 			return;
 		}
 		
-		if(currCell.getCellType() == CellType.PORTAL1){
-			System.out.println(currCell.toString() + " - Portal 1");
-		}
-		if(currCell.getCellType() == CellType.PORTAL2){
-			System.out.println(currCell.toString() + " - Portal 2");
-		}
-		if(currCell.getCellType() == CellType.PORTAL3){
-			System.out.println(currCell.toString() + " - Portal 3");
-		}
-		if(currCell.getCellType() == CellType.PORTAL4){
-			System.out.println(currCell.toString() + " - Portal 4");
-		}
-			System.out.println(currCell.toString() + " - d: " + currCell.getDistanceFromAgent() + " - h:" +currCell.getHeuristicDistanceFromGoal());
+		this.mainApp.printOnConsoleAndLog(currCell.toString() + " - d: " + currCell.getDistanceFromAgent() + " - h:" +currCell.getHeuristicDistanceFromGoal());
 		
+		//Compute heuristic value for all the cells adjacent to currCell and add them to candidate set if not visited.
 		for(MapCell iterCell : currCell.getReachableCells()){
         	AStarCell aCell = (AStarCell)iterCell;
         	computeHeuristic(aCell);
@@ -297,7 +293,7 @@ public class AStarPathFinder {
         }
 		
 		
-        //Pop a cell and recall the algorithm on it.
+        //Pop a cell and recall the algorithm on it (Min heuristic value is the criterion for the choice)
 		for(AStarCell iterCell: searchQueue){
 			if(!(iterCell.hasBeenVisited()) && iterCell.getCellType() != CellType.AGENT){
 				if(iterCell.getDistanceFromAgent()+iterCell.getHeuristicDistanceFromGoal() < minHeuristic){
@@ -318,10 +314,12 @@ public class AStarPathFinder {
 		int minManhattanDistance = Integer.MAX_VALUE;
 		int currDistanceFromAgent = 0;*/
 		
+		//Determine the path by going backwards from end to beginning following the chain of previousAPathCell pointers.
+		Logger.getLogger(TAIQLearningApp.LOGGERNAME).info("A* Path:");
 		 AStarCell currCell = endCell;
          while(currCell.getCellType() != CellType.AGENT){
                  aStarPath.add(currCell);
-                 System.out.println(currCell.toString());
+                 this.mainApp.printOnConsoleAndLog(currCell.toString());
                  currCell = currCell.getPreviousAPathCell();
          }
 		

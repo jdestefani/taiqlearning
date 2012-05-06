@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -28,6 +29,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 import ai.AStarPathFinder;
+import ai.UnreachableEndException;
 
 import data.AStarCell;
 import data.CellType;
@@ -71,6 +73,9 @@ public class MapGUI {
 	
 	private TAIQLearningApp mainApp;
 	
+	private boolean isAStarPathLearned;
+	private boolean isEndReachable;
+	
 	
 	
 	private static final ImageIcon AGENTICON = TAIQLearningApp.importImage(new String("Agent.png"));
@@ -89,121 +94,124 @@ public class MapGUI {
 	
 	
 
-	public MapGUI(TAIQLearningApp mainApp) {
+	public MapGUI(TAIQLearningApp aMainApp) {
 		super();
 		
-		this.mainApp = mainApp;
+		mainApp = aMainApp;
+		isAStarPathLearned = false;
 		
-		this.contentPane = new JPanel();
-		this.contentPane.setOpaque(true); 
-		this.contentPane.setLayout(new BorderLayout());
+		contentPane = new JPanel();
+		contentPane.setOpaque(true); 
+		contentPane.setLayout(new BorderLayout());
         
-		this.sidePanel = new JPanel();
-		this.sidePanel.setOpaque(true);
-		this.sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
+		sidePanel = new JPanel();
+		sidePanel.setOpaque(true);
+		sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
 	
 		Border actionPanelBorder = BorderFactory.createTitledBorder("Actions");
-		this.actionPanel = new JPanel();
-		this.actionPanel.setBorder(actionPanelBorder);
-		this.actionPanel.setLayout(new BoxLayout(actionPanel, BoxLayout.Y_AXIS));
+		actionPanel = new JPanel();
+		actionPanel.setBorder(actionPanelBorder);
+		actionPanel.setLayout(new BoxLayout(actionPanel, BoxLayout.Y_AXIS));
 		
 		Border mapActionPanelBorder = BorderFactory.createTitledBorder("Map");
-		this.mapActionPanel = new JPanel();
-		this.mapActionPanel.setBorder(mapActionPanelBorder);
-		this.mapActionPanel.setLayout(new BoxLayout(mapActionPanel, BoxLayout.Y_AXIS));
+		mapActionPanel = new JPanel();
+		mapActionPanel.setBorder(mapActionPanelBorder);
+		mapActionPanel.setLayout(new BoxLayout(mapActionPanel, BoxLayout.Y_AXIS));
 		
 		Border aStarActionPanelBorder = BorderFactory.createTitledBorder("A*");
-		this.aStarActionPanel = new JPanel();
-		this.aStarActionPanel.setBorder(aStarActionPanelBorder);
-  		this.aStarActionPanel.setLayout(new BoxLayout(aStarActionPanel, BoxLayout.Y_AXIS));
+		aStarActionPanel = new JPanel();
+		aStarActionPanel.setBorder(aStarActionPanelBorder);
+  		aStarActionPanel.setLayout(new BoxLayout(aStarActionPanel, BoxLayout.Y_AXIS));
 
 		Border qLearningActionPanelBorder = BorderFactory.createTitledBorder("Q-Learning");
-		this.qLearningActionPanel = new JPanel();
-		this.qLearningActionPanel.setBorder(qLearningActionPanelBorder);
-		this.qLearningActionPanel.setLayout(new BoxLayout(qLearningActionPanel, BoxLayout.Y_AXIS));
+		qLearningActionPanel = new JPanel();
+		qLearningActionPanel.setBorder(qLearningActionPanelBorder);
+		qLearningActionPanel.setLayout(new BoxLayout(qLearningActionPanel, BoxLayout.Y_AXIS));
 
-		this.generateMapButton = new JButton("Generate Map");
-		this.generateMapButton.addActionListener(new ActionElementsListener(this.mainApp));
-		this.saveMapButton = new JButton("Save Map");
-		this.saveMapButton.addActionListener(new ActionElementsListener(this.mainApp));
-		this.loadMapButton = new JButton("Load Map");
-		this.loadMapButton.addActionListener(new ActionElementsListener(this.mainApp));
-		this.displayMapButton = new JButton("Display map");
-		this.displayMapButton.addActionListener(new ActionElementsListener(this.mainApp));
-		this.learnAStarPathButton = new JButton("Learn A* Path");
-		this.learnAStarPathButton.addActionListener(new ActionElementsListener(this.mainApp));
-		this.displayDistanceMapButton = new JButton("Display distance map");
-		this.displayDistanceMapButton.addActionListener(new ActionElementsListener(this.mainApp));
-		this.displayRButton = new JButton("Display r values");
-		this.displayRButton.addActionListener(new ActionElementsListener(this.mainApp));
-		this.displayQButton = new JButton("Display Q values");
-		this.displayQButton.addActionListener(new ActionElementsListener(this.mainApp));
+		generateMapButton = new JButton("Generate Map");
+		generateMapButton.addActionListener(new ActionElementsListener(this.mainApp));
+		saveMapButton = new JButton("Save Map");
+		saveMapButton.addActionListener(new ActionElementsListener(this.mainApp));
+		loadMapButton = new JButton("Load Map");
+		loadMapButton.addActionListener(new ActionElementsListener(this.mainApp));
+		displayMapButton = new JButton("Display map");
+		displayMapButton.addActionListener(new ActionElementsListener(this.mainApp));
+		learnAStarPathButton = new JButton("Learn A* Path");
+		learnAStarPathButton.addActionListener(new ActionElementsListener(this.mainApp));
+		displayDistanceMapButton = new JButton("Display distance map");
+		displayDistanceMapButton.addActionListener(new ActionElementsListener(this.mainApp));
+		displayRButton = new JButton("Display r values");
+		displayRButton.addActionListener(new ActionElementsListener(this.mainApp));
+		displayQButton = new JButton("Display Q values");
+		displayQButton.addActionListener(new ActionElementsListener(this.mainApp));
 		
-		this.showAStarPath = new JCheckBox("Show A* Path");
-		this.showAStarPath.addItemListener(new ActionElementsListener(mainApp));
-		this.showAStarSet = new JCheckBox("Show A* Set");
-		this.showAStarSet.addItemListener(new ActionElementsListener(mainApp));
+		showAStarPath = new JCheckBox("Show A* Path");
+		showAStarPath.addItemListener(new ActionElementsListener(mainApp));
+		showAStarSet = new JCheckBox("Show A* Set");
+		showAStarSet.addItemListener(new ActionElementsListener(mainApp));
+
+		showAStarPath.setEnabled(isAStarPathLearned);
+		showAStarSet.setEnabled(isAStarPathLearned);
+		displayDistanceMapButton.setEnabled(isAStarPathLearned);
 		
-		this.mapActionPanel.add(generateMapButton);
-		this.mapActionPanel.add(saveMapButton);
-		this.mapActionPanel.add(loadMapButton);
-		this.mapActionPanel.add(displayMapButton);
-		this.aStarActionPanel.add(learnAStarPathButton);
-		this.aStarActionPanel.add(showAStarSet);
-		this.aStarActionPanel.add(showAStarPath);
-		this.aStarActionPanel.add(displayDistanceMapButton);
-		this.qLearningActionPanel.add(displayRButton);
-		this.qLearningActionPanel.add(displayQButton);
+		mapActionPanel.add(generateMapButton);
+		mapActionPanel.add(saveMapButton);
+		mapActionPanel.add(loadMapButton);
+		mapActionPanel.add(displayMapButton);
+		aStarActionPanel.add(learnAStarPathButton);
+		aStarActionPanel.add(showAStarSet);
+		aStarActionPanel.add(showAStarPath);
+		aStarActionPanel.add(displayDistanceMapButton);
+		qLearningActionPanel.add(displayRButton);
+		qLearningActionPanel.add(displayQButton);
 		
 		
-		this.actionPanel.add(mapActionPanel);
-		this.actionPanel.add(aStarActionPanel);
-		this.actionPanel.add(qLearningActionPanel);
-		this.sidePanel.add(actionPanel);
-		
-       
-		this.map = new JButton[QGrid.MAPHEIGHT][QGrid.MAPWIDTH];
+		actionPanel.add(mapActionPanel);
+		actionPanel.add(aStarActionPanel);
+		actionPanel.add(qLearningActionPanel);
+		sidePanel.add(actionPanel);
+		     
+		map = new JButton[QGrid.MAPHEIGHT][QGrid.MAPWIDTH];
 		//this.cellActionListener = new MapActionListener();
 		
 		Border gridBorder = BorderFactory.createLoweredBevelBorder();
 		
-		this.cellGrid = new JPanel();
-		this.cellGrid.setOpaque(true); 
-		this.cellGrid.setLayout(new GridLayout(QGrid.MAPHEIGHT,QGrid.MAPWIDTH,0,0));
-		this.cellGrid.setBorder(gridBorder);
-		this.cellActionListener = new CellButtonListener(this.mainApp);
+		cellGrid = new JPanel();
+		cellGrid.setOpaque(true); 
+		cellGrid.setLayout(new GridLayout(QGrid.MAPHEIGHT,QGrid.MAPWIDTH,0,0));
+		cellGrid.setBorder(gridBorder);
+		cellActionListener = new CellButtonListener(this.mainApp);
 		
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
 			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
-				this.map[i][j] = new JButton();
-				this.cellGrid.add(this.map[i][j]);
-				this.map[i][j].addActionListener(this.cellActionListener);
+				map[i][j] = new JButton();
+				cellGrid.add(this.map[i][j]);
+				map[i][j].addActionListener(this.cellActionListener);
 			}
 		}
 		
-		this.mapPanel = new JScrollPane(cellGrid);
-		this.mapPanel.setPreferredSize(new Dimension(600,400));
+		mapPanel = new JScrollPane(cellGrid);
+		mapPanel.setPreferredSize(new Dimension(600,400));
 		
 		Border consolePanelBorder = BorderFactory.createTitledBorder("Console");
-		this.consolePanel = new JPanel();
-		this.infoConsole = new JTextArea(7,100);
-		this.infoConsole.setEditable(false);
-		this.infoConsole.setLineWrap(true);
-		this.infoConsole.setWrapStyleWord(true);
-		this.consolePanel.add(infoConsole);
-		this.consolePanel.setBackground(Color.WHITE);
-		this.consoleScrollPanel = new JScrollPane(this.consolePanel);
-		this.consoleScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		this.consoleScrollPanel.setVerticalScrollBarPolicy(
+		consolePanel = new JPanel();
+		infoConsole = new JTextArea(7,100);
+		infoConsole.setEditable(false);
+		infoConsole.setLineWrap(true);
+		infoConsole.setWrapStyleWord(true);
+		consolePanel.add(infoConsole);
+		consolePanel.setBackground(Color.WHITE);
+		consoleScrollPanel = new JScrollPane(this.consolePanel);
+		consoleScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		consoleScrollPanel.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		this.consoleScrollPanel.setBorder(consolePanelBorder);
-        this.consoleScrollPanel.setBackground(Color.WHITE);
+		consoleScrollPanel.setBorder(consolePanelBorder);
+        consoleScrollPanel.setBackground(Color.WHITE);
 		
 		contentPane.add(mapPanel,BorderLayout.CENTER);
         contentPane.add(consoleScrollPanel,BorderLayout.SOUTH);
         contentPane.add(sidePanel,BorderLayout.EAST);
         refreshMap(QGrid.MAPHEIGHT,QGrid.MAPWIDTH);
-        drawAStarPath();
 	}
 
 	public JPanel getContentPane() {
@@ -322,6 +330,14 @@ public class MapGUI {
 		this.infoConsole = infoConsole;
 	}
 
+	public boolean isEndReachable() {
+		return isEndReachable;
+	}
+
+	public void setEndReachable(boolean isEndReachable) {
+		this.isEndReachable = isEndReachable;
+	}
+
 	/**
 	 * Refresh della mappa completa.
 	 * 
@@ -375,20 +391,54 @@ public class MapGUI {
 	public void drawAStarPath(){
 		
 		for(AStarCell currCell : this.mainApp.getaStarGridMap().getaStarPath()){
-			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("A*");
-			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setHorizontalTextPosition(JButton.CENTER);
-			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setVerticalTextPosition(JButton.CENTER);
-			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setForeground(Color.GREEN);
+			switch(currCell.getCellType()){
+			
+			case BONUS:		break;
+			case PORTAL1:
+			case PORTAL2:
+			case PORTAL3:
+			case PORTAL4:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("A*");
+							this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setHorizontalTextPosition(JButton.CENTER);
+		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setVerticalTextPosition(JButton.CENTER);
+		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setForeground(Color.GREEN); 
+						 	break;
+			case MALUS:
+			case AGENT:
+			case ENDPOINT: break;
+			
+			default:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setIcon(null);
+					 	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setContentAreaFilled(true);
+					 	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBackground(Color.GREEN);
+					 	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("");
+					 	break;
+			}
 		}
 	}
 	
 	public void drawAStarSet(){
 		
 		for(AStarCell currCell : this.mainApp.getaStarGridMap().getaStarSet()){
-			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("A*");
-			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setHorizontalTextPosition(JButton.CENTER);
-			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setVerticalTextPosition(JButton.CENTER);
-			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setForeground(Color.YELLOW);
+			switch(currCell.getCellType()){
+			
+			case BONUS:		break;
+			case PORTAL1:
+			case PORTAL2:
+			case PORTAL3:
+			case PORTAL4:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("A*");
+							this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setHorizontalTextPosition(JButton.CENTER);
+		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setVerticalTextPosition(JButton.CENTER);
+		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setForeground(Color.ORANGE); 
+						 	break;
+			case MALUS:
+			case AGENT:
+			case ENDPOINT: break;
+			
+			default:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setIcon(null);
+					 	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setContentAreaFilled(true);
+					 	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBackground(Color.ORANGE);
+					 	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("");
+					 	break;
+			}
 		}
 	}
 	
@@ -589,9 +639,18 @@ public class MapGUI {
 			String response = null;
 			
 			if(listenedCommand.equals("Generate Map")){
+				try {
 				this.mainApp.setqGridMap(new QGrid());
 				this.mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT, QGrid.MAPWIDTH);
-				this.mainApp.setaStarGridMap(new AStarPathFinder(this.mainApp.getqGridMap()));
+				this.mainApp.setaStarGridMap(new AStarPathFinder(this.mainApp,this.mainApp.getqGridMap()));
+				} catch (UnreachableEndException e1) {
+					JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),"The goal is unreachable on the generated map.\nPlease regenerate the map.","Warning",JOptionPane.WARNING_MESSAGE);
+				}
+				isAStarPathLearned = false;
+				showAStarPath.setEnabled(isAStarPathLearned);
+				showAStarSet.setEnabled(isAStarPathLearned);
+				displayDistanceMapButton.setEnabled(isAStarPathLearned);
+				infoConsole.setText("");
 			}
 			
 			if(listenedCommand.equals("Save Map")){
@@ -626,6 +685,11 @@ public class MapGUI {
 			
 			if(listenedCommand.equals("Learn A* Path")){
 				this.mainApp.getaStarGridMap().findAStarPath();
+				isAStarPathLearned = true;
+				showAStarPath.setEnabled(isAStarPathLearned);
+				showAStarSet.setEnabled(isAStarPathLearned);
+				displayDistanceMapButton.setEnabled(isAStarPathLearned);
+				
 			}
 			
 			if(listenedCommand.equals("Display distance map")){
@@ -657,6 +721,9 @@ public class MapGUI {
 			 
 		        if (e.getItemSelectable().equals(showAStarPath)) {
 		            if(e.getStateChange() == ItemEvent.SELECTED){
+		            	if(showAStarSet.isSelected()){
+			            	this.mainApp.getMapGUI().drawAStarSet();
+			            }
 		            	this.mainApp.getMapGUI().drawAStarPath();
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
@@ -670,6 +737,9 @@ public class MapGUI {
 		        if (e.getItemSelectable().equals(showAStarSet)) {
 		        	if(e.getStateChange() == ItemEvent.SELECTED){
 		            	this.mainApp.getMapGUI().drawAStarSet();
+		            	if(showAStarPath.isSelected()){
+			            	this.mainApp.getMapGUI().drawAStarPath();
+			            }
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
 		            	this.mainApp.getMapGUI().refreshPartialMap(this.mainApp.getaStarGridMap().getaStarSet());
