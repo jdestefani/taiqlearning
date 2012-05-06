@@ -506,6 +506,7 @@ public class QGrid {
 		QGridCell currCell = null;
 		Random componentsRng = new Random();
 		
+		//Listing of the free cells
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
 			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
 				if(this.getCell(i, j).getCellType() == CellType.PLAIN){
@@ -514,17 +515,26 @@ public class QGrid {
 			}
 		}
 		
+		//Initializing the placement order for portals
 		for(int i=0; i<PORTALREACHABILITY ; i++){
 			for(int j=0 ; j<PORTALNUMBER; j++){
 				portalOrder.add(new Integer(j));
 			}
 		}
 		
+		//Dividing the number of plain cells in bins of the same size, except for the last one
 		binsNumber = plainCells.size() / BINSIZE;
-		System.out.println("Bins:" + binsNumber);
+		//Shuffling the order of plain cells and portal placement order to have a random placement of components.
 		Collections.shuffle(plainCells);
 		Collections.shuffle(portalOrder);
 		
+		/* Placement Rules:
+		 * 
+		 * 1st Bin : Agent
+		 * 2nd to 10th Bin: Portals + Bonus/Malus
+		 * 10th to (n-1)th : Bonus/Malus
+		 * nth : Goal
+		 * */
 		for(index=0; index < binsNumber ; index++){
 			if(index == 0){
 				plainCells.get(index*BINSIZE+componentsRng.nextInt(BINSIZE)).setCellType(CellType.AGENT);
@@ -562,9 +572,16 @@ public class QGrid {
 						default: break;
 					}
 				}
+				
+				if(index == binsNumber - 1){
+					do{
+						currCell = plainCells.get(index*BINSIZE+componentsRng.nextInt(BINSIZE));
+					}while(currCell.getCellType() != CellType.PLAIN);
+					currCell.setCellType(CellType.ENDPOINT);
+				}
 			}
 		}
-		plainCells.get(index*BINSIZE+componentsRng.nextInt(plainCells.size()%BINSIZE == 0 ? 1 : plainCells.size()%BINSIZE)).setCellType(CellType.ENDPOINT);
+		
 	}
 	
 	private void checkGrid(MapCell[][] aGrid) throws IndexOutOfBoundsException,NullPointerException{

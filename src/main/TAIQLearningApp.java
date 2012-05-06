@@ -1,7 +1,6 @@
 package main;
 
 import gui.MapGUI;
-
 import io.GridFileHandler;
 
 import java.awt.Dimension;
@@ -16,15 +15,13 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import ai.AStarPathFinder;
-
-import data.CellType;
+import ai.UnreachableEndException;
 import data.QGrid;
-import data.QGridCell;
 
 public class TAIQLearningApp {
 	
@@ -35,21 +32,25 @@ public class TAIQLearningApp {
 	private QGrid qGridMap;
 	private AStarPathFinder aStarGridMap;
 	private final static String IMAGEPATH = new String("../img/");
+	public final static String LOGGERNAME = new String("appLogger");
 	
 	public TAIQLearningApp() {
 		super();
-		this.appLogger = Logger.getLogger("src.appLogger");
-		this.setupLogger();
-		this.appWindow = new JFrame();
-		this.appWindow.addWindowListener(new AppWindowListener());
-		this.qGridMap = new QGrid();
-		this.aStarGridMap = new AStarPathFinder(this.qGridMap);
-		this.mapGUI = new MapGUI(this);
-		this.fileHandler = new GridFileHandler(this);
+		appLogger = Logger.getLogger(LOGGERNAME);
+		setupLogger();
+		appWindow = new JFrame();
+		appWindow.addWindowListener(new AppWindowListener());
+		try {
+			qGridMap = new QGrid();
+			aStarGridMap = new AStarPathFinder(this,this.qGridMap);
+		} catch (UnreachableEndException e) {
+			JOptionPane.showMessageDialog(appWindow,"The goal is unreachable on the generated map.\nPlease regenerate the map.","Warning",JOptionPane.WARNING_MESSAGE);
+		}
+		mapGUI = new MapGUI(this);
+		fileHandler = new GridFileHandler(this);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.updateCurrentWindow("Grid World", screenSize.width, screenSize.height, this.mapGUI.getContentPane());
+		updateCurrentWindow("Grid World", screenSize.width, screenSize.height, this.mapGUI.getContentPane());
 	}
-	
 	
 
 	public AStarPathFinder getaStarGridMap() {
@@ -135,8 +136,8 @@ public class TAIQLearningApp {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Logger.getLogger("src.appLogger").addHandler(fileHandler);
-		Logger.getLogger("src.appLogger").setLevel(Level.INFO);
+		Logger.getLogger(LOGGERNAME).addHandler(fileHandler);
+		Logger.getLogger(LOGGERNAME).setLevel(Level.INFO);
 		
 		SimpleFormatter formatter = new SimpleFormatter();
 	    fileHandler.setFormatter(formatter);
@@ -158,6 +159,11 @@ public class TAIQLearningApp {
 							 IMAGEPATH+fileName));
 	}
 	
+	public void printOnConsoleAndLog(String aMsg){
+		Logger.getLogger(TAIQLearningApp.LOGGERNAME).info(aMsg);
+		this.mapGUI.getInfoConsole().append(aMsg+System.getProperty("line.separator"));
+	}
+	
 	private class AppWindowListener implements WindowListener{
 
 		@Override
@@ -174,7 +180,6 @@ public class TAIQLearningApp {
 
 		@Override
 		public void windowClosing(WindowEvent arg0) {
-			
 		}
 
 		@Override
