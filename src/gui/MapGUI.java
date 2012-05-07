@@ -90,15 +90,17 @@ public class MapGUI {
 	private static final ImageIcon PORTAL3ICON = TAIQLearningApp.importImage(new String("Portal3.png"));
 	private static final ImageIcon PORTAL4ICON = TAIQLearningApp.importImage(new String("Portal4.png"));
 	private static final String ATTRIBUTEDELIMITER = new String(",");
-	//private static final ImageIcon FOGICON = GUIElement.importImage(FOGPATH);
+	private static final Color ASTARSETCOLOR = Color.ORANGE;
+	private static final Color ASTARPATHCOLOR = Color.GREEN;
 	
 	
 
-	public MapGUI(TAIQLearningApp aMainApp) {
+	public MapGUI(TAIQLearningApp aMainApp,boolean aIsEndReachable) {
 		super();
 		
 		mainApp = aMainApp;
 		isAStarPathLearned = false;
+		isEndReachable = aIsEndReachable;
 		
 		contentPane = new JPanel();
 		contentPane.setOpaque(true); 
@@ -150,6 +152,7 @@ public class MapGUI {
 		showAStarSet = new JCheckBox("Show A* Set");
 		showAStarSet.addItemListener(new ActionElementsListener(mainApp));
 
+		learnAStarPathButton.setEnabled(isEndReachable);
 		showAStarPath.setEnabled(isAStarPathLearned);
 		showAStarSet.setEnabled(isAStarPathLearned);
 		displayDistanceMapButton.setEnabled(isAStarPathLearned);
@@ -369,7 +372,6 @@ public class MapGUI {
 	}
 	
 	public void refreshMapQ(int rowNumber, int columnNumber){
-		
 		for(int i=0;i<rowNumber;i++){
 			for(int j=0; j<columnNumber; j++){
 				this.refreshSingleCellQReward(i,j,this.mainApp.getqGridMap().getCell(i, j).getCellQValue()) ;
@@ -388,57 +390,31 @@ public class MapGUI {
 		}
 	}
 	
-	public void drawAStarPath(){
+	public void drawAStarResults(boolean aIsSet){
 		
-		for(AStarCell currCell : this.mainApp.getaStarGridMap().getaStarPath()){
+		for(AStarCell currCell : aIsSet?this.mainApp.getaStarGridMap().getaStarSet():this.mainApp.getaStarGridMap().getaStarPath()){
 			switch(currCell.getCellType()){
 			
-			case BONUS:		break;
 			case PORTAL1:
 			case PORTAL2:
 			case PORTAL3:
 			case PORTAL4:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("A*");
 							this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setHorizontalTextPosition(JButton.CENTER);
 		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setVerticalTextPosition(JButton.CENTER);
-		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setForeground(Color.GREEN); 
-						 	break;
+		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setForeground(aIsSet?ASTARSETCOLOR:ASTARPATHCOLOR);
+		 					break;
+						 	
+			case BONUS:		
 			case MALUS:
 			case AGENT:
-			case ENDPOINT: break;
-			
-			default:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setIcon(null);
-					 	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setContentAreaFilled(true);
-					 	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBackground(Color.GREEN);
-					 	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("");
+			case ENDPOINT:
+			default:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("");
 					 	break;
 			}
-		}
-	}
-	
-	public void drawAStarSet(){
-		
-		for(AStarCell currCell : this.mainApp.getaStarGridMap().getaStarSet()){
-			switch(currCell.getCellType()){
 			
-			case BONUS:		break;
-			case PORTAL1:
-			case PORTAL2:
-			case PORTAL3:
-			case PORTAL4:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("A*");
-							this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setHorizontalTextPosition(JButton.CENTER);
-		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setVerticalTextPosition(JButton.CENTER);
-		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setForeground(Color.ORANGE); 
-						 	break;
-			case MALUS:
-			case AGENT:
-			case ENDPOINT: break;
+			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, aIsSet?ASTARSETCOLOR:ASTARPATHCOLOR));
+			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorderPainted(true);
 			
-			default:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setIcon(null);
-					 	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setContentAreaFilled(true);
-					 	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBackground(Color.ORANGE);
-					 	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("");
-					 	break;
-			}
 		}
 	}
 	
@@ -604,8 +580,7 @@ public class MapGUI {
 		currentButton.setIcon(PLAINQRICON);
 		currentButton.setBackground(Color.WHITE);
 		iconDimension = new Dimension(PLAINICON.getIconHeight(),PLAINICON.getIconWidth());
-		//currentButton.setText(Double.toString(aAttribute));
-		currentButton.setText(Integer.toString((int)aAttribute));
+		currentButton.setText(Double.toString(aAttribute));
 		currentButton.setHorizontalTextPosition(JButton.CENTER);
 		currentButton.setVerticalTextPosition(JButton.CENTER);
 		currentButton.setForeground(Color.WHITE);
@@ -617,6 +592,29 @@ public class MapGUI {
 		currentButton.setActionCommand(actionCommand);
 	}
 
+	
+	public void refreshSingleCellQReward(int aRow, int aColumn,int aAttribute){
+		
+		JButton currentButton = this.map[aRow][aColumn];
+		Dimension iconDimension = null;
+		String actionCommand = null;
+		//Double rewardQValue = new Double(aAttribute);
+		
+		currentButton.setIcon(PLAINQRICON);
+		currentButton.setBackground(Color.WHITE);
+		iconDimension = new Dimension(PLAINICON.getIconHeight(),PLAINICON.getIconWidth());
+		//currentButton.setText(Double.toString(aAttribute));
+		currentButton.setText(Integer.toString(aAttribute));
+		currentButton.setHorizontalTextPosition(JButton.CENTER);
+		currentButton.setVerticalTextPosition(JButton.CENTER);
+		currentButton.setForeground(Color.WHITE);
+		
+		actionCommand = new String(aRow+ATTRIBUTEDELIMITER+aColumn+ATTRIBUTEDELIMITER+Integer.toString(aAttribute));
+		currentButton.setBorderPainted(false);
+		currentButton.setPreferredSize(iconDimension);
+		currentButton.setContentAreaFilled(false);
+		currentButton.setActionCommand(actionCommand);
+	}
 
 	
 	class ActionElementsListener implements ActionListener,ItemListener{
@@ -643,12 +641,18 @@ public class MapGUI {
 				this.mainApp.setqGridMap(new QGrid());
 				this.mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT, QGrid.MAPWIDTH);
 				this.mainApp.setaStarGridMap(new AStarPathFinder(this.mainApp,this.mainApp.getqGridMap()));
+				isEndReachable = true;
 				} catch (UnreachableEndException e1) {
+					isEndReachable = false;
 					JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),"The goal is unreachable on the generated map.\nPlease regenerate the map.","Warning",JOptionPane.WARNING_MESSAGE);
 				}
+				
 				isAStarPathLearned = false;
+				learnAStarPathButton.setEnabled(isEndReachable);
 				showAStarPath.setEnabled(isAStarPathLearned);
+				showAStarPath.setSelected(false);
 				showAStarSet.setEnabled(isAStarPathLearned);
+				showAStarSet.setSelected(false);
 				displayDistanceMapButton.setEnabled(isAStarPathLearned);
 				infoConsole.setText("");
 			}
@@ -722,29 +726,29 @@ public class MapGUI {
 		        if (e.getItemSelectable().equals(showAStarPath)) {
 		            if(e.getStateChange() == ItemEvent.SELECTED){
 		            	if(showAStarSet.isSelected()){
-			            	this.mainApp.getMapGUI().drawAStarSet();
+			            	this.mainApp.getMapGUI().drawAStarResults(true);
 			            }
-		            	this.mainApp.getMapGUI().drawAStarPath();
+		            	this.mainApp.getMapGUI().drawAStarResults(false);
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
 		            	this.mainApp.getMapGUI().refreshPartialMap(this.mainApp.getaStarGridMap().getaStarPath());
 		            	if(showAStarSet.isSelected()){
-			            	this.mainApp.getMapGUI().drawAStarSet();
+			            	this.mainApp.getMapGUI().drawAStarResults(true);
 			            }
 		            }
 		            
 		        }
 		        if (e.getItemSelectable().equals(showAStarSet)) {
 		        	if(e.getStateChange() == ItemEvent.SELECTED){
-		            	this.mainApp.getMapGUI().drawAStarSet();
+		            	this.mainApp.getMapGUI().drawAStarResults(true);
 		            	if(showAStarPath.isSelected()){
-			            	this.mainApp.getMapGUI().drawAStarPath();
+			            	this.mainApp.getMapGUI().drawAStarResults(false);
 			            }
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
 		            	this.mainApp.getMapGUI().refreshPartialMap(this.mainApp.getaStarGridMap().getaStarSet());
 		            	if(showAStarPath.isSelected()){
-			            	this.mainApp.getMapGUI().drawAStarPath();
+			            	this.mainApp.getMapGUI().drawAStarResults(false);
 			            }
 		            }
 		            
