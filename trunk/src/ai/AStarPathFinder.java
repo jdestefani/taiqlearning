@@ -70,8 +70,10 @@ public class AStarPathFinder {
 		
 		updatePortalReachableCells();
 		
+		
 		//Detection of the furthest and closest portals to the agent.
 		computeDistanceFrom(agentCell);
+		
 		
 		if(stepsFromAgentToEnd == -1){
 			throw new UnreachableEndException();
@@ -91,18 +93,17 @@ public class AStarPathFinder {
 	
 		//Sorting of the update order of the portals according to the distance
 		//from the agent
-		boolean swap = false;
 		int swapElement = 0;
-		while(!swap){
-			swap = false;
+		for(int j = 0; j<QGrid.PORTALNUMBER ; j++){
 			for(int i = 0; i<QGrid.PORTALNUMBER - 1 ; i++){
-				if(portalCells[i].get(minDistancePortalIndex[i]).getDistanceFromAgent() < portalCells[i+1].get(minDistancePortalIndex[i+1]).getDistanceFromAgent()){
+				if(portalCells[i].get(minDistancePortalIndex[i]).getDistanceFromAgent() <= portalCells[i+1].get(minDistancePortalIndex[i+1]).getDistanceFromAgent()){
 					swapElement = portalDiscoveryOrder[i];
 					portalDiscoveryOrder[i] = portalDiscoveryOrder[i+1];
 					portalDiscoveryOrder[i+1] = swapElement;
-					swap = true;
+				
 				}
 			}
+			
 		}
 		
 		//Update of the distance
