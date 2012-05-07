@@ -1,5 +1,6 @@
 package main;
 
+import data.CellType;
 import data.QGridCell;
 import data.QGrid;
 
@@ -17,7 +18,7 @@ public class StartApp {
 		double epsilon=0.2;
 		int N_episodes=5000;
 		int rg=10; int rs=-1;
-		int reward;
+		double reward;
 
 		QGridCell s0 = new QGridCell(1,4);
 		QGridCell sf = new QGridCell(10,4);
@@ -34,10 +35,11 @@ public class StartApp {
 			while (s.getRowIndex()!=sf.getRowIndex() || s.getColumnIndex()!=sf.getColumnIndex()){
 				Action a=epsGreedy(N_actions,epsilon,Q[s.getRowIndex()][s.getColumnIndex()]); //choose a from s using (eps greedy)
 				QGridCell sp= moving(s,a);
-				if (sp.getRowIndex()==sf.getRowIndex() && sp.getColumnIndex()==sf.getColumnIndex())
+				reward=sp.getCellReward();
+				/*if (sp.getRowIndex()==sf.getRowIndex() && sp.getColumnIndex()==sf.getColumnIndex())
 					reward=rg;
 				else
-					reward =rs;
+					reward =rs;*/
 
 				totalReward[i]+=reward;
 				int Qspap[]= new int [N_actions]; //Q(s',a') for all a'
