@@ -13,7 +13,7 @@ public class StartApp {
 		// TODO Auto-generated method stub
 		TAIQLearningApp mainApp = new TAIQLearningApp();
 		
-		double alpha= 0.1;
+		/*double alpha= 0.1;
 		double gamma=0.9; 
 		double epsilon=0.2;
 		int N_episodes=5000;
@@ -41,7 +41,7 @@ public class StartApp {
 				else
 					reward =rs;*/
 
-				totalReward[i]+=reward;
+			/*	totalReward[i]+=reward;
 				int Qspap[]= new int [N_actions]; //Q(s',a') for all a'
 				for (int j=1; j<=N_actions; j++){
 					Qspap[j]=Q[sp.getRowIndex()][sp.getColumnIndex()][j];
@@ -63,7 +63,7 @@ public class StartApp {
 			draw (s,sp);
 			s=sp;
 		}
-		
+		*/
 		
 		
 	}

@@ -36,6 +36,9 @@ public class TAIQLearningApp {
 	
 	public TAIQLearningApp() {
 		super();
+		
+		boolean isEndReachable = false;
+		
 		appLogger = Logger.getLogger(LOGGERNAME);
 		setupLogger();
 		appWindow = new JFrame();
@@ -43,10 +46,12 @@ public class TAIQLearningApp {
 		try {
 			qGridMap = new QGrid();
 			aStarGridMap = new AStarPathFinder(this,this.qGridMap);
+			isEndReachable = true;
 		} catch (UnreachableEndException e) {
+			isEndReachable = false;
 			JOptionPane.showMessageDialog(appWindow,"The goal is unreachable on the generated map.\nPlease regenerate the map.","Warning",JOptionPane.WARNING_MESSAGE);
 		}
-		mapGUI = new MapGUI(this);
+		mapGUI = new MapGUI(this,isEndReachable);
 		fileHandler = new GridFileHandler(this);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		updateCurrentWindow("Grid World", screenSize.width, screenSize.height, this.mapGUI.getContentPane());
