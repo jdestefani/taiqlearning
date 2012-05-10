@@ -1,8 +1,8 @@
 package main;
 
+import ai.QGrid;
 import data.CellType;
 import data.QGridCell;
-import data.QGrid;
 
 public class StartApp {
 

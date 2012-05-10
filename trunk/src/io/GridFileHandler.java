@@ -9,9 +9,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+import ai.QGrid;
+
 import main.TAIQLearningApp;
 import data.CellType;
-import data.QGrid;
 import data.QGridCell;
 
 public class GridFileHandler {

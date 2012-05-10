@@ -2,12 +2,15 @@ package data;
 
 import java.util.ArrayList;
 
+import ai.QGrid;
+
 public class MapCell {
 
 	protected int rowIndex;
 	protected int columnIndex;
 	protected CellType cellType;
 	protected ArrayList<MapCell> reachableCells;
+	protected boolean hasBeenVisited;
 	
 
 	public static void verifyIndexes(int aRowIndex, int aColumnIndex) {
@@ -238,6 +241,14 @@ public class MapCell {
 	@Override
 	public String toString() {
 		return new String("("+rowIndex+","+columnIndex+")");
+	}
+
+	public boolean hasBeenVisited() {
+		return hasBeenVisited;
+	}
+
+	public void setHasBeenVisited(boolean hasBeenVisited) {
+		this.hasBeenVisited = hasBeenVisited;
 	}
 
 	public MapCell() {
