@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 
 import ai.AStarPathFinder;
 import ai.QGrid;
+import ai.QLearning;
 import ai.UnreachableEndException;
 
 public class TAIQLearningApp {
@@ -31,6 +32,7 @@ public class TAIQLearningApp {
 	private Logger appLogger;
 	private QGrid qGridMap;
 	private AStarPathFinder aStarGridMap;
+	private QLearning aQlearning;
 	private final static String IMAGEPATH = new String("../img/");
 	public final static String LOGGERNAME = new String("appLogger");
 	
@@ -46,6 +48,7 @@ public class TAIQLearningApp {
 		try {
 			qGridMap = new QGrid();
 			aStarGridMap = new AStarPathFinder(this,this.qGridMap);
+			aQlearning = new QLearning(this, this.qGridMap);
 			isEndReachable = true;
 		} catch (UnreachableEndException e) {
 			isEndReachable = false;
@@ -57,6 +60,11 @@ public class TAIQLearningApp {
 		updateCurrentWindow("Grid World", screenSize.width, screenSize.height, this.mapGUI.getContentPane());
 	}
 	
+
+	public QLearning getaQlearning() {
+		return aQlearning;
+	}
+
 
 	public AStarPathFinder getaStarGridMap() {
 		return aStarGridMap;

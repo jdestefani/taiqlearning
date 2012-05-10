@@ -12,7 +12,6 @@ public class StartApp {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		TAIQLearningApp mainApp = new TAIQLearningApp();
-		
 		/*double alpha= 0.1;
 		double gamma=0.9; 
 		double epsilon=0.2;
