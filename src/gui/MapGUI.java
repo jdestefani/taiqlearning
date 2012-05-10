@@ -29,12 +29,12 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 import ai.AStarPathFinder;
+import ai.QGrid;
 import ai.UnreachableEndException;
 
 import data.AStarCell;
 import data.CellType;
 import data.MapCell;
-import data.QGrid;
 import data.QGridCell;
 
 import main.TAIQLearningApp;
@@ -392,7 +392,7 @@ public class MapGUI {
 	
 	public void drawAStarResults(boolean aIsSet){
 		
-		for(AStarCell currCell : aIsSet?this.mainApp.getaStarGridMap().getaStarSet():this.mainApp.getaStarGridMap().getaStarPath()){
+		for(MapCell currCell : aIsSet?this.mainApp.getaStarGridMap().getaStarSet():this.mainApp.getaStarGridMap().getaStarPath()){
 			switch(currCell.getCellType()){
 			
 			case PORTAL1:
@@ -774,7 +774,7 @@ public class MapGUI {
 		public void actionPerformed(ActionEvent e) {
 			String listenedCommand = e.getActionCommand(); 
 			parseActionCommand(listenedCommand);
-			AStarCell currCell = this.mainApp.getaStarGridMap().getCell(this.row, this.column);
+			MapCell currCell = this.mainApp.getaStarGridMap().getCell(this.row, this.column);
 			this.mainApp.getMapGUI().getInfoConsole().append("Reachable Cells from" + "("+this.row+","+this.column+"):\n");
 			for(MapCell reachableCell : currCell.getReachableCells())
 			{

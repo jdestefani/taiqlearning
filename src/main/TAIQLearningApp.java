@@ -20,8 +20,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import ai.AStarPathFinder;
+import ai.QGrid;
 import ai.UnreachableEndException;
-import data.QGrid;
 
 public class TAIQLearningApp {
 	

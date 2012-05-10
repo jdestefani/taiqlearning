@@ -6,7 +6,6 @@ public class AStarCell extends MapCell {
 	
 	private int distanceFromAgent;
 	private double heuristicDistanceFromGoal;
-	private boolean hasBeenVisited;
 	private AStarCell previousAPathCell;
 	
 	public AStarCell() {
@@ -64,14 +63,6 @@ public class AStarCell extends MapCell {
 	
 	public void visit(){
 		this.hasBeenVisited = true;
-	}
-
-	public boolean hasBeenVisited() {
-		return hasBeenVisited;
-	}
-
-	public void setHasBeenVisited(boolean hasBeenVisited) {
-		this.hasBeenVisited = hasBeenVisited;
 	}
 
 	public AStarCell getPreviousAPathCell() {

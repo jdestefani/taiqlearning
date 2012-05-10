@@ -12,10 +12,9 @@ import main.TAIQLearningApp;
 import data.AStarCell;
 import data.CellType;
 import data.MapCell;
-import data.QGrid;
 import data.QGridCell;
 
-public class AStarPathFinder {
+public class AStarPathFinder implements GameGrid {
 	
 	private TAIQLearningApp mainApp;
 	private ArrayList<MapCell>[] portalReachableCells;
@@ -123,15 +122,18 @@ public class AStarPathFinder {
 		return portalReachableCells;
 	}
 
-	public AStarCell[][] getaStarGrid() {
+	public MapCell[][] getaStarGrid() {
 		return aStarGrid;
 	}
 
-	public AStarCell getAgentCell() {
+	public MapCell getAgentCell() {
 		return agentCell;
 	}
-
-	public AStarCell getEndCell() {
+	/* (non-Javadoc)
+	 * @see ai.GameGrid#getEndCell()
+	 */
+	@Override
+	public MapCell getEndCell() {
 		return endCell;
 	}
 
@@ -146,6 +148,7 @@ public class AStarPathFinder {
 	public int getStepsFromAgentToEnd() {
 		return stepsFromAgentToEnd;
 	}
+
 
 	public AStarCell getCell(int aRowIndex, int aColumnIndex) throws IndexOutOfBoundsException{
 		MapCell.verifyIndexes(aRowIndex, aColumnIndex);
@@ -366,13 +369,13 @@ public class AStarPathFinder {
 			
 			//2. Update neighbour distance
 			for(MapCell iterCell : currCell.getReachableCells()){
-				if(((AStarCell)iterCell).getPreviousAPathCell() == null && ((AStarCell)iterCell).getCellType() != CellType.AGENT){
+				if(((AStarCell)iterCell).getPreviousAPathCell() == null && ((MapCell)iterCell).getCellType() != CellType.AGENT){
 					cellsToVisit[insertionPoint++] = ((AStarCell)iterCell);
 					((AStarCell)iterCell).setDistanceFromAgent(currCell.getDistanceFromAgent()+1);
 					((AStarCell)iterCell).setPreviousAPathCell(currCell);
 				}
 				
-				if(((AStarCell)iterCell).getCellType() == CellType.ENDPOINT){
+				if(((MapCell)iterCell).getCellType() == CellType.ENDPOINT){
 					stepsFromAgentToEnd = ((AStarCell)iterCell).getDistanceFromAgent();
 				}
 			}
@@ -401,13 +404,13 @@ public class AStarPathFinder {
 			
 			//2. Update neighbour distance
 			for(MapCell iterCell : currCell.getReachableCells()){
-				if(distanceFromCell+1 < ((AStarCell)iterCell).getDistanceFromAgent() && ((AStarCell)iterCell).getCellType() != CellType.AGENT){
+				if(distanceFromCell+1 < ((AStarCell)iterCell).getDistanceFromAgent() && ((MapCell)iterCell).getCellType() != CellType.AGENT){
 					cellsToVisit[insertionPoint++] = ((AStarCell)iterCell);
 					((AStarCell)iterCell).setDistanceFromAgent(currCell.getDistanceFromAgent()+1);
 					((AStarCell)iterCell).setPreviousAPathCell(currCell);
 				}
 				
-				if(((AStarCell)iterCell).getCellType() == CellType.ENDPOINT){
+				if(((MapCell)iterCell).getCellType() == CellType.ENDPOINT){
 					stepsFromAgentToEnd = ((AStarCell)iterCell).getDistanceFromAgent();
 				}
 			}
