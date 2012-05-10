@@ -64,6 +64,7 @@ public class MapGUI {
 	private JButton displayDistanceMapButton;
 	private JButton displayQButton;
 	private JButton displayRButton;
+	private JButton displayQStartButton;
 	private JCheckBox showAStarSet;
 	private JCheckBox showAStarPath;
 	
@@ -146,6 +147,8 @@ public class MapGUI {
 		displayRButton.addActionListener(new ActionElementsListener(this.mainApp));
 		displayQButton = new JButton("Display Q values");
 		displayQButton.addActionListener(new ActionElementsListener(this.mainApp));
+		displayQStartButton = new JButton("Start learning");
+		displayQStartButton.addActionListener(new ActionElementsListener(this.mainApp));
 		
 		showAStarPath = new JCheckBox("Show A* Path");
 		showAStarPath.addItemListener(new ActionElementsListener(mainApp));
@@ -167,6 +170,7 @@ public class MapGUI {
 		aStarActionPanel.add(displayDistanceMapButton);
 		qLearningActionPanel.add(displayRButton);
 		qLearningActionPanel.add(displayQButton);
+		qLearningActionPanel.add(displayQStartButton);
 		
 		
 		actionPanel.add(mapActionPanel);
@@ -712,6 +716,12 @@ public class MapGUI {
 				
 				this.mainApp.getMapGUI().refreshMapQ(QGrid.MAPHEIGHT,QGrid.MAPWIDTH );
 					
+			}
+			
+			if(listenedCommand.equals("Start learning")){
+				//need to show
+				//this.mainApp.getMapGUI().refreshMapQ(QGrid.MAPHEIGHT,QGrid.MAPWIDTH );
+				this.mainApp.getaQlearning().startIteration();
 			}
 			
 			if(listenedCommand.equals("Exit")){		
