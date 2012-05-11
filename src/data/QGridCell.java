@@ -13,7 +13,7 @@ public class QGridCell extends MapCell {
 		this.columnIndex = 0;
 		this.cellType = CellType.PLAIN;
 		this.reachableCells = new ArrayList<MapCell>();
-		this.cellReward = 0.0;
+		this.cellReward = CellType.PLAINREWARD;
 		this.cellQValue = 0.0;
 	}
 	
@@ -45,7 +45,7 @@ public class QGridCell extends MapCell {
 		this.columnIndex = aColumnIndex;
 		this.cellType = CellType.PLAIN;
 		this.reachableCells = new ArrayList<MapCell>();
-		this.cellReward = 0.0;
+		this.cellReward = CellType.PLAINREWARD;
 		this.cellQValue = 0.0;
 	}
 
