@@ -30,6 +30,7 @@ import javax.swing.border.Border;
 
 import ai.AStarPathFinder;
 import ai.QGrid;
+import ai.QLearning;
 import ai.UnreachableEndException;
 
 import data.AStarCell;
@@ -41,6 +42,7 @@ import main.TAIQLearningApp;
 
 public class MapGUI {
 
+	private QLearning QLThread;
 	
 	private JPanel contentPane;
 	private JScrollPane mapPanel;
@@ -732,15 +734,25 @@ public class MapGUI {
 			}
 			
 			if(listenedCommand.equals("Start learning")){
-				//need to show
-				//this.mainApp.getMapGUI().refreshMapQ(QGrid.MAPHEIGHT,QGrid.MAPWIDTH );
-				this.mainApp.getaQlearning().start();
+				if(QLThread != null)
+				{
+					if(!QLThread.isAlive())
+					{
+						QLThread = new QLearning(mainApp, mainApp.getqGridMap());
+						QLThread.start();
+					}
+				}
+				else
+				{
+					QLThread = new QLearning(mainApp, mainApp.getqGridMap());
+					QLThread.start();
+				}
 			}
 			
 			if(listenedCommand.equals("Reset")){
-				//need to show
-				//this.mainApp.getMapGUI().refreshMapQ(QGrid.MAPHEIGHT,QGrid.MAPWIDTH );
-				this.mainApp.getaQlearning().reset();
+				if(QLThread != null)
+					if(!QLThread.isAlive())
+						QLThread.reset();
 			}
 			
 			if(listenedCommand.equals("Exit")){		
