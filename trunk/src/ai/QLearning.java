@@ -8,44 +8,74 @@ import data.MapCell;
 import data.QGridCell;
 import main.TAIQLearningApp;
 
-public class QLearning{
+public class QLearning extends Thread 
+{
 	private TAIQLearningApp mainApp;
 	private QGrid qGrid;
-	private double alpha = 0.1;
-	private double gamma = 0.9; 
+	private double alpha = 0.2;
+	private double gamma = 0.99; 
 	private double epsilon = 0.2;
 	// private agent !
-	private MapCell agent;
-	private MapCell endState;
+	private QGridCell agent;
+	private QGridCell endState;
 	private Random rand = new Random();
 	
 	
-	public QLearning(TAIQLearningApp aMainApp, QGrid qGridMap)  throws UnreachableEndException
+	public QLearning(TAIQLearningApp aMainApp, QGrid qGridMap) throws UnreachableEndException
 	{
 		super();
 		
 		mainApp = aMainApp;
 		qGrid = qGridMap;
-		agent = aMainApp.getqGridMap().getAgentCell();
-		endState = aMainApp.getqGridMap().getEndCell();
+		agent = (QGridCell)qGrid.getAgentCell();
+		endState = (QGridCell)qGrid.getEndCell();
 	}
 
-	public void setAgent(MapCell agent) 
+	public void setAgent(QGridCell agent) 
 	{
 		this.agent = agent;
 	}
 
 	public void startIteration()
 	{
-		QGridCell currentState = (QGridCell) agent;
-		QGridCell nextstate;
+		QGridCell laststate; QGridCell nextstate;
+		String position = new String();
 		while(agent.getColumnIndex() != endState.getColumnIndex() || agent.getRowIndex() != endState.getRowIndex())
 		{
+			laststate = (QGridCell) qGrid.getAgentCell();
 			nextstate = this.getNextAction();
-			mainApp.getqGridMap().moveAgent(nextstate.getRowIndex(), nextstate.getColumnIndex());
+			qGrid.moveAgent(nextstate.getRowIndex(), nextstate.getColumnIndex());
+			agent = (QGridCell)qGrid.getAgentCell();
+			agent.setHasBeenVisited(true);
 			this.computeQValue();
-			System.out.println(agent.getColumnIndex());
+
+			position = "(" + agent.getColumnIndex() + "," + agent.getRowIndex() + ")";
+			System.out.println(position);
+			mainApp.getMapGUI().refreshTwoCells(laststate, nextstate);
+//			mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT, QGrid.MAPWIDTH);
+			//mainApp.getMapGUI().getCellGrid().revalidate();
+			try {
+				this.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+	}
+	
+	public void run()
+	{
+		this.startIteration();
+	}
+	
+	public void reset()
+	{
+		QGridCell initialPos = qGrid.getInitAgentCell();
+//		System.out.print(initialPos.getRowIndex());
+//		System.out.print(initialPos.getColumnIndex());
+		QGridCell actualPos = (QGridCell)qGrid.getAgentCell();
+		qGrid.moveAgent(initialPos.getRowIndex(), initialPos.getColumnIndex());
+		mainApp.getMapGUI().refreshTwoCells(initialPos, actualPos);
 	}
 	
 	public void startIteration(int nbreIteration)
@@ -79,7 +109,7 @@ public class QLearning{
 		int index = rand.nextInt(cell.getReachableCells().size());
 		ArrayList<MapCell> temp = cell.getReachableCells();
 		ArrayList<MapCell> bestCells = new ArrayList<MapCell>();
-		double Qmax = 0;
+		double Qmax = -1000000.0;
 		
 		Iterator<MapCell> itr = temp.iterator();
 		while(itr.hasNext()) //find the cell with the best QValue

@@ -65,6 +65,7 @@ public class MapGUI {
 	private JButton displayQButton;
 	private JButton displayRButton;
 	private JButton displayQStartButton;
+	private JButton displayQResetButton;
 	private JCheckBox showAStarSet;
 	private JCheckBox showAStarPath;
 	
@@ -149,6 +150,8 @@ public class MapGUI {
 		displayQButton.addActionListener(new ActionElementsListener(this.mainApp));
 		displayQStartButton = new JButton("Start learning");
 		displayQStartButton.addActionListener(new ActionElementsListener(this.mainApp));
+		displayQResetButton = new JButton("Reset");
+		displayQResetButton.addActionListener(new ActionElementsListener(this.mainApp));
 		
 		showAStarPath = new JCheckBox("Show A* Path");
 		showAStarPath.addItemListener(new ActionElementsListener(mainApp));
@@ -171,6 +174,7 @@ public class MapGUI {
 		qLearningActionPanel.add(displayRButton);
 		qLearningActionPanel.add(displayQButton);
 		qLearningActionPanel.add(displayQStartButton);
+		qLearningActionPanel.add(displayQResetButton);
 		
 		
 		actionPanel.add(mapActionPanel);
@@ -394,6 +398,13 @@ public class MapGUI {
 		}
 	}
 	
+	public void refreshTwoCells(MapCell firstCell,MapCell secondCell){
+		
+		this.refreshSingleCell(firstCell.getRowIndex(),firstCell.getColumnIndex(), this.mainApp.getqGridMap().getCell(firstCell.getRowIndex(), firstCell.getColumnIndex()).getCellType(),this.mainApp.getqGridMap().getCell(firstCell.getRowIndex(), firstCell.getColumnIndex()).getCellReward());		
+		this.refreshSingleCell(secondCell.getRowIndex(),secondCell.getColumnIndex(), this.mainApp.getqGridMap().getCell(secondCell.getRowIndex(), secondCell.getColumnIndex()).getCellType(),this.mainApp.getqGridMap().getCell(secondCell.getRowIndex(), secondCell.getColumnIndex()).getCellReward());
+		
+	}
+	
 	public void drawAStarResults(boolean aIsSet){
 		
 		for(MapCell currCell : aIsSet?this.mainApp.getaStarGridMap().getaStarSet():this.mainApp.getaStarGridMap().getaStarPath()){
@@ -572,6 +583,8 @@ public class MapGUI {
 		currentButton.setPreferredSize(iconDimension);
 		currentButton.setContentAreaFilled(false);
 		currentButton.setActionCommand(actionCommand);
+		//currentButton.repaint();
+		//currentButton.revalidate();
 	}
 	
 	public void refreshSingleCellQReward(int aRow, int aColumn,double aAttribute){
@@ -721,7 +734,13 @@ public class MapGUI {
 			if(listenedCommand.equals("Start learning")){
 				//need to show
 				//this.mainApp.getMapGUI().refreshMapQ(QGrid.MAPHEIGHT,QGrid.MAPWIDTH );
-				this.mainApp.getaQlearning().startIteration();
+				this.mainApp.getaQlearning().start();
+			}
+			
+			if(listenedCommand.equals("Reset")){
+				//need to show
+				//this.mainApp.getMapGUI().refreshMapQ(QGrid.MAPHEIGHT,QGrid.MAPWIDTH );
+				this.mainApp.getaQlearning().reset();
 			}
 			
 			if(listenedCommand.equals("Exit")){		

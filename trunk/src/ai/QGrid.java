@@ -23,10 +23,12 @@ public class QGrid implements GameGrid {
 	private QGridCell initAgentCell;
 	private QGridCell agentCell;
 	private QGridCell endCell;
+	private CellType lastCellType;
 	
 	
 	public QGrid() {
 		super();
+		lastCellType = CellType.PLAIN;
 		grid = new QGridCell[MAPHEIGHT][MAPWIDTH];
 		
 		portalReachableCells = new ArrayList[PORTALNUMBER];
@@ -55,6 +57,7 @@ public class QGrid implements GameGrid {
 
 	public QGrid(QGridCell[][] aGrid) throws IndexOutOfBoundsException,NullPointerException {
 		super();
+		lastCellType = CellType.PLAIN;
 		checkGrid(aGrid);
 		grid = aGrid;
 	}
@@ -627,10 +630,14 @@ public class QGrid implements GameGrid {
 		return initAgentCell;
 	}
 	
+	public void resetAgent() {
+		agentCell = initAgentCell;
+	}
+	
 	public void moveAgent(int aRowIndex, int aColumnIndex){
-		agentCell.setCellType(CellType.PLAIN);
+		agentCell.setCellType(lastCellType);
 		switch(getCell(aRowIndex, aColumnIndex).getCellType()){
-			case BONUS:	//Get bonus - Return reward?
+			case BONUS:	//Get bonus - Return reward? lastCellType = CellType.PLAINCELL
 					break;
 			case ENDPOINT: break;
 			case WALL:  break;
@@ -640,6 +647,7 @@ public class QGrid implements GameGrid {
 		
 		}
 		agentCell = getCell(aRowIndex, aColumnIndex);
+		lastCellType = agentCell.getCellType();
 		agentCell.setCellType(CellType.AGENT);
 	}
 }
