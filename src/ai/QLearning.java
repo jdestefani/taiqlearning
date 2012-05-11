@@ -49,8 +49,8 @@ public class QLearning extends Thread
 			agent.setHasBeenVisited(true);
 			this.computeQValue();
 
-			position = "(" + agent.getColumnIndex() + "," + agent.getRowIndex() + ")";
-			System.out.println(position);
+//			position = "(" + agent.getColumnIndex() + "," + agent.getRowIndex() + ")";
+//			System.out.println(position);
 			mainApp.getMapGUI().refreshTwoCells(laststate, nextstate);
 //			mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT, QGrid.MAPWIDTH);
 			//mainApp.getMapGUI().getCellGrid().revalidate();

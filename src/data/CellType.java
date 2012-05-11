@@ -17,5 +17,5 @@ public enum CellType {
 	public static double BONUSREWARD = -1.0;
 	public static double MALUSREWARD = -10.0;
 	public static double WALLREWARD = -1000.0;
-	public static double ENDPOINTREWARD = 100.0;
+	public static double ENDPOINTREWARD = 1000.0;
 }
