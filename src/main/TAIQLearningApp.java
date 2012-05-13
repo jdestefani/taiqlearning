@@ -162,7 +162,8 @@ public class TAIQLearningApp {
 		appWindow.setPreferredSize(new Dimension(width, height));
 		//appWindow.setResizable(false);
         appWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        appWindow.setContentPane(contentPane);
+        appWindow.setJMenuBar(mapGUI.getDisplayMenuBar());
+        appWindow.setContentPane(contentPane);        
         appWindow.pack();
         appWindow.setVisible(true);
 	}

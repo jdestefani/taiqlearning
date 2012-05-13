@@ -20,6 +20,9 @@ public class QLearning extends Thread
 	private QGridCell endState;
 	private Random rand = new Random();
 	
+	public static final int MAXTRIALSNUMBER = 100;
+	public static final int MINTRIALSNUMBER = 0;
+	
 	
 	public QLearning(TAIQLearningApp aMainApp, QGrid qGridMap) throws UnreachableEndException
 	{
@@ -40,6 +43,8 @@ public class QLearning extends Thread
 	{
 		QGridCell laststate; QGridCell nextstate;
 		String position = new String();
+		int movesNumber = 0;
+		
 		while(agent.getColumnIndex() != endState.getColumnIndex() || agent.getRowIndex() != endState.getRowIndex())
 		{
 			laststate = (QGridCell) qGrid.getAgentCell();
@@ -47,6 +52,7 @@ public class QLearning extends Thread
 			qGrid.moveAgent(nextstate.getRowIndex(), nextstate.getColumnIndex());
 			agent = (QGridCell)qGrid.getAgentCell();
 			agent.setHasBeenVisited(true);
+			qGrid.getVisitedCells().add(agent);
 			this.computeQValue();
 
 //			position = "(" + agent.getColumnIndex() + "," + agent.getRowIndex() + ")";
@@ -60,7 +66,9 @@ public class QLearning extends Thread
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			movesNumber++;
 		}
+		this.mainApp.printOnConsoleAndLog("Iteration completed in "+movesNumber+" steps");
 	}
 	
 	public void run()
