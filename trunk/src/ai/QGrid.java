@@ -26,6 +26,7 @@ public class QGrid implements GameGrid {
 	private QGridCell endCell;
 	private CellType lastCellType;
 	private ArrayList<MapCell> BonusCells;
+	private ArrayList<MapCell> visitedCells;
 	
 	
 	public QGrid() {
@@ -33,6 +34,7 @@ public class QGrid implements GameGrid {
 		lastCellType = CellType.PLAIN;
 		grid = new QGridCell[MAPHEIGHT][MAPWIDTH];
 		BonusCells = new ArrayList<MapCell>();
+		visitedCells = new ArrayList<MapCell>();
 		
 		portalReachableCells = new ArrayList[PORTALNUMBER];
 		for(int i=0; i<PORTALNUMBER ; i++){
@@ -56,6 +58,10 @@ public class QGrid implements GameGrid {
 				this.getCell(i, j).addPortalReachableCells(grid,portalReachableCells);
 			}
 		}
+	}
+
+	public ArrayList<MapCell> getVisitedCells() {
+		return visitedCells;
 	}
 
 	public QGrid(QGridCell[][] aGrid) throws IndexOutOfBoundsException,NullPointerException {

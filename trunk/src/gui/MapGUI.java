@@ -10,24 +10,32 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
-import javax.swing.Action;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
+
 import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import ai.AStarPathFinder;
 import ai.QGrid;
@@ -62,19 +70,28 @@ public class MapGUI {
 	private JButton[][] map;
 	
 	private JButton generateMapButton;
-	private JButton saveMapButton;
-	private JButton loadMapButton;
-	private JButton displayMapButton;
 	private JButton learnAStarPathButton;
 	private JButton displayDistanceMapButton;
-	private JButton displayQButton;
-	private JButton displayRButton;
 	private JButton displayQStartButton;
 	private JButton displayQResetButton;
-	private JButton displayQLearnButton;
 	private JButton displayQLearnStopButton;
-	private JCheckBox showAStarSet;
-	private JCheckBox showAStarPath;
+	
+	private JMenuBar displayMenuBar;
+	private JMenu mapMenu;
+	private JMenuItem saveMapMenuItem;
+	private JMenuItem loadMapMenuItem;
+	private JMenuItem displayMapMenuItem;
+	private JMenu aStarMenu;
+	private JCheckBoxMenuItem showAStarSet;
+	private JCheckBoxMenuItem showAStarPath;
+	private JMenu qLearningMenu;
+	private JMenuItem displayQMenuItem;
+	private JMenuItem displayRMenuItem;
+	private JCheckBoxMenuItem showQVisitedSet;
+	
+	
+	private JLabel qTrialLabel;
+	private JSlider qTrialsSlider;
 	
 	private JTextArea infoConsole;
 	
@@ -82,8 +99,10 @@ public class MapGUI {
 	
 	private TAIQLearningApp mainApp;
 	
+	
 	private boolean isAStarPathLearned;
 	private boolean isEndReachable;
+	
 	
 	
 	
@@ -101,6 +120,14 @@ public class MapGUI {
 	private static final String ATTRIBUTEDELIMITER = new String(",");
 	private static final Color ASTARSETCOLOR = Color.ORANGE;
 	private static final Color ASTARPATHCOLOR = Color.GREEN;
+	private static final Color QVISITEDSETCOLOR = Color.BLUE;
+	private static final Border ASTARSETBORDER = BorderFactory.createMatteBorder(2, 2, 2, 2, ASTARSETCOLOR);
+	private static final Border ASTARPATHBORDER = BorderFactory.createMatteBorder(2, 2, 2, 2, ASTARPATHCOLOR);
+	private static final Border QVISITEDSETBORDER = BorderFactory.createMatteBorder(4, 4, 4, 4, QVISITEDSETCOLOR);
+	private static final Border ASTARSETQVISITEDSETBORDER = BorderFactory.createCompoundBorder(ASTARSETBORDER, QVISITEDSETBORDER);
+	private static final Border ASTARPATHQVISITEDSETBORDER = BorderFactory.createCompoundBorder(ASTARPATHBORDER, QVISITEDSETBORDER);
+	private static final int MINTICKSSPACING = 5;
+	private static final int MAXTICKSSPACING = 10;
 	
 	
 
@@ -141,56 +168,59 @@ public class MapGUI {
 
 		generateMapButton = new JButton("Generate Map");
 		generateMapButton.addActionListener(new ActionElementsListener(this.mainApp));
-		saveMapButton = new JButton("Save Map");
-		saveMapButton.addActionListener(new ActionElementsListener(this.mainApp));
-		loadMapButton = new JButton("Load Map");
-		loadMapButton.addActionListener(new ActionElementsListener(this.mainApp));
-		displayMapButton = new JButton("Display map");
-		displayMapButton.addActionListener(new ActionElementsListener(this.mainApp));
+		saveMapMenuItem = new JMenuItem("Save Map");
+		saveMapMenuItem.addActionListener(new ActionElementsListener(this.mainApp));
+		loadMapMenuItem = new JMenuItem("Load Map");
+		loadMapMenuItem.addActionListener(new ActionElementsListener(this.mainApp));
+		displayMapMenuItem = new JMenuItem("Display map");
+		displayMapMenuItem.addActionListener(new ActionElementsListener(this.mainApp));
 		learnAStarPathButton = new JButton("Learn A* Path");
 		learnAStarPathButton.addActionListener(new ActionElementsListener(this.mainApp));
 		displayDistanceMapButton = new JButton("Display distance map");
 		displayDistanceMapButton.addActionListener(new ActionElementsListener(this.mainApp));
-		displayRButton = new JButton("Display r values");
-		displayRButton.addActionListener(new ActionElementsListener(this.mainApp));
-		displayQButton = new JButton("Display Q values");
-		displayQButton.addActionListener(new ActionElementsListener(this.mainApp));
+		displayRMenuItem = new JMenuItem("Display r values");
+		displayRMenuItem.addActionListener(new ActionElementsListener(this.mainApp));
+		displayQMenuItem = new JMenuItem("Display Q values");
+		displayQMenuItem.addActionListener(new ActionElementsListener(this.mainApp));
 		displayQStartButton = new JButton("Start learning");
 		displayQStartButton.addActionListener(new ActionElementsListener(this.mainApp));
 		displayQResetButton = new JButton("Reset");
 		displayQResetButton.addActionListener(new ActionElementsListener(this.mainApp));
-		displayQLearnButton = new JButton("Learn 100 times");
-		displayQLearnButton.addActionListener(new ActionElementsListener(this.mainApp));
-		displayQLearnStopButton = new JButton("Stop");
+	
+		displayQLearnStopButton = new JButton("Stop learning");
 		displayQLearnStopButton.addActionListener(new ActionElementsListener(this.mainApp));
 		
-		showAStarPath = new JCheckBox("Show A* Path");
+		showAStarPath = new JCheckBoxMenuItem("Show A* Path");
 		showAStarPath.addItemListener(new ActionElementsListener(mainApp));
-		showAStarSet = new JCheckBox("Show A* Set");
+		showAStarSet = new JCheckBoxMenuItem("Show A* Set");
 		showAStarSet.addItemListener(new ActionElementsListener(mainApp));
-
+		showQVisitedSet = new JCheckBoxMenuItem("Show visited cells");
+		showQVisitedSet.addItemListener(new ActionElementsListener(mainApp));
+		
+		qTrialsSlider = new JSlider(QLearning.MINTRIALSNUMBER, QLearning.MAXTRIALSNUMBER, QLearning.MINTRIALSNUMBER);
+		qTrialsSlider.setMinorTickSpacing(MINTICKSSPACING);
+		qTrialsSlider.setMajorTickSpacing(MAXTICKSSPACING);
+		qTrialsSlider.setPaintTicks(true);
+		qTrialsSlider.setPaintLabels(true);
+		qTrialsSlider.addChangeListener(new ActionElementsListener(mainApp));
+		
+		qTrialLabel = new JLabel("Q-Learning Trials",JLabel.CENTER);
+		
 		learnAStarPathButton.setEnabled(isEndReachable);
+		displayQLearnStopButton.setEnabled(isEndReachable);
 		showAStarPath.setEnabled(isAStarPathLearned);
 		showAStarSet.setEnabled(isAStarPathLearned);
 		displayDistanceMapButton.setEnabled(isAStarPathLearned);
 		
 		mapActionPanel.add(generateMapButton);
-		mapActionPanel.add(saveMapButton);
-		mapActionPanel.add(loadMapButton);
-		mapActionPanel.add(displayMapButton);
 		aStarActionPanel.add(learnAStarPathButton);
-		aStarActionPanel.add(showAStarSet);
-		aStarActionPanel.add(showAStarPath);
 		aStarActionPanel.add(displayDistanceMapButton);
-		qLearningActionPanel.add(displayRButton);
-		qLearningActionPanel.add(displayQButton);
+		qLearningActionPanel.add(qTrialLabel);
+		qLearningActionPanel.add(qTrialsSlider);
 		qLearningActionPanel.add(displayQStartButton);
-		qLearningActionPanel.add(displayQResetButton);
-		qLearningActionPanel.add(displayQLearnButton);
 		qLearningActionPanel.add(displayQLearnStopButton);
-		
-		
-		
+		qLearningActionPanel.add(displayQResetButton);
+			
 		
 		actionPanel.add(mapActionPanel);
 		actionPanel.add(aStarActionPanel);
@@ -234,10 +264,54 @@ public class MapGUI {
 		consoleScrollPanel.setBorder(consolePanelBorder);
         consoleScrollPanel.setBackground(Color.WHITE);
 		
+        setupDisplayMenu();
+        
 		contentPane.add(mapPanel,BorderLayout.CENTER);
         contentPane.add(consoleScrollPanel,BorderLayout.SOUTH);
         contentPane.add(sidePanel,BorderLayout.EAST);
         refreshMap(QGrid.MAPHEIGHT,QGrid.MAPWIDTH);
+	}
+	
+	private void setupDisplayMenu() {
+		//Create the menu bar.
+		displayMenuBar = new JMenuBar();
+
+		mapMenu = new JMenu("Map");
+		mapMenu.setMnemonic(KeyEvent.VK_M);
+		
+		mapMenu.add(saveMapMenuItem);
+		mapMenu.add(loadMapMenuItem);
+		mapMenu.addSeparator();
+		mapMenu.add(displayMapMenuItem);
+		
+		displayMenuBar.add(mapMenu);
+		
+		//Build the first menu.
+		aStarMenu = new JMenu("A*");
+		aStarMenu.setMnemonic(KeyEvent.VK_A);
+		
+		aStarMenu.add(showAStarSet);
+		aStarMenu.add(showAStarPath);
+		
+		displayMenuBar.add(aStarMenu);
+
+		qLearningMenu = new JMenu("Q-Learning");
+		qLearningMenu.setMnemonic(KeyEvent.VK_Q);
+		qLearningMenu.getAccessibleContext().setAccessibleDescription(
+		        "The only menu in this program that has menu items");
+		
+		qLearningMenu.add(displayRMenuItem);
+		qLearningMenu.add(displayQMenuItem);
+		qLearningMenu.addSeparator();
+		qLearningMenu.add(showQVisitedSet);
+		
+		displayMenuBar.add(qLearningMenu);
+		
+	}
+
+
+	public JMenuBar getDisplayMenuBar() {
+		return displayMenuBar;
 	}
 
 	public JPanel getContentPane() {
@@ -304,28 +378,12 @@ public class MapGUI {
 		this.map = map;
 	}
 
-	public JButton getLoadMapButton() {
-		return loadMapButton;
-	}
-
-	public void setLoadMapButton(JButton loadMapButton) {
-		this.loadMapButton = loadMapButton;
-	}
-
 	public JButton getLearnPathButton() {
 		return learnAStarPathButton;
 	}
 
 	public void setLearnPathButton(JButton learnPathButton) {
 		this.learnAStarPathButton = learnPathButton;
-	}
-
-	public JButton getDisplayQButton() {
-		return displayQButton;
-	}
-
-	public void setDisplayQButton(JButton displayQButton) {
-		this.displayQButton = displayQButton;
 	}
 	
 	public CellButtonListener getCellActionListener() {
@@ -338,14 +396,6 @@ public class MapGUI {
 
 	public void setMainApp(TAIQLearningApp mainApp) {
 		this.mainApp = mainApp;
-	}
-
-	public JButton getSaveMapButton() {
-		return saveMapButton;
-	}
-
-	public void setSaveMapButton(JButton saveMapButton) {
-		this.saveMapButton = saveMapButton;
 	}
 
 	public JTextArea getInfoConsole() {
@@ -442,12 +492,78 @@ public class MapGUI {
 					 	break;
 			}
 			
-			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, aIsSet?ASTARSETCOLOR:ASTARPATHCOLOR));
+			if(this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder() instanceof MatteBorder){
+				if(((MatteBorder) this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder()).getMatteColor().equals(QVISITEDSETCOLOR)){
+					if(!aIsSet){
+						this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARPATHQVISITEDSETBORDER);
+					}
+					else{
+						this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARSETQVISITEDSETBORDER);
+					}
+				}
+				if(((MatteBorder) this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder()).getMatteColor().equals(ASTARSETCOLOR)){
+					if(!aIsSet){
+						this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARPATHBORDER);
+					}
+				}
+			}
+			else{
+				if(!(this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder() instanceof CompoundBorder)){
+					if(!aIsSet){
+						this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARPATHBORDER);
+					}
+					else{
+						this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARSETBORDER);
+					}
+				}
+			}
+			
 			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorderPainted(true);
 			
 		}
 	}
 	
+	
+	public void drawQResults(){
+		
+		for(MapCell currCell : this.mainApp.getqGridMap().getVisitedCells()){
+			switch(currCell.getCellType()){
+			
+			case PORTAL1:
+			case PORTAL2:
+			case PORTAL3:
+			case PORTAL4:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("Q");
+							this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setHorizontalTextPosition(JButton.CENTER);
+		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setVerticalTextPosition(JButton.CENTER);
+		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setForeground(QVISITEDSETCOLOR);
+		 					break;
+						 	
+			case BONUS:		
+			case MALUS:
+			case AGENT:
+			case ENDPOINT:
+			default:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("");
+					 	break;
+			}
+			
+			if(this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder() instanceof MatteBorder){
+				if(((MatteBorder) this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder()).getMatteColor().equals(ASTARPATHCOLOR)){
+					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARPATHQVISITEDSETBORDER);
+				}
+				
+				if(((MatteBorder) this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder()).getMatteColor().equals(ASTARSETCOLOR)){
+					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARSETQVISITEDSETBORDER);
+				}
+			}
+			else{
+				if(! (this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder() instanceof CompoundBorder)){
+					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(QVISITEDSETBORDER);
+				}
+			}
+			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorderPainted(true);
+			
+		}
+	}
 	/**
 	 * Refresh parziale della mappa
 	 * 
@@ -478,6 +594,17 @@ public class MapGUI {
 	
 	
 	public void refreshPartialMap(ArrayList<AStarCell> refreshCells){
+		int i = 0;
+		int j = 0;
+		
+		for(MapCell iterCell: refreshCells){
+			i = iterCell.getRowIndex();
+			j = iterCell.getColumnIndex();
+				this.refreshSingleCell(i,j, this.mainApp.getqGridMap().getCell(i, j).getCellType(),this.mainApp.getqGridMap().getCell(i, j).getCellReward());		
+			}
+	}
+	
+	public void refreshPartialMapQ(ArrayList<MapCell> refreshCells){
 		int i = 0;
 		int j = 0;
 		
@@ -606,6 +733,7 @@ public class MapGUI {
 		
 		actionCommand = new String(aRow+ATTRIBUTEDELIMITER+aColumn+ATTRIBUTEDELIMITER+rewardValue.toString());
 		currentButton.setText("");
+		currentButton.setBorder(BorderFactory.createEmptyBorder());
 		currentButton.setBorderPainted(false);
 		currentButton.setPreferredSize(iconDimension);
 		currentButton.setContentAreaFilled(false);
@@ -661,7 +789,7 @@ public class MapGUI {
 	}
 
 	
-	class ActionElementsListener implements ActionListener,ItemListener{
+	class ActionElementsListener implements ActionListener,ItemListener,ChangeListener{
 		
 		private TAIQLearningApp mainApp;
 		
@@ -758,7 +886,7 @@ public class MapGUI {
 					
 			}
 			
-			if(listenedCommand.equals("Start learning")){
+			/*if(listenedCommand.equals("Start learning")){
 				if(QLThread != null)
 				{
 					if(!QLThread.isAlive())
@@ -772,7 +900,7 @@ public class MapGUI {
 					QLThread = new QLearning(mainApp, mainApp.getqGridMap());
 					QLThread.start();
 				}
-			}
+			}*/
 			
 			if(listenedCommand.equals("Reset")){
 				if(QLThread != null)
@@ -780,30 +908,28 @@ public class MapGUI {
 						QLThread.reset();
 			}
 			
-			if(listenedCommand.equals("Exit")){		
-			}
 			
-			if(listenedCommand.equals("Learn 100 times")){
+			if(listenedCommand.equals("Start learning")){
 				
 				if(QLearningThread != null)
 				{
 					if(!QLearningThread.isAlive())
 					{
 						QLearningThread = new QLearnThread(mainApp, mainApp.getqGridMap());
-						QLearningThread.setRepeat(100);
+						QLearningThread.setRepeat(qTrialsSlider.getValue());
 						QLearningThread.start();
 					}
 				}
 				else
 				{
 					QLearningThread = new QLearnThread(mainApp, mainApp.getqGridMap());
-					QLearningThread.setRepeat(100);
+					QLearningThread.setRepeat(qTrialsSlider.getValue());
 					QLearningThread.start();
 				}
 				
 			}
 			
-			if(listenedCommand.equals("Stop")){		
+			if(listenedCommand.equals("Stop learning")){		
 				if(QLearningThread != null)
 				{
 					QLearningThread.stopIteration();
@@ -821,6 +947,9 @@ public class MapGUI {
 		            	if(showAStarSet.isSelected()){
 			            	this.mainApp.getMapGUI().drawAStarResults(true);
 			            }
+		            	if (showQVisitedSet.isSelected()) {
+		            		this.mainApp.getMapGUI().drawQResults();
+						}
 		            	this.mainApp.getMapGUI().drawAStarResults(false);
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
@@ -828,24 +957,64 @@ public class MapGUI {
 		            	if(showAStarSet.isSelected()){
 			            	this.mainApp.getMapGUI().drawAStarResults(true);
 			            }
+		            	if (showQVisitedSet.isSelected()) {
+		            		this.mainApp.getMapGUI().drawQResults();
+						}
 		            }
 		            
 		        }
+		        
 		        if (e.getItemSelectable().equals(showAStarSet)) {
 		        	if(e.getStateChange() == ItemEvent.SELECTED){
-		            	this.mainApp.getMapGUI().drawAStarResults(true);
 		            	if(showAStarPath.isSelected()){
 			            	this.mainApp.getMapGUI().drawAStarResults(false);
 			            }
+		            	if (showQVisitedSet.isSelected()) {
+		            		this.mainApp.getMapGUI().drawQResults();
+						}
+		            	this.mainApp.getMapGUI().drawAStarResults(true);
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
 		            	this.mainApp.getMapGUI().refreshPartialMap(this.mainApp.getaStarGridMap().getaStarSet());
 		            	if(showAStarPath.isSelected()){
 			            	this.mainApp.getMapGUI().drawAStarResults(false);
 			            }
+		            	if (showQVisitedSet.isSelected()) {
+		            		this.mainApp.getMapGUI().drawQResults();
+						}
 		            }
 		            
 		        }
+			
+		        if (e.getItemSelectable().equals(showQVisitedSet)) {
+		        	if(e.getStateChange() == ItemEvent.SELECTED){
+		            	if(showAStarPath.isSelected()){
+			            	this.mainApp.getMapGUI().drawAStarResults(false);
+			            }
+		            	if(showAStarSet.isSelected()){
+			            	this.mainApp.getMapGUI().drawAStarResults(true);
+			            }
+		            	this.mainApp.getMapGUI().drawQResults();
+		            }
+		            if(e.getStateChange() == ItemEvent.DESELECTED){
+		            	this.mainApp.getMapGUI().refreshPartialMapQ(this.mainApp.getqGridMap().getVisitedCells());
+		            	if(showAStarPath.isSelected()){
+			            	this.mainApp.getMapGUI().drawAStarResults(false);
+			            }
+		            	if(showAStarSet.isSelected()){
+			            	this.mainApp.getMapGUI().drawAStarResults(true);
+			            }
+		            }
+		            
+		        }
+		}
+
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			 JSlider source = (JSlider)e.getSource();
+			 if(!(source.getValueIsAdjusting())){
+				 qTrialLabel.setText("Q Learning Trials: "+source.getValue());
+			 }
 			
 		}
 	}

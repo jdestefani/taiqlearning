@@ -41,8 +41,11 @@ public class QLearnThread extends Thread
 		repeating = true;
 		int count = repeat;
 		
+		this.mainApp.printOnConsoleAndLog("############## Q-Learning ##############");
+		
 		for(int i = 0; (i < count) && repeating; i++)
 		{
+			this.mainApp.printOnConsoleAndLog("Iteration "+(i+1)+" started.");
 			myThread = new QLearning(mainApp, qGrid);
 			myThread.start();
 			try {
@@ -52,6 +55,7 @@ public class QLearnThread extends Thread
 				e.printStackTrace();
 			}
 			myThread.reset();
+			
 		}
 	}
 
