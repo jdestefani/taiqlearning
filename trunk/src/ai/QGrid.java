@@ -5,6 +5,7 @@ import java.awt.geom.QuadCurve2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Random;
 
 import javax.swing.JButton;
@@ -24,12 +25,14 @@ public class QGrid implements GameGrid {
 	private QGridCell agentCell;
 	private QGridCell endCell;
 	private CellType lastCellType;
+	private ArrayList<MapCell> BonusCells;
 	
 	
 	public QGrid() {
 		super();
 		lastCellType = CellType.PLAIN;
 		grid = new QGridCell[MAPHEIGHT][MAPWIDTH];
+		BonusCells = new ArrayList<MapCell>();
 		
 		portalReachableCells = new ArrayList[PORTALNUMBER];
 		for(int i=0; i<PORTALNUMBER ; i++){
@@ -253,7 +256,16 @@ public class QGrid implements GameGrid {
 		return true;
 	}
 	
-	
+	public void resetVisited()
+	{
+		for(int i = 0; i < QGrid.MAPHEIGHT; i++)
+		{
+			for(int j = 0; j < QGrid.MAPWIDTH; j++)
+			{
+				this.getCell(i, j).setHasBeenVisited(false);
+			}
+		}
+	}
 
 	private void checkGrid(MapCell[][] aGrid) throws IndexOutOfBoundsException,NullPointerException{
 		int rowLength = 0;
@@ -630,14 +642,32 @@ public class QGrid implements GameGrid {
 		return initAgentCell;
 	}
 	
+	public ArrayList<MapCell> getBonusCells() {
+		return BonusCells;
+	}
+
+	public void resetBonus()
+	{
+		Iterator<MapCell> iter = BonusCells.iterator();
+		while(iter.hasNext())
+		{
+			iter.next().setCellType(CellType.BONUS);
+		}
+		BonusCells.clear();
+	}
+	
 	public void resetAgent() {
-		agentCell = initAgentCell;
+		moveAgent(initAgentCell.getRowIndex(), initAgentCell.getColumnIndex());
 	}
 	
 	public void moveAgent(int aRowIndex, int aColumnIndex){
 		agentCell.setCellType(lastCellType);
-		switch(getCell(aRowIndex, aColumnIndex).getCellType()){
+		agentCell = getCell(aRowIndex, aColumnIndex);
+		lastCellType = agentCell.getCellType();
+		switch(agentCell.getCellType()){
 			case BONUS:	//Get bonus - Return reward? lastCellType = CellType.PLAINCELL
+					lastCellType = CellType.PLAIN;
+					BonusCells.add(agentCell);
 					break;
 			case ENDPOINT: break;
 			case WALL:  break;
@@ -646,8 +676,6 @@ public class QGrid implements GameGrid {
 			default:  break;
 		
 		}
-		agentCell = getCell(aRowIndex, aColumnIndex);
-		lastCellType = agentCell.getCellType();
 		agentCell.setCellType(CellType.AGENT);
 	}
 }

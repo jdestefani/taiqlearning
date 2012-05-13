@@ -76,12 +76,21 @@ public class QLearning extends Thread
 		QGridCell actualPos = (QGridCell)qGrid.getAgentCell();
 		qGrid.moveAgent(initialPos.getRowIndex(), initialPos.getColumnIndex());
 		mainApp.getMapGUI().refreshTwoCells(initialPos, actualPos);
+		qGrid.resetVisited();
+		ArrayList<MapCell> bonusCells = new ArrayList<MapCell>();
+		bonusCells.addAll(qGrid.getBonusCells());
+		System.out.println(bonusCells.size());
+
+		qGrid.resetBonus();
+		mainApp.getMapGUI().refreshMap(bonusCells);
+		System.out.println(bonusCells.size());
 	}
 	
 	public void startIteration(int nbreIteration)
 	{
 		for(int i = 0; i < nbreIteration; i++)
 		{
+			qGrid.resetAgent();
 			this.startIteration();
 		}
 	}
@@ -147,9 +156,13 @@ public class QLearning extends Thread
 	{
 		QGridCell tcell = (QGridCell) agent;
 		double qValue = 0.0;
-		QGridCell nextcell = this.getBestAction();
-		qValue = tcell.getCellQValue() + alpha * (nextcell.getCellReward() + gamma * (this.getBestAction(nextcell)).getCellQValue() - tcell.getCellQValue());
-		tcell.setCellQValue(qValue);
+		if(tcell != qGrid.getEndCell())
+		{
+			QGridCell nextcell = this.getBestAction();
+			qValue = tcell.getCellQValue() + alpha * (nextcell.getCellReward() + gamma * (this.getBestAction(nextcell)).getCellQValue() - tcell.getCellQValue());
+			tcell.setCellQValue(qValue);
+		}
+		
 	}
 
 }
