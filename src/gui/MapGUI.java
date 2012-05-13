@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.Logger;
 
 import javax.swing.Action;
@@ -30,6 +31,7 @@ import javax.swing.border.Border;
 
 import ai.AStarPathFinder;
 import ai.QGrid;
+import ai.QLearnThread;
 import ai.QLearning;
 import ai.UnreachableEndException;
 
@@ -43,6 +45,7 @@ import main.TAIQLearningApp;
 public class MapGUI {
 
 	private QLearning QLThread;
+	private QLearnThread QLearningThread;
 	
 	private JPanel contentPane;
 	private JScrollPane mapPanel;
@@ -68,6 +71,8 @@ public class MapGUI {
 	private JButton displayRButton;
 	private JButton displayQStartButton;
 	private JButton displayQResetButton;
+	private JButton displayQLearnButton;
+	private JButton displayQLearnStopButton;
 	private JCheckBox showAStarSet;
 	private JCheckBox showAStarPath;
 	
@@ -154,6 +159,10 @@ public class MapGUI {
 		displayQStartButton.addActionListener(new ActionElementsListener(this.mainApp));
 		displayQResetButton = new JButton("Reset");
 		displayQResetButton.addActionListener(new ActionElementsListener(this.mainApp));
+		displayQLearnButton = new JButton("Learn 100 times");
+		displayQLearnButton.addActionListener(new ActionElementsListener(this.mainApp));
+		displayQLearnStopButton = new JButton("Stop");
+		displayQLearnStopButton.addActionListener(new ActionElementsListener(this.mainApp));
 		
 		showAStarPath = new JCheckBox("Show A* Path");
 		showAStarPath.addItemListener(new ActionElementsListener(mainApp));
@@ -177,6 +186,10 @@ public class MapGUI {
 		qLearningActionPanel.add(displayQButton);
 		qLearningActionPanel.add(displayQStartButton);
 		qLearningActionPanel.add(displayQResetButton);
+		qLearningActionPanel.add(displayQLearnButton);
+		qLearningActionPanel.add(displayQLearnStopButton);
+		
+		
 		
 		
 		actionPanel.add(mapActionPanel);
@@ -452,6 +465,18 @@ public class MapGUI {
 	 * @param diffColumn
 	 *            Il numero di righe da ridisegnare a partire dalla cella di partenza.
 	 */
+	public void refreshMap(ArrayList<MapCell> refreshCells)
+	{
+		Iterator<MapCell> iter = refreshCells.iterator();
+		while(iter.hasNext())
+		{
+			MapCell curCell = iter.next();
+			this.refreshSingleCell(curCell.getRowIndex(), curCell.getColumnIndex(), this.mainApp.getqGridMap().getCell(curCell.getRowIndex(), curCell.getColumnIndex()).getCellType(), this.mainApp.getqGridMap().getCell(curCell.getRowIndex(), curCell.getColumnIndex()).getCellReward());
+		}
+	}
+
+	
+	
 	public void refreshPartialMap(ArrayList<AStarCell> refreshCells){
 		int i = 0;
 		int j = 0;
@@ -756,6 +781,33 @@ public class MapGUI {
 			}
 			
 			if(listenedCommand.equals("Exit")){		
+			}
+			
+			if(listenedCommand.equals("Learn 100 times")){
+				
+				if(QLearningThread != null)
+				{
+					if(!QLearningThread.isAlive())
+					{
+						QLearningThread = new QLearnThread(mainApp, mainApp.getqGridMap());
+						QLearningThread.setRepeat(100);
+						QLearningThread.start();
+					}
+				}
+				else
+				{
+					QLearningThread = new QLearnThread(mainApp, mainApp.getqGridMap());
+					QLearningThread.setRepeat(100);
+					QLearningThread.start();
+				}
+				
+			}
+			
+			if(listenedCommand.equals("Stop")){		
+				if(QLearningThread != null)
+				{
+					QLearningThread.stopIteration();
+				}
 			}
 			
 		}
