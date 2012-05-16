@@ -55,15 +55,10 @@ public class QLearning extends Thread
 			qGrid.getVisitedCells().add(agent);
 			this.computeQValue();
 
-//			position = "(" + agent.getColumnIndex() + "," + agent.getRowIndex() + ")";
-//			System.out.println(position);
 			mainApp.getMapGUI().refreshTwoCells(laststate, nextstate);
-//			mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT, QGrid.MAPWIDTH);
-			//mainApp.getMapGUI().getCellGrid().revalidate();
 			try {
 				this.sleep(10);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			movesNumber++;
@@ -79,15 +74,12 @@ public class QLearning extends Thread
 	public void reset()
 	{
 		QGridCell initialPos = qGrid.getInitAgentCell();
-//		System.out.print(initialPos.getRowIndex());
-//		System.out.print(initialPos.getColumnIndex());
 		QGridCell actualPos = (QGridCell)qGrid.getAgentCell();
 		qGrid.moveAgent(initialPos.getRowIndex(), initialPos.getColumnIndex());
 		mainApp.getMapGUI().refreshTwoCells(initialPos, actualPos);
 		qGrid.resetVisited();
 		ArrayList<MapCell> bonusCells = new ArrayList<MapCell>();
 		bonusCells.addAll(qGrid.getBonusCells());
-		System.out.println(bonusCells.size());
 
 		qGrid.resetBonus();
 		mainApp.getMapGUI().refreshMap(bonusCells);
