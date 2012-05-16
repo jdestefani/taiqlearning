@@ -671,13 +671,13 @@ public class QGrid implements GameGrid {
 		agentCell = getCell(aRowIndex, aColumnIndex);
 		lastCellType = agentCell.getCellType();
 		switch(agentCell.getCellType()){
-			case BONUS:	//Get bonus - Return reward? lastCellType = CellType.PLAINCELL
+			case BONUS:	
 					lastCellType = CellType.PLAIN;
 					BonusCells.add(agentCell);
 					break;
 			case ENDPOINT: break;
 			case WALL:  break;
-			case MALUS: //Get malus - Return reward?
+			case MALUS:
 					break;
 			default:  break;
 		
