@@ -15,20 +15,43 @@ import main.TAIQLearningApp;
 import data.CellType;
 import data.QGridCell;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GridFileHandler.
+ */
 public class GridFileHandler {
 
+	/** The main app. */
 	private TAIQLearningApp mainApp;
 	
+	/** The MAPPATH. */
 	public static String MAPPATH = new String("");
+	
+	/** The cell separator. */
 	public static String cellSeparator = new String(" ");
+	
+	/** The value separator. */
 	public static String valueSeparator = new String(",");
+	
+	/** The line separator. */
 	public static String lineSeparator = System.getProperty("line.separator");
 	
+	/**
+	 * Instantiates a new grid file handler.
+	 *
+	 * @param mainApp the main app
+	 */
 	public GridFileHandler(TAIQLearningApp mainApp) {
 		super();
 		this.mainApp = mainApp;
 	}
 	
+	/**
+	 * Read map from file.
+	 *
+	 * @param filename the filename
+	 * @return the q grid cell[][]
+	 */
 	public static QGridCell[][] readMapFromFile(String filename){
 		File mapFile = new File(filename);
 		Scanner lineScanner = null;
@@ -116,6 +139,12 @@ public class GridFileHandler {
 		return gridMap;
 	}
 	
+	/**
+	 * Write map to file.
+	 *
+	 * @param filename the filename
+	 * @return true, if successful
+	 */
 	public boolean writeMapToFile(String filename){
 		FileOutputStream fos;
 		try {

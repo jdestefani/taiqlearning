@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package ai;
 
 import gui.MapGUI;
@@ -16,22 +19,55 @@ import data.CellType;
 import data.MapCell;
 import data.QGridCell;
 
+/**
+ * The Class AStarPathFinder.
+ */
 public class AStarPathFinder implements GameGrid {
 	
+	/** The main app. */
 	private TAIQLearningApp mainApp;
+	
+	/** The portal reachable cells. */
 	private ArrayList<MapCell>[] portalReachableCells;
+	
+	/** The portal cells. */
 	private ArrayList<AStarCell>[] portalCells;
+	
+	/** The max distance portal index. */
 	private int[] maxDistancePortalIndex;
+	
+	/** The min distance portal index. */
 	private int[] minDistancePortalIndex;
+	
+	/** The portal discovery order. */
 	private int[] portalDiscoveryOrder;
+	
+	/** The a star grid. */
 	private AStarCell[][] aStarGrid;
+	
+	/** The agent cell. */
 	private AStarCell agentCell;
+	
+	/** The end cell. */
 	private AStarCell endCell;
+	
+	/** The steps from agent to end. */
 	private int stepsFromAgentToEnd;
+	
+	/** The a star path. */
 	private ArrayList<AStarCell> aStarPath;
+	
+	/** The a star set. */
 	private ArrayList<AStarCell> aStarSet;
 	
 	
+	/**
+	 * Instantiates a new a star path finder.
+	 *
+	 * @param aMainApp the a main app
+	 * @param aQGrid the a q grid
+	 * @throws UnreachableEndException the unreachable end exception
+	 */
 	public AStarPathFinder(TAIQLearningApp aMainApp,QGrid aQGrid) throws UnreachableEndException {
 		super();
 		
@@ -120,14 +156,27 @@ public class AStarPathFinder implements GameGrid {
 		}
 	}
 
+	/**
+	 * Gets the portal reachable cells.
+	 *
+	 * @return the portal reachable cells
+	 */
 	public ArrayList<MapCell>[] getPortalReachableCells() {
 		return portalReachableCells;
 	}
 
+	/**
+	 * Gets the a star grid.
+	 *
+	 * @return the a star grid
+	 */
 	public MapCell[][] getaStarGrid() {
 		return aStarGrid;
 	}
 
+	/* (non-Javadoc)
+	 * @see ai.GameGrid#getAgentCell()
+	 */
 	public MapCell getAgentCell() {
 		return agentCell;
 	}
@@ -139,24 +188,52 @@ public class AStarPathFinder implements GameGrid {
 		return endCell;
 	}
 
+	/**
+	 * Gets the a star set.
+	 *
+	 * @return the a star set
+	 */
 	public ArrayList<AStarCell> getaStarSet() {
 		return aStarSet;
 	}
 
+	/**
+	 * Gets the a star path.
+	 *
+	 * @return the a star path
+	 */
 	public ArrayList<AStarCell> getaStarPath() {
 		return aStarPath;
 	}
 
+	/**
+	 * Gets the steps from agent to end.
+	 *
+	 * @return the steps from agent to end
+	 */
 	public int getStepsFromAgentToEnd() {
 		return stepsFromAgentToEnd;
 	}
 
 
+	/**
+	 * Gets the cell.
+	 *
+	 * @param aRowIndex the a row index
+	 * @param aColumnIndex the a column index
+	 * @return the cell
+	 * @throws IndexOutOfBoundsException the index out of bounds exception
+	 */
 	public AStarCell getCell(int aRowIndex, int aColumnIndex) throws IndexOutOfBoundsException{
 		MapCell.verifyIndexes(aRowIndex, aColumnIndex);
 		return aStarGrid[aRowIndex][aColumnIndex];
 	}
 
+	/**
+	 * Import q grid map.
+	 *
+	 * @param aQGrid the a q grid
+	 */
 	public void importQGridMap(MapCell aQGrid[][]){
 		
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
@@ -184,6 +261,9 @@ public class AStarPathFinder implements GameGrid {
 		
 	}
 	
+	/**
+	 * Update portal reachable cells.
+	 */
 	private void updatePortalReachableCells(){
 		
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
@@ -229,6 +309,11 @@ public class AStarPathFinder implements GameGrid {
 			
 	}
 
+	/**
+	 * Compute heuristic.
+	 *
+	 * @param aCell the a cell
+	 */
 	private void computeHeuristic(AStarCell aCell){
 		switch(aCell.getCellType()){
 		case PORTAL1:
@@ -242,6 +327,13 @@ public class AStarPathFinder implements GameGrid {
 		}
 	}
 	
+	/**
+	 * Euclidian distance.
+	 *
+	 * @param aCell1 the a cell1
+	 * @param aCell2 the a cell2
+	 * @return the double
+	 */
 	private double euclidianDistance(MapCell aCell1, MapCell aCell2){
 		int heightDiff = Math.abs(aCell1.getRowIndex() - aCell2.getRowIndex());
 		int widthDiff = Math.abs(aCell1.getColumnIndex() - aCell2.getColumnIndex());
@@ -249,6 +341,9 @@ public class AStarPathFinder implements GameGrid {
 	}
 	
 
+	/**
+	 * Find a star path.
+	 */
 	public void findAStarPath(){
 		
 		if(stepsFromAgentToEnd == -1){
@@ -273,6 +368,12 @@ public class AStarPathFinder implements GameGrid {
         buildAStarPath();
 	}
 	
+	/**
+	 * Select next cell.
+	 *
+	 * @param currCell the curr cell
+	 * @param searchQueue the search queue
+	 */
 	private void selectNextCell(AStarCell currCell,ArrayList<AStarCell> searchQueue){
 		double minHeuristic = Double.MAX_VALUE;
 		AStarCell nextCell = null;
@@ -312,6 +413,9 @@ public class AStarPathFinder implements GameGrid {
 		selectNextCell(nextCell,searchQueue);
 	}
 	
+	/**
+	 * Builds the a star path.
+	 */
 	private void buildAStarPath(){
 		/*AStarCell currCell = agentCell;
 		AStarCell nextCell = null;
@@ -358,6 +462,11 @@ public class AStarPathFinder implements GameGrid {
 		}*/
 	}
 	
+	/**
+	 * Compute distance from.
+	 *
+	 * @param aCell the a cell
+	 */
 	private void computeDistanceFrom(AStarCell aCell){
 		AStarCell[] cellsToVisit = new AStarCell[QGrid.MAPHEIGHT*QGrid.MAPWIDTH];
 		int index = 0;
@@ -391,6 +500,11 @@ public class AStarPathFinder implements GameGrid {
 		
 	}
 	
+	/**
+	 * Update distance.
+	 *
+	 * @param aCell the a cell
+	 */
 	private void updateDistance(AStarCell aCell){
 		AStarCell[] cellsToVisit = new AStarCell[QGrid.MAPHEIGHT*QGrid.MAPWIDTH];
 		int index = 0;

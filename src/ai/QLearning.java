@@ -10,22 +10,50 @@ import data.MapCell;
 import data.QGridCell;
 import main.TAIQLearningApp;
 
+/**
+ * The Class QLearning.
+ */
 public class QLearning extends Thread 
 {
+	
+	/** The main app. */
 	private TAIQLearningApp mainApp;
+	
+	/** The q grid. */
 	private QGrid qGrid;
+	
+	/** The alpha. */
 	private double alpha = 0.2;
+	
+	/** The gamma. */
 	private double gamma = 0.99; 
+	
+	/** The epsilon. */
 	private double epsilon = 0.2;
 	// private agent !
+	/** The agent. */
 	private QGridCell agent;
+	
+	/** The end state. */
 	private QGridCell endState;
+	
+	/** The rand. */
 	private Random rand = new Random();
 	
+	/** The Constant MAXTRIALSNUMBER. */
 	public static final int MAXTRIALSNUMBER = 100;
+	
+	/** The Constant MINTRIALSNUMBER. */
 	public static final int MINTRIALSNUMBER = 0;
 	
 	
+	/**
+	 * Instantiates a new q learning.
+	 *
+	 * @param aMainApp the a main app
+	 * @param qGridMap the q grid map
+	 * @throws UnreachableEndException the unreachable end exception
+	 */
 	public QLearning(TAIQLearningApp aMainApp, QGrid qGridMap) throws UnreachableEndException
 	{
 		super();
@@ -36,11 +64,19 @@ public class QLearning extends Thread
 		endState = (QGridCell)qGrid.getEndCell();
 	}
 
+	/**
+	 * Sets the agent.
+	 *
+	 * @param agent the new agent
+	 */
 	public void setAgent(QGridCell agent) 
 	{
 		this.agent = agent;
 	}
 
+	/**
+	 * Start iteration.
+	 */
 	public void startIteration()
 	{
 		QGridCell laststate; QGridCell nextstate;
@@ -68,11 +104,17 @@ public class QLearning extends Thread
 		MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Iteration completed in "+movesNumber+" steps");
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	public void run()
 	{
 		this.startIteration();
 	}
 	
+	/**
+	 * Reset.
+	 */
 	public void reset()
 	{
 		QGridCell initialPos = qGrid.getInitAgentCell();
@@ -88,6 +130,11 @@ public class QLearning extends Thread
 		System.out.println(bonusCells.size());
 	}
 	
+	/**
+	 * Start iteration.
+	 *
+	 * @param nbreIteration the nbre iteration
+	 */
 	public void startIteration(int nbreIteration)
 	{
 		for(int i = 0; i < nbreIteration; i++)
@@ -97,6 +144,11 @@ public class QLearning extends Thread
 		}
 	}
 	
+	/**
+	 * Gets the next action.
+	 *
+	 * @return the next action
+	 */
 	private QGridCell getNextAction()
 	{
 		if(Math.random() < epsilon) //choose randomly an action with a probability epsilon
@@ -110,11 +162,22 @@ public class QLearning extends Thread
 		}
 	}
 	
+	/**
+	 * Gets the best action.
+	 *
+	 * @return the best action
+	 */
 	private QGridCell getBestAction()
 	{
 		return this.getBestAction((QGridCell)agent);
 	}
 	
+	/**
+	 * Gets the best action.
+	 *
+	 * @param cell the cell
+	 * @return the best action
+	 */
 	private QGridCell getBestAction(QGridCell cell)
 	{
 		int index = rand.nextInt(cell.getReachableCells().size());
@@ -154,6 +217,9 @@ public class QLearning extends Thread
 		}
 	}
 	
+	/**
+	 * Compute q value.
+	 */
 	private void computeQValue()
 	{
 		QGridCell tcell = (QGridCell) agent;
