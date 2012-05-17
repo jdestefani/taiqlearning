@@ -24,18 +24,42 @@ import ai.QGrid;
 import ai.QLearning;
 import ai.UnreachableEndException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class TAIQLearningApp.
+ */
 public class TAIQLearningApp {
 	
+	/** The map gui. */
 	private MapGUI mapGUI;
+	
+	/** The file handler. */
 	private GridFileHandler fileHandler;
+	
+	/** The app window. */
 	private JFrame appWindow;
+	
+	/** The app logger. */
 	private Logger appLogger;
+	
+	/** The q grid map. */
 	private QGrid qGridMap;
+	
+	/** The a star grid map. */
 	private AStarPathFinder aStarGridMap;
+	
+	/** The a qlearning. */
 	private QLearning aQlearning;
+	
+	/** The Constant IMAGEPATH. */
 	private final static String IMAGEPATH = new String("../img/");
+	
+	/** The Constant LOGGERNAME. */
 	public final static String LOGGERNAME = new String("appLogger");
 	
+	/**
+	 * Instantiates a new tAIQ learning app.
+	 */
 	public TAIQLearningApp() {
 		super();
 		
@@ -60,78 +84,158 @@ public class TAIQLearningApp {
 	}
 	
 
+	/**
+	 * Gets the a qlearning.
+	 *
+	 * @return the a qlearning
+	 */
 	public QLearning getaQlearning() {
 		return aQlearning;
 	}
 
 
+	/**
+	 * Gets the a star grid map.
+	 *
+	 * @return the a star grid map
+	 */
 	public AStarPathFinder getaStarGridMap() {
 		return aStarGridMap;
 	}
 
 
 
+	/**
+	 * Sets the a star grid map.
+	 *
+	 * @param aStarGridMap the new a star grid map
+	 */
 	public void setaStarGridMap(AStarPathFinder aStarGridMap) {
 		this.aStarGridMap = aStarGridMap;
 	}
 
 
 
+	/**
+	 * Gets the file handler.
+	 *
+	 * @return the file handler
+	 */
 	public GridFileHandler getFileHandler() {
 		return fileHandler;
 	}
 
 
 
+	/**
+	 * Sets the file handler.
+	 *
+	 * @param fileHandler the new file handler
+	 */
 	public void setFileHandler(GridFileHandler fileHandler) {
 		this.fileHandler = fileHandler;
 	}
 
 
 
+	/**
+	 * Gets the imagepath.
+	 *
+	 * @return the imagepath
+	 */
 	public static String getImagepath() {
 		return IMAGEPATH;
 	}
 
+	/**
+	 * Gets the map gui.
+	 *
+	 * @return the map gui
+	 */
 	public MapGUI getMapGUI() {
 		return mapGUI;
 	}
 
+	/**
+	 * Sets the map gui.
+	 *
+	 * @param mapGUI the new map gui
+	 */
 	public void setMapGUI(MapGUI mapGUI) {
 		this.mapGUI = mapGUI;
 	}
 
+	/**
+	 * Gets the app window.
+	 *
+	 * @return the app window
+	 */
 	public JFrame getAppWindow() {
 		return appWindow;
 	}
 
+	/**
+	 * Sets the app window.
+	 *
+	 * @param appWindow the new app window
+	 */
 	public void setAppWindow(JFrame appWindow) {
 		this.appWindow = appWindow;
 	}
 
+	/**
+	 * Gets the app logger.
+	 *
+	 * @return the app logger
+	 */
 	public Logger getAppLogger() {
 		return appLogger;
 	}
 
+	/**
+	 * Sets the app logger.
+	 *
+	 * @param appLogger the new app logger
+	 */
 	public void setAppLogger(Logger appLogger) {
 		this.appLogger = appLogger;
 	}
 
 
+	/**
+	 * Gets the q grid map.
+	 *
+	 * @return the q grid map
+	 */
 	public QGrid getqGridMap() {
 		return qGridMap;
 	}
 
 
+	/**
+	 * Sets the q grid map.
+	 *
+	 * @param qGridMap the new q grid map
+	 */
 	public void setqGridMap(QGrid qGridMap) {
 		this.qGridMap = qGridMap;
 	}
 
 
+	/**
+	 * Gets the mapheight.
+	 *
+	 * @return the mapheight
+	 */
 	public static int getMapheight() {
 		return QGrid.MAPHEIGHT;
 	}
 
+	/**
+	 * Gets the mapwidth.
+	 *
+	 * @return the mapwidth
+	 */
 	public static int getMapwidth() {
 		return QGrid.MAPWIDTH;
 	}
@@ -156,6 +260,14 @@ public class TAIQLearningApp {
 
 	}
 	
+	/**
+	 * Update current window.
+	 *
+	 * @param title the title
+	 * @param width the width
+	 * @param height the height
+	 * @param contentPane the content pane
+	 */
 	public void updateCurrentWindow(String title,int width, int height, JPanel contentPane){
 		appWindow.setTitle("TAIQLearning - "+ title);
 		appWindow.setPreferredSize(new Dimension(width, height));
@@ -167,6 +279,12 @@ public class TAIQLearningApp {
         appWindow.setVisible(true);
 	}
 	
+	/**
+	 * Import image.
+	 *
+	 * @param fileName the file name
+	 * @return the image icon
+	 */
 	public static ImageIcon importImage(String fileName){
 		return new ImageIcon(TAIQLearningApp.class.getResource(
 							 IMAGEPATH+fileName));

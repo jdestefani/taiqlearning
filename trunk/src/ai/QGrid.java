@@ -16,19 +16,43 @@ import data.QGridCell;
 
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class QGrid.
+ */
 public class QGrid implements GameGrid {
 
+	/** The grid. */
 	private QGridCell[][] grid;
+	
+	/** The portal reachable cells. */
 	private ArrayList<MapCell>[] portalReachableCells;
+	
+	/** The curr agent cell. */
 	private QGridCell currAgentCell;
+	
+	/** The init agent cell. */
 	private QGridCell initAgentCell;
+	
+	/** The agent cell. */
 	private QGridCell agentCell;
+	
+	/** The end cell. */
 	private QGridCell endCell;
+	
+	/** The last cell type. */
 	private CellType lastCellType;
+	
+	/** The Bonus cells. */
 	private ArrayList<MapCell> BonusCells;
+	
+	/** The visited cells. */
 	private ArrayList<MapCell> visitedCells;
 	
 	
+	/**
+	 * Instantiates a new q grid.
+	 */
 	public QGrid() {
 		super();
 		lastCellType = CellType.PLAIN;
@@ -60,10 +84,22 @@ public class QGrid implements GameGrid {
 		}
 	}
 
+	/**
+	 * Gets the visited cells.
+	 *
+	 * @return the visited cells
+	 */
 	public ArrayList<MapCell> getVisitedCells() {
 		return visitedCells;
 	}
 
+	/**
+	 * Instantiates a new q grid.
+	 *
+	 * @param aGrid the a grid
+	 * @throws IndexOutOfBoundsException the index out of bounds exception
+	 * @throws NullPointerException the null pointer exception
+	 */
 	public QGrid(QGridCell[][] aGrid) throws IndexOutOfBoundsException,NullPointerException {
 		super();
 		lastCellType = CellType.PLAIN;
@@ -71,19 +107,42 @@ public class QGrid implements GameGrid {
 		grid = aGrid;
 	}
 
+	/**
+	 * Gets the grid.
+	 *
+	 * @return the grid
+	 */
 	public MapCell[][] getGrid() {
 		return grid;
 	}
 
+	/**
+	 * Sets the grid.
+	 *
+	 * @param aGrid the new grid
+	 */
 	public void setGrid(QGridCell[][] aGrid) {
 		this.grid = aGrid;
 	}
 	
+	/**
+	 * Gets the cell.
+	 *
+	 * @param aRowIndex the a row index
+	 * @param aColumnIndex the a column index
+	 * @return the cell
+	 * @throws IndexOutOfBoundsException the index out of bounds exception
+	 */
 	public QGridCell getCell(int aRowIndex,int aColumnIndex) throws IndexOutOfBoundsException{
 		QGridCell.verifyIndexes(aRowIndex, aColumnIndex);
 		return this.grid[aRowIndex][aColumnIndex];
 	}
 	
+	/**
+	 * Checks for only one agent.
+	 *
+	 * @return true, if successful
+	 */
 	private boolean hasOnlyOneAgent(){
 		boolean agentFound = false;
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
@@ -101,6 +160,11 @@ public class QGrid implements GameGrid {
 		return true;
 	}
 	
+	/**
+	 * Are portal1 coupled.
+	 *
+	 * @return true, if successful
+	 */
 	private boolean arePortal1Coupled(){
 		int portal1Number = 0;
 		int index = 0;
@@ -137,6 +201,11 @@ public class QGrid implements GameGrid {
 		return true;
 	}
 	
+	/**
+	 * Are portal2 coupled.
+	 *
+	 * @return true, if successful
+	 */
 	private boolean arePortal2Coupled(){
 		int portal2Number = 0;
 		int index = 0;
@@ -173,6 +242,11 @@ public class QGrid implements GameGrid {
 		return true;
 	}
 	
+	/**
+	 * Are portal3 coupled.
+	 *
+	 * @return true, if successful
+	 */
 	private boolean arePortal3Coupled(){
 		int portal3Number = 0;
 		int index = 0;
@@ -209,6 +283,11 @@ public class QGrid implements GameGrid {
 		return true;
 	}
 	
+	/**
+	 * Are portal4 coupled.
+	 *
+	 * @return true, if successful
+	 */
 	private boolean arePortal4Coupled(){
 		int portal4Number = 0;
 		int index = 0;
@@ -245,6 +324,11 @@ public class QGrid implements GameGrid {
 		return true;
 	}
 	
+	/**
+	 * Checks for only one endpoint.
+	 *
+	 * @return true, if successful
+	 */
 	private boolean hasOnlyOneEndpoint(){
 		boolean exitFound = false;
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
@@ -262,6 +346,9 @@ public class QGrid implements GameGrid {
 		return true;
 	}
 	
+	/**
+	 * Reset visited.
+	 */
 	public void resetVisited()
 	{
 		for(int i = 0; i < QGrid.MAPHEIGHT; i++)
@@ -273,6 +360,13 @@ public class QGrid implements GameGrid {
 		}
 	}
 
+	/**
+	 * Check grid.
+	 *
+	 * @param aGrid the a grid
+	 * @throws IndexOutOfBoundsException the index out of bounds exception
+	 * @throws NullPointerException the null pointer exception
+	 */
 	private void checkGrid(MapCell[][] aGrid) throws IndexOutOfBoundsException,NullPointerException{
 		int rowLength = 0;
 		int columnLength = 0;
@@ -297,6 +391,9 @@ public class QGrid implements GameGrid {
 		}
 	}
 
+	/**
+	 * Generate deterministic test map.
+	 */
 	private void generateDeterministicTestMap(){
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
 			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
@@ -322,6 +419,9 @@ public class QGrid implements GameGrid {
 		}
 	}
 	
+	/**
+	 * Generate random test map.
+	 */
 	private void generateRandomTestMap(){
 		Random rngMap = new Random();
 		
@@ -354,6 +454,9 @@ public class QGrid implements GameGrid {
 		}
 	}
 	
+	/**
+	 * Generate maze map.
+	 */
 	private void generateMazeMap(){
 		
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
@@ -365,6 +468,14 @@ public class QGrid implements GameGrid {
 		splitMap(0, 0, MAPHEIGHT, MAPWIDTH);
 	}
 	
+	/**
+	 * Split map.
+	 *
+	 * @param aUpperCornerRow the a upper corner row
+	 * @param aUpperCornerColumn the a upper corner column
+	 * @param aLowerCornerRow the a lower corner row
+	 * @param aLowerCornerColumn the a lower corner column
+	 */
 	private void splitMap(int aUpperCornerRow,int aUpperCornerColumn,int aLowerCornerRow,int aLowerCornerColumn){
 		int frameHeight = aLowerCornerRow - aUpperCornerRow;
 		int frameWidth =  aLowerCornerColumn - aUpperCornerColumn;
@@ -547,6 +658,9 @@ public class QGrid implements GameGrid {
 		splitMap(intersectRow, aUpperCornerColumn,aLowerCornerRow,intersectColumn);
 	}
 	
+	/**
+	 * Place components.
+	 */
 	private void placeComponents(){
 		ArrayList<QGridCell> plainCells = new ArrayList<QGridCell>();
 		ArrayList<Integer> portalOrder = new ArrayList<Integer>(PORTALNUMBER*PORTALREACHABILITY);
@@ -636,22 +750,41 @@ public class QGrid implements GameGrid {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see ai.GameGrid#getEndCell()
+	 */
 	public MapCell getEndCell() {
 		return endCell;
 	}
 
+	/* (non-Javadoc)
+	 * @see ai.GameGrid#getAgentCell()
+	 */
 	public MapCell getAgentCell() {		
 		return agentCell;
 	}
 
+	/**
+	 * Gets the inits the agent cell.
+	 *
+	 * @return the inits the agent cell
+	 */
 	public QGridCell getInitAgentCell() {
 		return initAgentCell;
 	}
 	
+	/**
+	 * Gets the bonus cells.
+	 *
+	 * @return the bonus cells
+	 */
 	public ArrayList<MapCell> getBonusCells() {
 		return BonusCells;
 	}
 
+	/**
+	 * Reset bonus.
+	 */
 	public void resetBonus()
 	{
 		Iterator<MapCell> iter = BonusCells.iterator();
@@ -662,10 +795,19 @@ public class QGrid implements GameGrid {
 		BonusCells.clear();
 	}
 	
+	/**
+	 * Reset agent.
+	 */
 	public void resetAgent() {
 		moveAgent(initAgentCell.getRowIndex(), initAgentCell.getColumnIndex());
 	}
 	
+	/**
+	 * Move agent.
+	 *
+	 * @param aRowIndex the a row index
+	 * @param aColumnIndex the a column index
+	 */
 	public void moveAgent(int aRowIndex, int aColumnIndex){
 		agentCell.setCellType(lastCellType);
 		agentCell = getCell(aRowIndex, aColumnIndex);
