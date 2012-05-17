@@ -1,5 +1,7 @@
 package ai;
 
+import gui.MapGUI;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -63,7 +65,7 @@ public class QLearning extends Thread
 			}
 			movesNumber++;
 		}
-		this.mainApp.printOnConsoleAndLog("Iteration completed in "+movesNumber+" steps");
+		MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Iteration completed in "+movesNumber+" steps");
 	}
 	
 	public void run()
