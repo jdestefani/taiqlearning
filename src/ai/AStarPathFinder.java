@@ -1,5 +1,7 @@
 package ai;
 
+import gui.MapGUI;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -265,7 +267,7 @@ public class AStarPathFinder implements GameGrid {
 		}
         
         //Recursive application of A*
-        this.mainApp.printOnConsoleAndLog("A* Set:");
+        MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getaStarConsole(),"A* Set:");
         selectNextCell(agentCell, searchQueue);
      
         buildAStarPath();
@@ -284,7 +286,7 @@ public class AStarPathFinder implements GameGrid {
 			return;
 		}
 		
-		this.mainApp.printOnConsoleAndLog(currCell.toString() + " - d: " + currCell.getDistanceFromAgent() + " - h:" +currCell.getHeuristicDistanceFromGoal());
+		MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getaStarConsole(),currCell.toString() + " - d: " + currCell.getDistanceFromAgent() + " - h:" +currCell.getHeuristicDistanceFromGoal());
 		
 		//Compute heuristic value for all the cells adjacent to currCell and add them to candidate set if not visited.
 		for(MapCell iterCell : currCell.getReachableCells()){
@@ -323,7 +325,7 @@ public class AStarPathFinder implements GameGrid {
 		 AStarCell currCell = endCell;
          while(currCell.getCellType() != CellType.AGENT){
                  aStarPath.add(currCell);
-                 this.mainApp.printOnConsoleAndLog(currCell.toString());
+                 MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getaStarConsole(),currCell.toString());
                  currCell = currCell.getPreviousAPathCell();
          }
 		

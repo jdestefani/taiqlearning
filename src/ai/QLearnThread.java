@@ -1,5 +1,6 @@
 package ai;
 
+import gui.MapGUI;
 import main.TAIQLearningApp;
 
 public class QLearnThread extends Thread 
@@ -41,11 +42,11 @@ public class QLearnThread extends Thread
 		repeating = true;
 		int count = repeat;
 		
-		this.mainApp.printOnConsoleAndLog("############## Q-Learning ##############");
+		MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"############## Q-Learning ##############");
 		
 		for(int i = 0; (i < count) && repeating; i++)
 		{
-			this.mainApp.printOnConsoleAndLog("Iteration "+(i+1)+" started.");
+			MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Iteration "+(i+1)+" started.");
 			myThread = new QLearning(mainApp, qGrid);
 			myThread.start();
 			try {

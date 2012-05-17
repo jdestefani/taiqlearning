@@ -49,88 +49,162 @@ import data.MapCell;
 import data.QGridCell;
 
 import main.TAIQLearningApp;
-
+import gui.GUICell;
+/**
+ * The Class MapGUI.
+ */
 public class MapGUI {
 
+	/** The QL thread. */
 	private QLearning QLThread;
+	
+	/** The Q learning thread. */
 	private QLearnThread QLearningThread;
 	
+	/** The content pane. */
 	private JPanel contentPane;
+	
+	/** The map panel. */
 	private JScrollPane mapPanel;
+	
+	/** The cell grid. */
 	private JPanel cellGrid;
-	private JPanel consolePanel;
-	private JScrollPane consoleScrollPanel;
+	
+	/** The side panel. */
 	private JPanel sidePanel;
+	
+	/** The action panel. */
 	private JPanel actionPanel;
+	
+	/** The map action panel. */
 	private JPanel mapActionPanel;
+	
+	/** The q learning action panel. */
 	private JPanel qLearningActionPanel;
+	
+	/** The a star action panel. */
 	private JPanel aStarActionPanel;
 	
+	private JPanel infoPanel;
 	
-	private JButton[][] map;
+	private JPanel aStarInfoPanel;
+	private JPanel qLearnInfoPanel;
 	
+	/** The console panel. */
+	private JPanel consolePanel;
+	
+	/** The a star console scroll panel. */
+	private JScrollPane aStarConsoleScrollPanel;
+	
+	/** The q learn console scroll panel. */
+	private JScrollPane qLearnConsoleScrollPanel;
+	
+	
+	/** The map. */
+	private GUICell[][] map;
+	
+	/** The generate map button. */
 	private JButton generateMapButton;
+	
+	/** The learn a star path button. */
 	private JButton learnAStarPathButton;
+	
+	/** The display distance map button. */
 	private JButton displayDistanceMapButton;
+	
+	/** The display q start button. */
 	private JButton displayQStartButton;
+	
+	/** The display q reset button. */
 	private JButton displayQResetButton;
+	
+	/** The display q learn stop button. */
 	private JButton displayQLearnStopButton;
 	
+	/** The display menu bar. */
 	private JMenuBar displayMenuBar;
+	
+	/** The map menu. */
 	private JMenu mapMenu;
+	
+	/** The save map menu item. */
 	private JMenuItem saveMapMenuItem;
+	
+	/** The load map menu item. */
 	private JMenuItem loadMapMenuItem;
+	
+	/** The display map menu item. */
 	private JMenuItem displayMapMenuItem;
+	
+	/** The a star menu. */
 	private JMenu aStarMenu;
+	
+	/** The show a star set. */
 	private JCheckBoxMenuItem showAStarSet;
+	
+	/** The show a star path. */
 	private JCheckBoxMenuItem showAStarPath;
+	
+	/** The q learning menu. */
 	private JMenu qLearningMenu;
-	private JMenuItem displayQMenuItem;
-	private JMenuItem displayRMenuItem;
+	
+	/** The show q visited set. */
 	private JCheckBoxMenuItem showQVisitedSet;
 	
+	/** The show q visited set. */
+	private JCheckBoxMenuItem showQResultingPath;
 	
+	private JLabel aStarPathInfo;
+	private JLabel aStarSetInfo;
+	private JLabel qLearningVisitedInfo;
+	private JLabel qLearningPathInfo;
+	
+	
+	/** The q trial label. */
 	private JLabel qTrialLabel;
+	
+	/** The q trials slider. */
 	private JSlider qTrialsSlider;
 	
-	private JTextArea infoConsole;
+	/** The a star console. */
+	private JTextArea aStarConsole;
 	
+	/** The q learn console. */
+	private JTextArea qLearnConsole;
+	
+	/** The cell action listener. */
 	private CellButtonListener cellActionListener;
 	
+	/** The main app. */
 	private TAIQLearningApp mainApp;
 	
+	/** The Constant CONSOLEROWNUMBER. */
+	private static final int CONSOLEROWNUMBER = 7;
 	
-	private boolean isAStarPathLearned;
-	private boolean isEndReachable;
+	/** The Constant CONSOLECOLUMNNUMBER. */
+	private static final int CONSOLECOLUMNNUMBER = 50;
 	
-	
-	
-	
-	private static final ImageIcon AGENTICON = TAIQLearningApp.importImage(new String("Agent.png"));
-	private static final ImageIcon PLAINICON = TAIQLearningApp.importImage(new String("SteelFloor3.png"));
-	private static final ImageIcon PLAINQRICON = TAIQLearningApp.importImage(new String("SteelFloor2.png"));
-	private static final ImageIcon ENDPOINTICON = TAIQLearningApp.importImage(new String("EndPoint.png"));
-	private static final ImageIcon WALLICON = TAIQLearningApp.importImage(new String("Wall.png"));
-	private static final ImageIcon BONUSICON = TAIQLearningApp.importImage(new String("Box.png"));
-	private static final ImageIcon MALUSICON = TAIQLearningApp.importImage(new String("MalusIcon.png"));
-	private static final ImageIcon PORTAL1ICON = TAIQLearningApp.importImage(new String("Portal1.png"));
-	private static final ImageIcon PORTAL2ICON = TAIQLearningApp.importImage(new String("Portal2.png"));
-	private static final ImageIcon PORTAL3ICON = TAIQLearningApp.importImage(new String("Portal3.png"));
-	private static final ImageIcon PORTAL4ICON = TAIQLearningApp.importImage(new String("Portal4.png"));
-	private static final String ATTRIBUTEDELIMITER = new String(",");
-	private static final Color ASTARSETCOLOR = Color.ORANGE;
-	private static final Color ASTARPATHCOLOR = Color.GREEN;
-	private static final Color QVISITEDSETCOLOR = Color.BLUE;
-	private static final Border ASTARSETBORDER = BorderFactory.createMatteBorder(2, 2, 2, 2, ASTARSETCOLOR);
-	private static final Border ASTARPATHBORDER = BorderFactory.createMatteBorder(2, 2, 2, 2, ASTARPATHCOLOR);
-	private static final Border QVISITEDSETBORDER = BorderFactory.createMatteBorder(4, 4, 4, 4, QVISITEDSETCOLOR);
-	private static final Border ASTARSETQVISITEDSETBORDER = BorderFactory.createCompoundBorder(ASTARSETBORDER, QVISITEDSETBORDER);
-	private static final Border ASTARPATHQVISITEDSETBORDER = BorderFactory.createCompoundBorder(ASTARPATHBORDER, QVISITEDSETBORDER);
+	/** The Constant MINTICKSSPACING. */
 	private static final int MINTICKSSPACING = 5;
+	
+	/** The Constant MAXTICKSSPACING. */
 	private static final int MAXTICKSSPACING = 10;
 	
 	
+	/** The is a star path learned. */
+	private boolean isAStarPathLearned;
+	
+	/** The is end reachable. */
+	private boolean isEndReachable;
+	
+	
 
+	/**
+	 * Instantiates a new map gui.
+	 *
+	 * @param aMainApp the a main app
+	 * @param aIsEndReachable the a is end reachable
+	 */
 	public MapGUI(TAIQLearningApp aMainApp,boolean aIsEndReachable) {
 		super();
 		
@@ -178,10 +252,6 @@ public class MapGUI {
 		learnAStarPathButton.addActionListener(new ActionElementsListener(this.mainApp));
 		displayDistanceMapButton = new JButton("Display distance map");
 		displayDistanceMapButton.addActionListener(new ActionElementsListener(this.mainApp));
-		displayRMenuItem = new JMenuItem("Display r values");
-		displayRMenuItem.addActionListener(new ActionElementsListener(this.mainApp));
-		displayQMenuItem = new JMenuItem("Display Q values");
-		displayQMenuItem.addActionListener(new ActionElementsListener(this.mainApp));
 		displayQStartButton = new JButton("Start learning");
 		displayQStartButton.addActionListener(new ActionElementsListener(this.mainApp));
 		displayQResetButton = new JButton("Reset");
@@ -194,6 +264,8 @@ public class MapGUI {
 		showAStarPath.addItemListener(new ActionElementsListener(mainApp));
 		showAStarSet = new JCheckBoxMenuItem("Show A* Set");
 		showAStarSet.addItemListener(new ActionElementsListener(mainApp));
+		showQVisitedSet = new JCheckBoxMenuItem("Show visited cells");
+		showQVisitedSet.addItemListener(new ActionElementsListener(mainApp));
 		showQVisitedSet = new JCheckBoxMenuItem("Show visited cells");
 		showQVisitedSet.addItemListener(new ActionElementsListener(mainApp));
 		
@@ -220,14 +292,20 @@ public class MapGUI {
 		qLearningActionPanel.add(displayQStartButton);
 		qLearningActionPanel.add(displayQLearnStopButton);
 		qLearningActionPanel.add(displayQResetButton);
-			
+		
+		Border infoPanelBorder = BorderFactory.createTitledBorder("Information");
+		infoPanel = new JPanel();
+		infoPanel.setOpaque(true);
+		infoPanel.setBorder(infoPanelBorder);
+		infoPanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
+		
 		
 		actionPanel.add(mapActionPanel);
 		actionPanel.add(aStarActionPanel);
 		actionPanel.add(qLearningActionPanel);
 		sidePanel.add(actionPanel);
 		     
-		map = new JButton[QGrid.MAPHEIGHT][QGrid.MAPWIDTH];
+		map = new GUICell[QGrid.MAPHEIGHT][QGrid.MAPWIDTH];
 		//this.cellActionListener = new MapActionListener();
 		
 		Border gridBorder = BorderFactory.createLoweredBevelBorder();
@@ -240,7 +318,7 @@ public class MapGUI {
 		
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
 			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
-				map[i][j] = new JButton();
+				map[i][j] = new GUICell(i,j);
 				cellGrid.add(this.map[i][j]);
 				map[i][j].addActionListener(this.cellActionListener);
 			}
@@ -249,29 +327,46 @@ public class MapGUI {
 		mapPanel = new JScrollPane(cellGrid);
 		mapPanel.setPreferredSize(new Dimension(600,400));
 		
-		Border consolePanelBorder = BorderFactory.createTitledBorder("Console");
+		
 		consolePanel = new JPanel();
-		infoConsole = new JTextArea(7,100);
-		infoConsole.setEditable(false);
-		infoConsole.setLineWrap(true);
-		infoConsole.setWrapStyleWord(true);
-		consolePanel.add(infoConsole);
-		consolePanel.setBackground(Color.WHITE);
-		consoleScrollPanel = new JScrollPane(this.consolePanel);
-		consoleScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		consoleScrollPanel.setVerticalScrollBarPolicy(
-                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		consoleScrollPanel.setBorder(consolePanelBorder);
-        consoleScrollPanel.setBackground(Color.WHITE);
+		
+		Border aStarConsolePanelBorder = BorderFactory.createTitledBorder("A* console");
+		aStarConsole = new JTextArea(CONSOLEROWNUMBER, CONSOLECOLUMNNUMBER);
+		aStarConsole.setEditable(false);
+		aStarConsole.setLineWrap(true);
+		aStarConsoleScrollPanel = new JScrollPane(aStarConsole);
+		aStarConsoleScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		aStarConsoleScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		aStarConsoleScrollPanel.setBorder(aStarConsolePanelBorder);
+		aStarConsoleScrollPanel.setBackground(Color.WHITE);
+		
+		Border qLearnConsolePanelBorder = BorderFactory.createTitledBorder("Q-Learning console");
+		qLearnConsole = new JTextArea(CONSOLEROWNUMBER, CONSOLECOLUMNNUMBER);
+		qLearnConsole.setEditable(false);
+		qLearnConsole.setLineWrap(true);
+		qLearnConsoleScrollPanel = new JScrollPane(qLearnConsole);
+		qLearnConsoleScrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		qLearnConsoleScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		qLearnConsoleScrollPanel.setBorder(qLearnConsolePanelBorder);
+		qLearnConsoleScrollPanel.setBackground(Color.WHITE);
+		
+		consolePanel = new JPanel();
+		consolePanel.setOpaque(true);
+		consolePanel.setLayout(new BoxLayout(consolePanel, BoxLayout.X_AXIS));
+		consolePanel.add(aStarConsoleScrollPanel);
+		consolePanel.add(qLearnConsoleScrollPanel);
 		
         setupDisplayMenu();
         
 		contentPane.add(mapPanel,BorderLayout.CENTER);
-        contentPane.add(consoleScrollPanel,BorderLayout.SOUTH);
+        contentPane.add(consolePanel,BorderLayout.SOUTH);
         contentPane.add(sidePanel,BorderLayout.EAST);
         refreshMap(QGrid.MAPHEIGHT,QGrid.MAPWIDTH);
 	}
 	
+	/**
+	 * Setup display menu.
+	 */
 	private void setupDisplayMenu() {
 		//Create the menu bar.
 		displayMenuBar = new JMenuBar();
@@ -300,9 +395,6 @@ public class MapGUI {
 		qLearningMenu.getAccessibleContext().setAccessibleDescription(
 		        "The only menu in this program that has menu items");
 		
-		qLearningMenu.add(displayRMenuItem);
-		qLearningMenu.add(displayQMenuItem);
-		qLearningMenu.addSeparator();
 		qLearningMenu.add(showQVisitedSet);
 		
 		displayMenuBar.add(qLearningMenu);
@@ -310,131 +402,379 @@ public class MapGUI {
 	}
 
 
-	public JMenuBar getDisplayMenuBar() {
-		return displayMenuBar;
+	
+	
+	/**
+	 * Gets the qL thread.
+	 *
+	 * @return the qL thread
+	 */
+	public QLearning getQLThread() {
+		return QLThread;
 	}
 
+	/**
+	 * Gets the q learning thread.
+	 *
+	 * @return the q learning thread
+	 */
+	public QLearnThread getQLearningThread() {
+		return QLearningThread;
+	}
+
+	/**
+	 * Gets the content pane.
+	 *
+	 * @return the content pane
+	 */
 	public JPanel getContentPane() {
 		return contentPane;
 	}
 
-	public void setContentPane(JPanel contentPane) {
-		this.contentPane = contentPane;
-	}
-
+	/**
+	 * Gets the map panel.
+	 *
+	 * @return the map panel
+	 */
 	public JScrollPane getMapPanel() {
 		return mapPanel;
 	}
 
-	public void setMapPanel(JScrollPane mapPanel) {
-		this.mapPanel = mapPanel;
-	}
-
+	/**
+	 * Gets the cell grid.
+	 *
+	 * @return the cell grid
+	 */
 	public JPanel getCellGrid() {
 		return cellGrid;
 	}
 
-	public void setCellGrid(JPanel cellGrid) {
-		this.cellGrid = cellGrid;
-	}
-
-	public JPanel getConsolePanel() {
-		return consolePanel;
-	}
-
-	public void setConsolePanel(JPanel consolePanel) {
-		this.consolePanel = consolePanel;
-	}
-
-	public JScrollPane getConsoleScrollPanel() {
-		return consoleScrollPanel;
-	}
-
-	public void setConsoleScrollPanel(JScrollPane consoleScrollPanel) {
-		this.consoleScrollPanel = consoleScrollPanel;
-	}
-
+	/**
+	 * Gets the side panel.
+	 *
+	 * @return the side panel
+	 */
 	public JPanel getSidePanel() {
 		return sidePanel;
 	}
 
-	public void setSidePanel(JPanel sidePanel) {
-		this.sidePanel = sidePanel;
-	}
-
+	/**
+	 * Gets the action panel.
+	 *
+	 * @return the action panel
+	 */
 	public JPanel getActionPanel() {
 		return actionPanel;
 	}
 
-	public void setActionPanel(JPanel actionPanel) {
-		this.actionPanel = actionPanel;
+	/**
+	 * Gets the map action panel.
+	 *
+	 * @return the map action panel
+	 */
+	public JPanel getMapActionPanel() {
+		return mapActionPanel;
 	}
 
+	/**
+	 * Gets the q learning action panel.
+	 *
+	 * @return the q learning action panel
+	 */
+	public JPanel getqLearningActionPanel() {
+		return qLearningActionPanel;
+	}
+
+	/**
+	 * Gets the a star action panel.
+	 *
+	 * @return the a star action panel
+	 */
+	public JPanel getaStarActionPanel() {
+		return aStarActionPanel;
+	}
+
+	/**
+	 * Gets the console panel.
+	 *
+	 * @return the console panel
+	 */
+	public JPanel getConsolePanel() {
+		return consolePanel;
+	}
+
+	/**
+	 * Gets the a star console scroll panel.
+	 *
+	 * @return the a star console scroll panel
+	 */
+	public JScrollPane getaStarConsoleScrollPanel() {
+		return aStarConsoleScrollPanel;
+	}
+	
+	/**
+	 * Gets the q learn console scroll panel.
+	 *
+	 * @return the q learn console scroll panel
+	 */
+	public JScrollPane getqLearnConsoleScrollPanel() {
+		return qLearnConsoleScrollPanel;
+	}
+
+	/**
+	 * Gets the map.
+	 *
+	 * @return the map
+	 */
 	public JButton[][] getMap() {
 		return map;
 	}
 
-	public void setMap(JButton[][] map) {
-		this.map = map;
+	/**
+	 * Gets the generate map button.
+	 *
+	 * @return the generate map button
+	 */
+	public JButton getGenerateMapButton() {
+		return generateMapButton;
 	}
 
-	public JButton getLearnPathButton() {
+	/**
+	 * Gets the learn a star path button.
+	 *
+	 * @return the learn a star path button
+	 */
+	public JButton getLearnAStarPathButton() {
 		return learnAStarPathButton;
 	}
 
-	public void setLearnPathButton(JButton learnPathButton) {
-		this.learnAStarPathButton = learnPathButton;
+	/**
+	 * Gets the display distance map button.
+	 *
+	 * @return the display distance map button
+	 */
+	public JButton getDisplayDistanceMapButton() {
+		return displayDistanceMapButton;
 	}
-	
+
+	/**
+	 * Gets the display q start button.
+	 *
+	 * @return the display q start button
+	 */
+	public JButton getDisplayQStartButton() {
+		return displayQStartButton;
+	}
+
+	/**
+	 * Gets the display q reset button.
+	 *
+	 * @return the display q reset button
+	 */
+	public JButton getDisplayQResetButton() {
+		return displayQResetButton;
+	}
+
+	/**
+	 * Gets the display q learn stop button.
+	 *
+	 * @return the display q learn stop button
+	 */
+	public JButton getDisplayQLearnStopButton() {
+		return displayQLearnStopButton;
+	}
+
+	/**
+	 * Gets the display menu bar.
+	 *
+	 * @return the display menu bar
+	 */
+	public JMenuBar getDisplayMenuBar() {
+		return displayMenuBar;
+	}
+
+	/**
+	 * Gets the map menu.
+	 *
+	 * @return the map menu
+	 */
+	public JMenu getMapMenu() {
+		return mapMenu;
+	}
+
+	/**
+	 * Gets the save map menu item.
+	 *
+	 * @return the save map menu item
+	 */
+	public JMenuItem getSaveMapMenuItem() {
+		return saveMapMenuItem;
+	}
+
+	/**
+	 * Gets the load map menu item.
+	 *
+	 * @return the load map menu item
+	 */
+	public JMenuItem getLoadMapMenuItem() {
+		return loadMapMenuItem;
+	}
+
+	/**
+	 * Gets the display map menu item.
+	 *
+	 * @return the display map menu item
+	 */
+	public JMenuItem getDisplayMapMenuItem() {
+		return displayMapMenuItem;
+	}
+
+	/**
+	 * Gets the a star menu.
+	 *
+	 * @return the a star menu
+	 */
+	public JMenu getaStarMenu() {
+		return aStarMenu;
+	}
+
+	/**
+	 * Gets the show a star set.
+	 *
+	 * @return the show a star set
+	 */
+	public JCheckBoxMenuItem getShowAStarSet() {
+		return showAStarSet;
+	}
+
+	/**
+	 * Gets the show a star path.
+	 *
+	 * @return the show a star path
+	 */
+	public JCheckBoxMenuItem getShowAStarPath() {
+		return showAStarPath;
+	}
+
+	/**
+	 * Gets the q learning menu.
+	 *
+	 * @return the q learning menu
+	 */
+	public JMenu getqLearningMenu() {
+		return qLearningMenu;
+	}
+
+	/**
+	 * Gets the show q visited set.
+	 *
+	 * @return the show q visited set
+	 */
+	public JCheckBoxMenuItem getShowQVisitedSet() {
+		return showQVisitedSet;
+	}
+
+	/**
+	 * Gets the q trial label.
+	 *
+	 * @return the q trial label
+	 */
+	public JLabel getqTrialLabel() {
+		return qTrialLabel;
+	}
+
+	/**
+	 * Gets the q trials slider.
+	 *
+	 * @return the q trials slider
+	 */
+	public JSlider getqTrialsSlider() {
+		return qTrialsSlider;
+	}
+
+	/**
+	 * Gets the a star console.
+	 *
+	 * @return the a star console
+	 */
+	public JTextArea getaStarConsole() {
+		return aStarConsole;
+	}
+
+	/**
+	 * Gets the q learn console.
+	 *
+	 * @return the q learn console
+	 */
+	public JTextArea getqLearnConsole() {
+		return qLearnConsole;
+	}
+
+	/**
+	 * Gets the cell action listener.
+	 *
+	 * @return the cell action listener
+	 */
 	public CellButtonListener getCellActionListener() {
 		return cellActionListener;
 	}
 
-	public void setCellActionListener(CellButtonListener cellActionListener) {
-		this.cellActionListener = cellActionListener;
-	}
-
-	public void setMainApp(TAIQLearningApp mainApp) {
-		this.mainApp = mainApp;
-	}
-
-	public JTextArea getInfoConsole() {
-		return infoConsole;
-	}
-
-	public void setInfoConsole(JTextArea infoConsole) {
-		this.infoConsole = infoConsole;
-	}
-
-	public boolean isEndReachable() {
-		return isEndReachable;
-	}
-
-	public void setEndReachable(boolean isEndReachable) {
-		this.isEndReachable = isEndReachable;
+	/**
+	 * Gets the main app.
+	 *
+	 * @return the main app
+	 */
+	public TAIQLearningApp getMainApp() {
+		return mainApp;
 	}
 
 	/**
-	 * Refresh della mappa completa.
-	 * 
-	 * @param charMap
-	 *            La matrice di caratteri fornente una rappresentazione
-	 *            testuale della mappa.
-	 * @param rowNumber
-	 *            Il numero di righe di tale matrice.
-	 * @param columnNumber
-	 *            Il numero di colonne di tale matrice.
+	 * Checks if A* star path has been learned.
+	 *
+	 * @return true, if is a star path learned
+	 */
+	public boolean isAStarPathLearned() {
+		return isAStarPathLearned;
+	}
+
+	/**
+	 * Checks if is end reachable.
+	 *
+	 * @return true, if is end reachable
+	 */
+	public boolean isEndReachable() {
+		return isEndReachable;
+	}
+	
+	public static void printOnConsoleAndLog(JTextArea console,String aMsg){
+		Logger.getLogger(TAIQLearningApp.LOGGERNAME).info(aMsg);
+		console.append(aMsg+System.getProperty("line.separator"));
+		console.setCaretPosition(console.getDocument().getLength());
+	}
+
+	
+	/**
+	 * Refresh map.
+	 *
+	 * @param rowNumber the row number
+	 * @param columnNumber the column number
 	 */
 	public void refreshMap(int rowNumber, int columnNumber){
 		
 		for(int i=0;i<rowNumber;i++){
 			for(int j=0; j<columnNumber; j++){
-				this.refreshSingleCell(i,j, this.mainApp.getqGridMap().getCell(i, j).getCellType(),this.mainApp.getqGridMap().getCell(i, j).getCellReward());		
+				this.map[i][j].refreshSingleCell(this.mainApp.getqGridMap().getCell(i, j).getCellType());		
 			}
 		}
 	}
 	
-	public void refreshDistanceMap(int rowNumber, int columnNumber){
+	/**
+	 * Refresh distance map.
+	 *
+	 * @param rowNumber the row number
+	 * @param columnNumber the column number
+	 */
+	/*public void refreshDistanceMap(int rowNumber, int columnNumber){
 		
 		for(int i=0;i<rowNumber;i++){
 			for(int j=0; j<columnNumber; j++){
@@ -442,144 +782,81 @@ public class MapGUI {
 				
 			}
 		}
-	}
+	}*/
 	
-	public void refreshMapQ(int rowNumber, int columnNumber){
-		for(int i=0;i<rowNumber;i++){
-			for(int j=0; j<columnNumber; j++){
-				this.refreshSingleCellQReward(i,j,this.mainApp.getqGridMap().getCell(i, j).getCellQValue()) ;
-				
-			}
-		}
-	}
 	
-	public void refreshMapReward(int rowNumber, int columnNumber){
-		
-		for(int i=0;i<rowNumber;i++){
-			for(int j=0; j<columnNumber; j++){
-				this.refreshSingleCellQReward(i,j,this.mainApp.getqGridMap().getCell(i, j).getCellReward()) ;
-				
-			}
-		}
-	}
-	
+	/**
+	 * Refresh two cells.
+	 *
+	 * @param firstCell the first cell
+	 * @param secondCell the second cell
+	 */
 	public void refreshTwoCells(MapCell firstCell,MapCell secondCell){
 		
-		this.refreshSingleCell(firstCell.getRowIndex(),firstCell.getColumnIndex(), this.mainApp.getqGridMap().getCell(firstCell.getRowIndex(), firstCell.getColumnIndex()).getCellType(),this.mainApp.getqGridMap().getCell(firstCell.getRowIndex(), firstCell.getColumnIndex()).getCellReward());		
-		this.refreshSingleCell(secondCell.getRowIndex(),secondCell.getColumnIndex(), this.mainApp.getqGridMap().getCell(secondCell.getRowIndex(), secondCell.getColumnIndex()).getCellType(),this.mainApp.getqGridMap().getCell(secondCell.getRowIndex(), secondCell.getColumnIndex()).getCellReward());
+		this.map[firstCell.getRowIndex()][firstCell.getColumnIndex()].refreshSingleCell( this.mainApp.getqGridMap().getCell(firstCell.getRowIndex(), firstCell.getColumnIndex()).getCellType());
+		this.map[secondCell.getRowIndex()][secondCell.getColumnIndex()].refreshSingleCell( this.mainApp.getqGridMap().getCell(secondCell.getRowIndex(), secondCell.getColumnIndex()).getCellType());
 		
 	}
 	
-	public void drawAStarResults(boolean aIsSet){
+	
+	/**
+	 * Draw a star results.
+	 *
+	 * @param aIsSet the a is set
+	 */
+	public void setAStarResults(boolean aIsSet){
 		
 		for(MapCell currCell : aIsSet?this.mainApp.getaStarGridMap().getaStarSet():this.mainApp.getaStarGridMap().getaStarPath()){
-			switch(currCell.getCellType()){
-			
-			case PORTAL1:
-			case PORTAL2:
-			case PORTAL3:
-			case PORTAL4:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("A*");
-							this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setHorizontalTextPosition(JButton.CENTER);
-		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setVerticalTextPosition(JButton.CENTER);
-		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setForeground(aIsSet?ASTARSETCOLOR:ASTARPATHCOLOR);
-		 					break;
-						 	
-			case BONUS:		
-			case MALUS:
-			case AGENT:
-			case ENDPOINT:
-			default:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("");
-					 	break;
-			}
-			
-			if(this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder() instanceof MatteBorder){
-				if(((MatteBorder) this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder()).getMatteColor().equals(QVISITEDSETCOLOR)){
-					if(!aIsSet){
-						this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARPATHQVISITEDSETBORDER);
-					}
-					else{
-						this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARSETQVISITEDSETBORDER);
-					}
-				}
-				if(((MatteBorder) this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder()).getMatteColor().equals(ASTARSETCOLOR)){
-					if(!aIsSet){
-						this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARPATHBORDER);
-					}
-				}
+			if(aIsSet){
+				this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setAStarSet(true);
 			}
 			else{
-				if(!(this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder() instanceof CompoundBorder)){
-					if(!aIsSet){
-						this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARPATHBORDER);
-					}
-					else{
-						this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARSETBORDER);
-					}
-				}
+				this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setAStarPath(true);
 			}
-			
-			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorderPainted(true);
-			
 		}
 	}
 	
-	
-	public void drawQResults(){
-		
-		for(MapCell currCell : this.mainApp.getqGridMap().getVisitedCells()){
-			switch(currCell.getCellType()){
-			
-			case PORTAL1:
-			case PORTAL2:
-			case PORTAL3:
-			case PORTAL4:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("Q");
-							this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setHorizontalTextPosition(JButton.CENTER);
-		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setVerticalTextPosition(JButton.CENTER);
-		 					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setForeground(QVISITEDSETCOLOR);
-		 					break;
-						 	
-			case BONUS:		
-			case MALUS:
-			case AGENT:
-			case ENDPOINT:
-			default:	this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setText("");
-					 	break;
-			}
-			
-			if(this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder() instanceof MatteBorder){
-				if(((MatteBorder) this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder()).getMatteColor().equals(ASTARPATHCOLOR)){
-					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARPATHQVISITEDSETBORDER);
-				}
-				
-				if(((MatteBorder) this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder()).getMatteColor().equals(ASTARSETCOLOR)){
-					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(ASTARSETQVISITEDSETBORDER);
-				}
-			}
-			else{
-				if(! (this.map[currCell.getRowIndex()][currCell.getColumnIndex()].getBorder() instanceof CompoundBorder)){
-					this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorder(QVISITEDSETBORDER);
-				}
-			}
-			this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setBorderPainted(true);
-			
-		}
-	}
 	/**
-	 * Refresh parziale della mappa
-	 * 
-	 * @param charMap
-	 *            La matrice di caratteri fornente una rappresentazione
-	 *            testuale della mappa.
-	 * @param attributesMap
-	 *            La matrice di interi rappresentante il valore numerico
-	 *            associato ad una cella della mappa, ove presente.
-	 *            (Id dinosauro oppure energia cella).
-	 * @param startCell
-	 *            La cella di partenza (in coordinate (x,y)).
-	 * @param diffRow
-	 *            Il numero di righe da ridisegnare a partire dalla cella di partenza.
-	 * @param diffColumn
-	 *            Il numero di righe da ridisegnare a partire dalla cella di partenza.
+	 * Draw a star results.
+	 *
+	 * @param aIsSet the a is set
+	 */
+	public void setQLearningResults(boolean aIsSet){
+		//Modify when QPath is ready!!!
+		for(MapCell currCell : this.mainApp.getqGridMap().getVisitedCells()){
+			if(aIsSet){
+				this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setQLearningSet(true);
+			}
+			else{
+				//this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setAStarPath(true);
+			}
+		}
+	}
+	
+	public void drawPaths(){
+		if(showAStarPath.isSelected()){
+			setAStarResults(false);
+		}
+		if(showAStarSet.isSelected()){
+			setAStarResults(true);
+		}
+		if(showQVisitedSet.isSelected()){
+			setQLearningResults(true);
+		}
+		
+		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
+			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
+				map[i][j].drawPath();
+			}
+		}
+	}
+	
+		
+	
+	/**
+	 * Refresh map.
+	 *
+	 * @param refreshCells the refresh cells
 	 */
 	public void refreshMap(ArrayList<MapCell> refreshCells)
 	{
@@ -587,31 +864,31 @@ public class MapGUI {
 		while(iter.hasNext())
 		{
 			MapCell curCell = iter.next();
-			this.refreshSingleCell(curCell.getRowIndex(), curCell.getColumnIndex(), this.mainApp.getqGridMap().getCell(curCell.getRowIndex(), curCell.getColumnIndex()).getCellType(), this.mainApp.getqGridMap().getCell(curCell.getRowIndex(), curCell.getColumnIndex()).getCellReward());
+			this.map[curCell.getRowIndex()][curCell.getColumnIndex()].refreshSingleCell(this.mainApp.getqGridMap().getCell(curCell.getRowIndex(), curCell.getColumnIndex()).getCellType());
 		}
 	}
 
 	
 	
+	/**
+	 * Refresh partial map.
+	 *
+	 * @param refreshCells the refresh cells
+	 */
 	public void refreshPartialMap(ArrayList<AStarCell> refreshCells){
-		int i = 0;
-		int j = 0;
-		
 		for(MapCell iterCell: refreshCells){
-			i = iterCell.getRowIndex();
-			j = iterCell.getColumnIndex();
-				this.refreshSingleCell(i,j, this.mainApp.getqGridMap().getCell(i, j).getCellType(),this.mainApp.getqGridMap().getCell(i, j).getCellReward());		
+			this.map[iterCell.getRowIndex()][iterCell.getColumnIndex()].refreshSingleCell(this.mainApp.getqGridMap().getCell(iterCell.getRowIndex(), iterCell.getColumnIndex()).getCellType());
 			}
 	}
 	
+	/**
+	 * Refresh partial map q.
+	 *
+	 * @param refreshCells the refresh cells
+	 */
 	public void refreshPartialMapQ(ArrayList<MapCell> refreshCells){
-		int i = 0;
-		int j = 0;
-		
 		for(MapCell iterCell: refreshCells){
-			i = iterCell.getRowIndex();
-			j = iterCell.getColumnIndex();
-				this.refreshSingleCell(i,j, this.mainApp.getqGridMap().getCell(i, j).getCellType(),this.mainApp.getqGridMap().getCell(i, j).getCellReward());		
+			this.map[iterCell.getRowIndex()][iterCell.getColumnIndex()].refreshSingleCell(this.mainApp.getqGridMap().getCell(iterCell.getRowIndex(), iterCell.getColumnIndex()).getCellType());
 			}
 	}
 	
@@ -643,111 +920,20 @@ public class MapGUI {
 		
 	}
 	
-	/**
-	 * Refresh della singola cella.
-	 * 
-	 * @param row
-	 *            L' indice di riga identificante la cella.
-	 * @param column
-	 *            L' indice di colonna identificante la cella.
-	 * @param type
-	 *            Il tipo della cella.
-	 * @param attribute
-	 *            L'eventuale attributo numerico associato alla cella,
-	 *            altrimenti 0 se non presente.
-	 */
-	public void refreshSingleCell(int aRow, int aColumn,CellType aType,double aAttribute){
-		
-		JButton currentButton = this.map[aRow][aColumn];
-		Dimension iconDimension = null;
-		String actionCommand = null;
-		Double rewardValue = new Double(aAttribute);
-		
-		switch(aType){
-		case PLAIN:currentButton.setIcon(PLAINICON);
-		iconDimension = new Dimension(PLAINICON.getIconHeight(),PLAINICON.getIconWidth());
-		currentButton.setToolTipText("Floor");
-		break;
-
-		case AGENT:currentButton.setIcon(AGENTICON);
-		iconDimension = new Dimension(AGENTICON.getIconHeight(),AGENTICON.getIconWidth());
-		currentButton.setToolTipText("Agent");
-		break;
-
-		case BONUS:currentButton.setIcon(BONUSICON);
-		iconDimension = new Dimension(BONUSICON.getIconHeight(),BONUSICON.getIconWidth());
-		currentButton.setToolTipText("Bonus");
-		break;
-
-		case MALUS:currentButton.setIcon(MALUSICON);
-		iconDimension = new Dimension(MALUSICON.getIconHeight(),MALUSICON.getIconWidth());
-		currentButton.setToolTipText("Malus");
-		break;
-		/*case STARTPOINT:if(attribute %2 == 0){ 
-				 	currentButton.setIcon(HERBIVOROUSICON);
-				 	iconDimension = new Dimension(HERBIVOROUSICON.getIconHeight(),HERBIVOROUSICON.getIconWidth());
-				 	currentButton.setToolTipText("Terreno\ncon\nErbivoro");
-				 	break;
-				 }
-				 else{
-					 currentButton.setIcon(CARNIVOROUSICON);
-					 iconDimension = new Dimension(CARNIVOROUSICON.getIconHeight(),CARNIVOROUSICON.getIconWidth());
-					 currentButton.setToolTipText("Terreno\ncon\nErbivoro");
-					 break;
-				 }*/
-
-
-		case ENDPOINT:	currentButton.setIcon(ENDPOINTICON);
-		iconDimension = new Dimension(ENDPOINTICON.getIconHeight(),ENDPOINTICON.getIconWidth());
-		currentButton.setToolTipText("Goal");
-		break;
-
-		case WALL:	currentButton.setIcon(WALLICON);
-		iconDimension = new Dimension(WALLICON.getIconHeight(),WALLICON.getIconWidth());
-		currentButton.setToolTipText("Wall");
-		break;
-
-		case PORTAL1:currentButton.setIcon(PORTAL1ICON);
-		iconDimension = new Dimension(PORTAL1ICON.getIconHeight(),PORTAL1ICON.getIconWidth());
-		currentButton.setToolTipText("Portal-Type 1");
-		break;
-
-		case PORTAL2:currentButton.setIcon(PORTAL2ICON);
-		iconDimension = new Dimension(PORTAL2ICON.getIconHeight(),PORTAL2ICON.getIconWidth());
-		currentButton.setToolTipText("Portal-Type 2");
-		break;
-
-		case PORTAL3:currentButton.setIcon(PORTAL3ICON);
-		iconDimension = new Dimension(PORTAL3ICON.getIconHeight(),PORTAL3ICON.getIconWidth());
-		currentButton.setToolTipText("Portal-Type 3");
-		break;
-
-		case PORTAL4:currentButton.setIcon(PORTAL4ICON);
-		iconDimension = new Dimension(PORTAL4ICON.getIconHeight(),PORTAL4ICON.getIconWidth());
-		currentButton.setToolTipText("Portal-Type 4");
-		break;
-
-
-		default:break;
-		}
-		
-		actionCommand = new String(aRow+ATTRIBUTEDELIMITER+aColumn+ATTRIBUTEDELIMITER+rewardValue.toString());
-		currentButton.setText("");
-		currentButton.setBorder(BorderFactory.createEmptyBorder());
-		currentButton.setBorderPainted(false);
-		currentButton.setPreferredSize(iconDimension);
-		currentButton.setContentAreaFilled(false);
-		currentButton.setActionCommand(actionCommand);
-		//currentButton.repaint();
-		//currentButton.revalidate();
-	}
 	
-	public void refreshSingleCellQReward(int aRow, int aColumn,double aAttribute){
+	
+	/**
+	 * Refresh single cell q reward.
+	 *
+	 * @param aRow the a row
+	 * @param aColumn the a column
+	 * @param aAttribute the a attribute
+	 */
+	/*public void refreshSingleCellQReward(int aRow, int aColumn,double aAttribute){
 		
 		JButton currentButton = this.map[aRow][aColumn];
 		Dimension iconDimension = null;
 		String actionCommand = null;
-		//Double rewardQValue = new Double(aAttribute);
 		
 		currentButton.setIcon(PLAINQRICON);
 		currentButton.setBackground(Color.WHITE);
@@ -762,48 +948,51 @@ public class MapGUI {
 		currentButton.setPreferredSize(iconDimension);
 		currentButton.setContentAreaFilled(false);
 		currentButton.setActionCommand(actionCommand);
-	}
+	}*/
 
 	
-	public void refreshSingleCellQReward(int aRow, int aColumn,int aAttribute){
-		
-		JButton currentButton = this.map[aRow][aColumn];
-		Dimension iconDimension = null;
-		String actionCommand = null;
-		//Double rewardQValue = new Double(aAttribute);
-		
-		currentButton.setIcon(PLAINQRICON);
-		currentButton.setBackground(Color.WHITE);
-		iconDimension = new Dimension(PLAINICON.getIconHeight(),PLAINICON.getIconWidth());
-		//currentButton.setText(Double.toString(aAttribute));
-		currentButton.setText(Integer.toString(aAttribute));
-		currentButton.setHorizontalTextPosition(JButton.CENTER);
-		currentButton.setVerticalTextPosition(JButton.CENTER);
-		currentButton.setForeground(Color.WHITE);
-		
-		actionCommand = new String(aRow+ATTRIBUTEDELIMITER+aColumn+ATTRIBUTEDELIMITER+Integer.toString(aAttribute));
-		currentButton.setBorderPainted(false);
-		currentButton.setPreferredSize(iconDimension);
-		currentButton.setContentAreaFilled(false);
-		currentButton.setActionCommand(actionCommand);
-	}
 
 	
+	/**
+	 * The listener interface for receiving actionElements events.
+	 * The class that is interested in processing a actionElements
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addActionElementsListener<code> method. When
+	 * the actionElements event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see ActionElementsEvent
+	 */
 	class ActionElementsListener implements ActionListener,ItemListener,ChangeListener{
 		
+		/** The main app. */
 		private TAIQLearningApp mainApp;
 		
 		
+		/**
+		 * Instantiates a new action elements listener.
+		 *
+		 * @param mainApp the main app
+		 */
 		public ActionElementsListener(TAIQLearningApp mainApp) {
 			super();
 			this.mainApp = mainApp;
 		}
 
+		/**
+		 * Checks if is map displayed.
+		 *
+		 * @return true, if is map displayed
+		 */
 		public boolean isMapDisplayed(){
 			return this.mainApp.getMapGUI().getMap()[0][0].getText().equals("");
 		}
 
-		@Override
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
+
 		public void actionPerformed(ActionEvent e) {
 			String listenedCommand = e.getActionCommand();
 			String response = null;
@@ -826,7 +1015,8 @@ public class MapGUI {
 				showAStarSet.setEnabled(isAStarPathLearned);
 				showAStarSet.setSelected(false);
 				displayDistanceMapButton.setEnabled(isAStarPathLearned);
-				infoConsole.setText("");
+				aStarConsole.setText("");
+				qLearnConsole.setText("");
 			}
 			
 			if(listenedCommand.equals("Save Map")){
@@ -870,20 +1060,8 @@ public class MapGUI {
 			
 			if(listenedCommand.equals("Display distance map")){
 				//if(isMapDisplayed()){
-				this.mainApp.getMapGUI().refreshDistanceMap(QGrid.MAPHEIGHT,QGrid.MAPWIDTH );
+				//this.mainApp.getMapGUI().refreshDistanceMap(QGrid.MAPHEIGHT,QGrid.MAPWIDTH );
 				//}
-			}
-			
-			if(listenedCommand.equals("Display r values")){
-				//if(isMapDisplayed()){
-				this.mainApp.getMapGUI().refreshMapReward(QGrid.MAPHEIGHT,QGrid.MAPWIDTH );
-				//}
-			}
-			
-			if(listenedCommand.equals("Display Q values")){
-				
-				this.mainApp.getMapGUI().refreshMapQ(QGrid.MAPHEIGHT,QGrid.MAPWIDTH );
-					
 			}
 			
 			/*if(listenedCommand.equals("Start learning")){
@@ -911,22 +1089,23 @@ public class MapGUI {
 			
 			if(listenedCommand.equals("Start learning")){
 				
-				if(QLearningThread != null)
-				{
-					if(!QLearningThread.isAlive())
+				if(qTrialsSlider.getValue() > 0){
+					if(QLearningThread != null)
+					{
+						if(!QLearningThread.isAlive())
+						{
+							QLearningThread = new QLearnThread(mainApp, mainApp.getqGridMap());
+							QLearningThread.setRepeat(qTrialsSlider.getValue());
+							QLearningThread.start();
+						}
+					}
+					else
 					{
 						QLearningThread = new QLearnThread(mainApp, mainApp.getqGridMap());
 						QLearningThread.setRepeat(qTrialsSlider.getValue());
 						QLearningThread.start();
 					}
 				}
-				else
-				{
-					QLearningThread = new QLearnThread(mainApp, mainApp.getqGridMap());
-					QLearningThread.setRepeat(qTrialsSlider.getValue());
-					QLearningThread.start();
-				}
-				
 			}
 			
 			if(listenedCommand.equals("Stop learning")){		
@@ -938,77 +1117,50 @@ public class MapGUI {
 			
 		}
 
+		/* (non-Javadoc)
+		 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+		 */
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			 Object source = e.getItemSelectable();
 			 
 		        if (e.getItemSelectable().equals(showAStarPath)) {
 		            if(e.getStateChange() == ItemEvent.SELECTED){
-		            	if(showAStarSet.isSelected()){
-			            	this.mainApp.getMapGUI().drawAStarResults(true);
-			            }
-		            	if (showQVisitedSet.isSelected()) {
-		            		this.mainApp.getMapGUI().drawQResults();
-						}
-		            	this.mainApp.getMapGUI().drawAStarResults(false);
+		            	drawPaths();
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
 		            	this.mainApp.getMapGUI().refreshPartialMap(this.mainApp.getaStarGridMap().getaStarPath());
-		            	if(showAStarSet.isSelected()){
-			            	this.mainApp.getMapGUI().drawAStarResults(true);
-			            }
-		            	if (showQVisitedSet.isSelected()) {
-		            		this.mainApp.getMapGUI().drawQResults();
-						}
+		            	drawPaths();
 		            }
 		            
 		        }
 		        
 		        if (e.getItemSelectable().equals(showAStarSet)) {
 		        	if(e.getStateChange() == ItemEvent.SELECTED){
-		            	if(showAStarPath.isSelected()){
-			            	this.mainApp.getMapGUI().drawAStarResults(false);
-			            }
-		            	if (showQVisitedSet.isSelected()) {
-		            		this.mainApp.getMapGUI().drawQResults();
-						}
-		            	this.mainApp.getMapGUI().drawAStarResults(true);
+		            	drawPaths();
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
 		            	this.mainApp.getMapGUI().refreshPartialMap(this.mainApp.getaStarGridMap().getaStarSet());
-		            	if(showAStarPath.isSelected()){
-			            	this.mainApp.getMapGUI().drawAStarResults(false);
-			            }
-		            	if (showQVisitedSet.isSelected()) {
-		            		this.mainApp.getMapGUI().drawQResults();
-						}
+		            	drawPaths();
 		            }
 		            
 		        }
 			
 		        if (e.getItemSelectable().equals(showQVisitedSet)) {
 		        	if(e.getStateChange() == ItemEvent.SELECTED){
-		            	if(showAStarPath.isSelected()){
-			            	this.mainApp.getMapGUI().drawAStarResults(false);
-			            }
-		            	if(showAStarSet.isSelected()){
-			            	this.mainApp.getMapGUI().drawAStarResults(true);
-			            }
-		            	this.mainApp.getMapGUI().drawQResults();
+		        		drawPaths();
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
 		            	this.mainApp.getMapGUI().refreshPartialMapQ(this.mainApp.getqGridMap().getVisitedCells());
-		            	if(showAStarPath.isSelected()){
-			            	this.mainApp.getMapGUI().drawAStarResults(false);
-			            }
-		            	if(showAStarSet.isSelected()){
-			            	this.mainApp.getMapGUI().drawAStarResults(true);
-			            }
+		            	drawPaths();
 		            }
 		            
 		        }
 		}
 
+		/* (non-Javadoc)
+		 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
+		 */
 		@Override
 		public void stateChanged(ChangeEvent e) {
 			 JSlider source = (JSlider)e.getSource();
@@ -1019,38 +1171,73 @@ public class MapGUI {
 		}
 	}
 	
-	class CellButtonListener implements ActionListener{
+	/**
+	 * The listener interface for receiving cellButton events.
+	 * The class that is interested in processing a cellButton
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addCellButtonListener<code> method. When
+	 * the cellButton event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see CellButtonEvent
+	 */
+	public class CellButtonListener implements ActionListener{
 		
+		/** The main app. */
 		private TAIQLearningApp mainApp;
+		
+		/** The row. */
 		private int row;
+		
+		/** The column. */
 		private int column;
 		
 		
+		/**
+		 * Instantiates a new cell button listener.
+		 *
+		 * @param mainApp the main app
+		 */
 		public CellButtonListener(TAIQLearningApp mainApp) {
 			super();
 			this.mainApp = mainApp;
 		}
 
 
-		@Override
+		
 		public void actionPerformed(ActionEvent e) {
 			String listenedCommand = e.getActionCommand(); 
 			parseActionCommand(listenedCommand);
-			MapCell currCell = this.mainApp.getaStarGridMap().getCell(this.row, this.column);
-			this.mainApp.getMapGUI().getInfoConsole().append("Reachable Cells from" + "("+this.row+","+this.column+"):\n");
-			for(MapCell reachableCell : currCell.getReachableCells())
+			AStarCell currACell = this.mainApp.getaStarGridMap().getCell(this.row, this.column);
+			QGridCell currQCell = this.mainApp.getqGridMap().getCell(this.row, this.column);
+			mainApp.getMapGUI().getaStarConsole().append("Reachable Cells from" + "("+this.row+","+this.column+"):\n");
+			for(MapCell reachableCell : currACell.getReachableCells())
 			{
 				AStarCell aCell = (AStarCell)reachableCell;
-				this.mainApp.getMapGUI().getInfoConsole().append("("+reachableCell.getRowIndex()+","+reachableCell.getColumnIndex()+") - "+"h: "+new Double(aCell.getHeuristicDistanceFromGoal()+aCell.getDistanceFromAgent())+"\n");
+				mainApp.getMapGUI().getaStarConsole().append("("+reachableCell.getRowIndex()+","+reachableCell.getColumnIndex()+") - "+"d: "+aCell.getDistanceFromAgent()+"- h: "+new Double(aCell.getHeuristicDistanceFromGoal())+"\n");
+			}
+			mainApp.getMapGUI().getqLearnConsole().append("Reachable Cells from" + "("+this.row+","+this.column+"):\n");
+			for(MapCell reachableCell : currQCell.getReachableCells())
+			{
+				QGridCell aCell = (QGridCell)reachableCell;
+				mainApp.getMapGUI().getqLearnConsole().append("("+reachableCell.getRowIndex()+","+reachableCell.getColumnIndex()+") - "+"r: "+aCell.getCellReward()+"- Q: "+aCell.getCellQValue()+"\n");
 			}
 		}
 		
+		/**
+		 * Parses the action command.
+		 *
+		 * @param actionCommand the action command
+		 */
 		public void parseActionCommand(String actionCommand){
-			String[] firstSplit = actionCommand.split(ATTRIBUTEDELIMITER);
+			String[] firstSplit = actionCommand.split(GUICell.getAttributedelimiter());
 			this.row = Integer.parseInt(firstSplit[0]);
 			this.column = Integer.parseInt(firstSplit[1]);
 		}
 		
 	}
-    }
+	
+	
+}
 
