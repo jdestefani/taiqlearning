@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -53,7 +54,7 @@ public class TAIQLearningApp {
 	private QLearning aQlearning;
 	
 	/** The Constant IMAGEPATH. */
-	private final static String IMAGEPATH = new String("../img/");
+	private final static String IMAGEPATH = new String("img/");
 	
 	/** The Constant LOGGERNAME. */
 	public final static String LOGGERNAME = new String("appLogger");
@@ -236,6 +237,7 @@ public class TAIQLearningApp {
 	public void setupLogger(){
 		Handler fileHandler = null;
 		try {
+			new File("./log").mkdirs();
 			fileHandler = new FileHandler("./log/appLog.log");
 		} catch (SecurityException e) {
 			e.printStackTrace();
