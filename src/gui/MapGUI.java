@@ -32,12 +32,9 @@ import javax.swing.JSlider;
 import javax.swing.JTextArea;
 
 import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import ai.AStarGrid;
 import ai.AStarThread;
 import ai.QGrid;
 import ai.QLearnThread;
@@ -45,7 +42,6 @@ import ai.QLearning;
 import ai.UnreachableEndException;
 
 import data.AStarCell;
-import data.CellType;
 import data.MapCell;
 import data.QGridCell;
 
@@ -270,7 +266,7 @@ public class MapGUI {
 
 		generateMapButton = new JButton("Generate Map");
 		generateMapButton.addActionListener(new ActionElementsListener(this.mainApp));
-		learnAStarPathButton = new JButton("Learn A* Path");
+		learnAStarPathButton = new JButton("Compute A* Path");
 		learnAStarPathButton.addActionListener(new ActionElementsListener(this.mainApp));
 		displayQStartButton = new JButton("Start learning");
 		displayQStartButton.addActionListener(new ActionElementsListener(this.mainApp));
@@ -1043,7 +1039,6 @@ public class MapGUI {
 
 		public void actionPerformed(ActionEvent e) {
 			String listenedCommand = e.getActionCommand();
-			String response = null;
 			
 			if(listenedCommand.equals("Generate Map")){
 				try {
@@ -1100,7 +1095,7 @@ public class MapGUI {
 				
 			}
 			
-			if(listenedCommand.equals("Learn A* Path")){
+			if(listenedCommand.equals("Compute A* Path")){
 				this.mainApp.getaStarPathfinder().execute();
 				isAStarPathLearned = true;
 				showAStarPath.setEnabled(isAStarPathLearned);
@@ -1172,7 +1167,6 @@ public class MapGUI {
 		 */
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			 Object source = e.getItemSelectable();
 			 
 		        if (e.getItemSelectable().equals(showAStarPath)) {
 		            if(e.getStateChange() == ItemEvent.SELECTED){
