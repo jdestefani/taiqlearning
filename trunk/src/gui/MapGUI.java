@@ -37,7 +37,8 @@ import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import ai.AStarPathFinder;
+import ai.AStarGrid;
+import ai.AStarThread;
 import ai.QGrid;
 import ai.QLearnThread;
 import ai.QLearning;
@@ -50,6 +51,7 @@ import data.QGridCell;
 
 import main.TAIQLearningApp;
 import gui.GUICell;
+
 /**
  * The Class MapGUI.
  */
@@ -85,9 +87,13 @@ public class MapGUI {
 	/** The a star action panel. */
 	private JPanel aStarActionPanel;
 	
+	/** The info panel. */
 	private JPanel infoPanel;
 	
+	/** The a star info panel. */
 	private JPanel aStarInfoPanel;
+	
+	/** The q learn info panel. */
 	private JPanel qLearnInfoPanel;
 	
 	/** The console panel. */
@@ -136,7 +142,7 @@ public class MapGUI {
 	/** The a star menu. */
 	private JMenu aStarMenu;
 	
-	/** The display distance map button. */
+	/** The display distance map. */
 	private JCheckBoxMenuItem displayDistanceMap;
 	
 	/** The show a star set. */
@@ -151,13 +157,22 @@ public class MapGUI {
 	/** The show q visited set. */
 	private JCheckBoxMenuItem showQVisitedSet;
 	
+	/** The show q visited path. */
 	private JCheckBoxMenuItem showQVisitedPath;
 	
+	/** The about menu item. */
 	private JMenuItem aboutMenuItem;
 	
+	/** The a star path info. */
 	private JLabel aStarPathInfo;
+	
+	/** The a star set info. */
 	private JLabel aStarSetInfo;
+	
+	/** The q learning visited info. */
 	private JLabel qLearningVisitedInfo;
+	
+	/** The q learning path info. */
 	private JLabel qLearningPathInfo;
 	
 	
@@ -191,10 +206,14 @@ public class MapGUI {
 	/** The Constant MAXTICKSSPACING. */
 	private static final int MAXTICKSSPACING = 10;
 	
+	/** The Constant ABOUTIMG. */
 	private static final ImageIcon ABOUTIMG = TAIQLearningApp.importImage(new String("AboutTAI.jpg"));
 	
-	private final static String PATHINFOTEXT = new String("Path Length: ");
-	private final static String SETINFOTEXT = new String("Visited Cells: ");
+	/** The Constant PATHINFOTEXT. */
+	public final static String PATHINFOTEXT = new String("Path Length: ");
+	
+	/** The Constant SETINFOTEXT. */
+	public final static String SETINFOTEXT = new String("Visited Cells: ");
 	
 	/** The is a star path learned. */
 	private boolean isAStarPathLearned;
@@ -323,8 +342,8 @@ public class MapGUI {
 		aStarInfoPanel.setBorder(aStarActionPanelBorder);
 		aStarInfoPanel.setLayout(new BoxLayout(aStarInfoPanel, BoxLayout.Y_AXIS));
 		
-		aStarSetInfo = new JLabel(SETINFOTEXT);
-		aStarPathInfo = new JLabel(PATHINFOTEXT);
+		aStarSetInfo = new JLabel(SETINFOTEXT+"ND");
+		aStarPathInfo = new JLabel(PATHINFOTEXT+"ND");
 		
 		aStarInfoPanel.add(aStarSetInfo);
 		aStarInfoPanel.add(aStarPathInfo);		
@@ -335,8 +354,8 @@ public class MapGUI {
 		qLearnInfoPanel.setBorder(qLearningActionPanelBorder);
 		qLearnInfoPanel.setLayout(new BoxLayout(qLearnInfoPanel, BoxLayout.Y_AXIS));
 		
-		qLearningVisitedInfo = new JLabel(SETINFOTEXT);
-		qLearningPathInfo = new JLabel(PATHINFOTEXT);
+		qLearningVisitedInfo = new JLabel(SETINFOTEXT+"ND");
+		qLearningPathInfo = new JLabel(PATHINFOTEXT+"ND");
 		
 		qLearnInfoPanel.add(qLearningVisitedInfo);
 		qLearnInfoPanel.add(qLearningPathInfo);
@@ -777,7 +796,7 @@ public class MapGUI {
 	}
 
 	/**
-	 * Checks if A* star path has been learned.
+	 * Checks if is a star path learned.
 	 *
 	 * @return true, if is a star path learned
 	 */
@@ -794,6 +813,12 @@ public class MapGUI {
 		return isEndReachable;
 	}
 	
+	/**
+	 * Prints the on console and log.
+	 *
+	 * @param console the console
+	 * @param aMsg the a msg
+	 */
 	public static void printOnConsoleAndLog(JTextArea console,String aMsg){
 		Logger.getLogger(TAIQLearningApp.LOGGERNAME).info(aMsg);
 		console.append(aMsg+System.getProperty("line.separator"));
@@ -815,7 +840,7 @@ public class MapGUI {
 					this.map[i][j].refreshSingleCell(this.mainApp.getqGridMap().getCell(i, j).getCellType());
 				}
 				else{
-					this.map[i][j].refreshSingleCellDistance(this.mainApp.getaStarGridMap().getCell(i, j).getDistanceFromAgent()) ;
+					this.map[i][j].refreshSingleCellDistance(this.mainApp.getaStarPathfinder().getaStarGrid().getCell(i, j).getDistanceFromAgent()) ;
 				}
 			}
 		}
@@ -831,7 +856,7 @@ public class MapGUI {
 		
 		for(int i=0;i<rowNumber;i++){
 			for(int j=0; j<columnNumber; j++){
-				this.map[i][j].refreshSingleCellDistance(this.mainApp.getaStarGridMap().getCell(i, j).getDistanceFromAgent()) ;
+				this.map[i][j].refreshSingleCellDistance(this.mainApp.getaStarPathfinder().getaStarGrid().getCell(i, j).getDistanceFromAgent()) ;
 			}
 		}
 	}
@@ -849,8 +874,8 @@ public class MapGUI {
 			this.map[secondCell.getRowIndex()][secondCell.getColumnIndex()].refreshSingleCell( this.mainApp.getqGridMap().getCell(secondCell.getRowIndex(), secondCell.getColumnIndex()).getCellType());
 		}
 		else{
-			this.map[firstCell.getRowIndex()][firstCell.getColumnIndex()].refreshSingleCellDistance(this.mainApp.getaStarGridMap().getCell(firstCell.getRowIndex(), firstCell.getColumnIndex()).getDistanceFromAgent());
-			this.map[secondCell.getRowIndex()][secondCell.getColumnIndex()].refreshSingleCellDistance(this.mainApp.getaStarGridMap().getCell(secondCell.getRowIndex(), secondCell.getColumnIndex()).getDistanceFromAgent());
+			this.map[firstCell.getRowIndex()][firstCell.getColumnIndex()].refreshSingleCellDistance(this.mainApp.getaStarPathfinder().getaStarGrid().getCell(firstCell.getRowIndex(), firstCell.getColumnIndex()).getDistanceFromAgent());
+			this.map[secondCell.getRowIndex()][secondCell.getColumnIndex()].refreshSingleCellDistance(this.mainApp.getaStarPathfinder().getaStarGrid().getCell(secondCell.getRowIndex(), secondCell.getColumnIndex()).getDistanceFromAgent());
 		}
 		
 		
@@ -858,13 +883,13 @@ public class MapGUI {
 	
 	
 	/**
-	 * Draw a star results.
+	 * Sets the a star results.
 	 *
-	 * @param aIsSet the a is set
+	 * @param aIsSet the new a star results
 	 */
 	public void setAStarResults(boolean aIsSet){
 		
-		for(MapCell currCell : aIsSet?this.mainApp.getaStarGridMap().getaStarSet():this.mainApp.getaStarGridMap().getaStarPath()){
+		for(MapCell currCell : aIsSet?this.mainApp.getaStarPathfinder().getaStarSet():this.mainApp.getaStarPathfinder().getaStarPath()){
 			if(aIsSet){
 				this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setAStarSet(true);
 			}
@@ -875,9 +900,9 @@ public class MapGUI {
 	}
 	
 	/**
-	 * Draw a star results.
+	 * Sets the q learning results.
 	 *
-	 * @param aIsSet the a is set
+	 * @param aIsSet the new q learning results
 	 */
 	public void setQLearningResults(boolean aIsSet){
 		//Modify when QPath is ready!!!
@@ -891,6 +916,9 @@ public class MapGUI {
 		}
 	}
 	
+	/**
+	 * Draw paths.
+	 */
 	public void drawPaths(){
 		if(showAStarPath.isSelected()){
 			setAStarResults(false);
@@ -926,7 +954,7 @@ public class MapGUI {
 				this.map[curCell.getRowIndex()][curCell.getColumnIndex()].refreshSingleCell(this.mainApp.getqGridMap().getCell(curCell.getRowIndex(), curCell.getColumnIndex()).getCellType());
 			}
 			else{
-				this.map[curCell.getRowIndex()][curCell.getColumnIndex()].refreshSingleCellDistance(this.mainApp.getaStarGridMap().getCell(curCell.getRowIndex(), curCell.getColumnIndex()).getDistanceFromAgent());
+				this.map[curCell.getRowIndex()][curCell.getColumnIndex()].refreshSingleCellDistance(this.mainApp.getaStarPathfinder().getaStarGrid().getCell(curCell.getRowIndex(), curCell.getColumnIndex()).getDistanceFromAgent());
 			}
 		}
 	}
@@ -944,7 +972,7 @@ public class MapGUI {
 				this.map[iterCell.getRowIndex()][iterCell.getColumnIndex()].refreshSingleCell(this.mainApp.getqGridMap().getCell(iterCell.getRowIndex(), iterCell.getColumnIndex()).getCellType());
 			}
 			else{
-				this.map[iterCell.getRowIndex()][iterCell.getColumnIndex()].refreshSingleCellDistance(this.mainApp.getaStarGridMap().getCell(iterCell.getRowIndex(), iterCell.getColumnIndex()).getDistanceFromAgent());
+				this.map[iterCell.getRowIndex()][iterCell.getColumnIndex()].refreshSingleCellDistance(this.mainApp.getaStarPathfinder().getaStarGrid().getCell(iterCell.getRowIndex(), iterCell.getColumnIndex()).getDistanceFromAgent());
 			}
 			}
 	}
@@ -960,37 +988,19 @@ public class MapGUI {
 			}
 	}
 	
-	/*public void refreshPartialMap(ArrayList<QGridCell> refreshCells){
-		int i = 0;
-		int j = 0;
 		
-		for(MapCell iterCell: refreshCells){
-			i = iterCell.getRowIndex();
-			j = iterCell.getColumnIndex();
-				this.refreshSingleCell(i,j, this.mainApp.getqGridMap().getCell(i, j).getCellType(),this.mainApp.getqGridMap().getCell(i, j).getCellReward());		
-			}
-	}*/
-		
-		/*Coordinates startCellGUI = new Coordinates(0,0);
-		
-		startCellGUI.XYtoRC(startCell.getRow(), startCell.getColumn());
-		
-		int i = 0, j = 0;
-		while(i<diffRow && (startCellGUI.getRow()-i)>=0){
-			j=0;
-			while(j<diffColumn && (startCellGUI.getColumn()+j)<40){				
-				this.refreshSingleCell(startCellGUI.getRow()-i,startCellGUI.getColumn()+j, CellType.PLAIN, attributesMap[i][j]);
-				j++;
-			}
-			i++;
-			
-		}
-		
-	}
 	
-	
-	
-	
+	/**
+	 * The listener interface for receiving actionElements events.
+	 * The class that is interested in processing a actionElements
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addActionElementsListener<code> method. When
+	 * the actionElements event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see ActionElementsEvent
+	 */
 	/**
 	 * The listener interface for receiving actionElements events.
 	 * The class that is interested in processing a actionElements
@@ -1039,7 +1049,7 @@ public class MapGUI {
 				try {
 				this.mainApp.setqGridMap(new QGrid());
 				this.mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT, QGrid.MAPWIDTH);
-				this.mainApp.setaStarGridMap(new AStarPathFinder(this.mainApp,this.mainApp.getqGridMap()));
+				this.mainApp.setaStarPathfinder(new AStarThread(this.mainApp));
 				isEndReachable = true;
 				} catch (UnreachableEndException e1) {
 					isEndReachable = false;
@@ -1091,14 +1101,11 @@ public class MapGUI {
 			}
 			
 			if(listenedCommand.equals("Learn A* Path")){
-				this.mainApp.getaStarGridMap().findAStarPath();
+				this.mainApp.getaStarPathfinder().execute();
 				isAStarPathLearned = true;
 				showAStarPath.setEnabled(isAStarPathLearned);
 				showAStarSet.setEnabled(isAStarPathLearned);
 				displayDistanceMap.setEnabled(isAStarPathLearned);
-				aStarSetInfo.setText(SETINFOTEXT+this.mainApp.getaStarGridMap().getaStarSet().size());
-				aStarPathInfo.setText(PATHINFOTEXT+this.mainApp.getaStarGridMap().getaStarPath().size());
-				
 			}
 			
 			
@@ -1172,7 +1179,7 @@ public class MapGUI {
 		            	drawPaths();
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
-		            	this.mainApp.getMapGUI().refreshPartialMap(this.mainApp.getaStarGridMap().getaStarPath());
+		            	this.mainApp.getMapGUI().refreshPartialMap(this.mainApp.getaStarPathfinder().getaStarPath());
 		            	drawPaths();
 		            }
 		            
@@ -1183,7 +1190,7 @@ public class MapGUI {
 		            	drawPaths();
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
-		            	this.mainApp.getMapGUI().refreshPartialMap(this.mainApp.getaStarGridMap().getaStarSet());
+		            	this.mainApp.getMapGUI().refreshPartialMap(this.mainApp.getaStarPathfinder().getaStarSet());
 		            	drawPaths();
 		            }
 		            
@@ -1227,6 +1234,78 @@ public class MapGUI {
 	}
 	
 	/**
+	 * Gets the a star path info.
+	 *
+	 * @return the a star path info
+	 */
+	public JLabel getaStarPathInfo() {
+		return aStarPathInfo;
+	}
+
+	/**
+	 * Sets the a star path info.
+	 *
+	 * @param aStarPathInfo the new a star path info
+	 */
+	public void setaStarPathInfo(JLabel aStarPathInfo) {
+		this.aStarPathInfo = aStarPathInfo;
+	}
+
+	/**
+	 * Gets the a star set info.
+	 *
+	 * @return the a star set info
+	 */
+	public JLabel getaStarSetInfo() {
+		return aStarSetInfo;
+	}
+
+	/**
+	 * Sets the a star set info.
+	 *
+	 * @param aStarSetInfo the new a star set info
+	 */
+	public void setaStarSetInfo(JLabel aStarSetInfo) {
+		this.aStarSetInfo = aStarSetInfo;
+	}
+
+	/**
+	 * Gets the q learning visited info.
+	 *
+	 * @return the q learning visited info
+	 */
+	public JLabel getqLearningVisitedInfo() {
+		return qLearningVisitedInfo;
+	}
+
+	/**
+	 * Sets the q learning visited info.
+	 *
+	 * @param qLearningVisitedInfo the new q learning visited info
+	 */
+	public void setqLearningVisitedInfo(JLabel qLearningVisitedInfo) {
+		this.qLearningVisitedInfo = qLearningVisitedInfo;
+	}
+
+	/**
+	 * Gets the q learning path info.
+	 *
+	 * @return the q learning path info
+	 */
+	public JLabel getqLearningPathInfo() {
+		return qLearningPathInfo;
+	}
+
+	/**
+	 * Sets the q learning path info.
+	 *
+	 * @param qLearningPathInfo the new q learning path info
+	 */
+	public void setqLearningPathInfo(JLabel qLearningPathInfo) {
+		this.qLearningPathInfo = qLearningPathInfo;
+	}
+
+	/**
 	 * The listener interface for receiving cellButton events.
 	 * The class that is interested in processing a cellButton
 	 * event implements this interface, and the object created
@@ -1261,10 +1340,13 @@ public class MapGUI {
 
 
 		
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		public void actionPerformed(ActionEvent e) {
 			String listenedCommand = e.getActionCommand(); 
 			parseActionCommand(listenedCommand);
-			AStarCell currACell = this.mainApp.getaStarGridMap().getCell(this.row, this.column);
+			AStarCell currACell = this.mainApp.getaStarPathfinder().getaStarGrid().getCell(this.row, this.column);
 			QGridCell currQCell = this.mainApp.getqGridMap().getCell(this.row, this.column);
 			mainApp.getMapGUI().getaStarConsole().append("Reachable Cells from" + "("+this.row+","+this.column+"):\n");
 			for(MapCell reachableCell : currACell.getReachableCells())

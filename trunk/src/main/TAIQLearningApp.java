@@ -19,7 +19,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import ai.AStarPathFinder;
+import ai.AStarGrid;
+import ai.AStarThread;
 import ai.QGrid;
 import ai.QLearning;
 import ai.UnreachableEndException;
@@ -46,7 +47,7 @@ public class TAIQLearningApp {
 	private QGrid qGridMap;
 	
 	/** The a star grid map. */
-	private AStarPathFinder aStarGridMap;
+	private AStarThread aStarPathfinder;
 	
 	/** The a qlearning. */
 	private QLearning aQlearning;
@@ -70,7 +71,7 @@ public class TAIQLearningApp {
 		appWindow = new JFrame();
 		try {
 			qGridMap = new QGrid();
-			aStarGridMap = new AStarPathFinder(this,this.qGridMap);
+			aStarPathfinder = new AStarThread(this);
 			aQlearning = new QLearning(this, this.qGridMap);
 			isEndReachable = true;
 		} catch (UnreachableEndException e) {
@@ -94,26 +95,15 @@ public class TAIQLearningApp {
 	}
 
 
-	/**
-	 * Gets the a star grid map.
-	 *
-	 * @return the a star grid map
-	 */
-	public AStarPathFinder getaStarGridMap() {
-		return aStarGridMap;
+
+	public AStarThread getaStarPathfinder() {
+		return aStarPathfinder;
 	}
 
 
-
-	/**
-	 * Sets the a star grid map.
-	 *
-	 * @param aStarGridMap the new a star grid map
-	 */
-	public void setaStarGridMap(AStarPathFinder aStarGridMap) {
-		this.aStarGridMap = aStarGridMap;
+	public void setaStarPathfinder(AStarThread aStarPathfinder) {
+		this.aStarPathfinder = aStarPathfinder;
 	}
-
 
 
 	/**
