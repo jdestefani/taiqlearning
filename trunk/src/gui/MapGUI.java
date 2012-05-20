@@ -902,15 +902,23 @@ public class MapGUI {
 	 */
 	public void setQLearningResults(boolean aIsSet){
 		//Modify when QPath is ready!!!
-		for(MapCell currCell : this.mainApp.getqGridMap().getVisitedCells()){
+		//mainApp.getaQlearning().calculateBestPath();
+		QLearning QL = new QLearning(mainApp, mainApp.getqGridMap());
+		
+		if(!aIsSet)
+			QL.calculateBestPath();
+		for(MapCell currCell : aIsSet?this.mainApp.getqGridMap().getVisitedCells():this.mainApp.getqGridMap().getHasBeenVisitedCells()){
 			if(aIsSet){
 				this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setQLearningSet(true);
 			}
 			else{
-				//this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setAStarPath(true);
+				this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setQLearningPath(true);
 			}
 		}
 	}
+	
+	
+	
 	
 	/**
 	 * Draw paths.
@@ -924,6 +932,9 @@ public class MapGUI {
 		}
 		if(showQVisitedSet.isSelected()){
 			setQLearningResults(true);
+		}
+		if(showQVisitedPath.isSelected()){
+			setQLearningResults(false);
 		}
 		
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
