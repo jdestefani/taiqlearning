@@ -92,6 +92,20 @@ public class QGrid implements GameGrid {
 	public ArrayList<MapCell> getVisitedCells() {
 		return visitedCells;
 	}
+	
+	
+	public ArrayList<MapCell> getHasBeenVisitedCells() {
+		ArrayList<MapCell> visitedC = new ArrayList<MapCell>();
+		
+		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
+			for(int j=0 ; j<QGrid.MAPWIDTH; j++){
+				if(this.getCell(i, j).hasBeenVisited())
+					visitedC.add(this.getCell(i,j));
+			}
+		}
+		
+		return visitedC;
+	}
 
 	/**
 	 * Instantiates a new q grid.

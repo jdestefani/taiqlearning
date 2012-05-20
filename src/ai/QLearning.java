@@ -80,8 +80,9 @@ public class QLearning extends Thread
 	public void startIteration()
 	{
 		QGridCell laststate; QGridCell nextstate;
-		String position = new String();
 		int movesNumber = 0;
+		qGrid.resetVisited();
+
 		
 		while(agent.getColumnIndex() != endState.getColumnIndex() || agent.getRowIndex() != endState.getRowIndex())
 		{
@@ -104,6 +105,40 @@ public class QLearning extends Thread
 		MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Iteration completed in "+movesNumber+" steps");
 	}
 	
+	public void calculateBestPath()
+	{
+		QGridCell laststate; QGridCell nextstate;
+		int movesNumber = 0;
+		qGrid.resetVisited();
+
+		while((agent.getColumnIndex() != endState.getColumnIndex() || agent.getRowIndex() != endState.getRowIndex()) && movesNumber < 1000)
+		{
+			laststate = (QGridCell) qGrid.getAgentCell();
+			nextstate = this.getBestAction();
+			qGrid.moveAgent(nextstate.getRowIndex(), nextstate.getColumnIndex());
+			agent = (QGridCell)qGrid.getAgentCell();
+			agent.setHasBeenVisited(true);
+			qGrid.getVisitedCells().add(agent);
+
+			mainApp.getMapGUI().refreshTwoCells(laststate, nextstate);
+//			try {
+//				this.sleep(10);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+			movesNumber++;
+		}
+		if(movesNumber < 1000)
+		{
+			MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Iteration completed in "+movesNumber+" steps");
+		}
+		else
+		{
+			MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Could not find the best path, it's cycling with the current QValues.");
+		}
+		MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Ok done");
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#run()
 	 */
@@ -121,7 +156,6 @@ public class QLearning extends Thread
 		QGridCell actualPos = (QGridCell)qGrid.getAgentCell();
 		qGrid.moveAgent(initialPos.getRowIndex(), initialPos.getColumnIndex());
 		mainApp.getMapGUI().refreshTwoCells(initialPos, actualPos);
-		qGrid.resetVisited();
 		ArrayList<MapCell> bonusCells = new ArrayList<MapCell>();
 		bonusCells.addAll(qGrid.getBonusCells());
 
@@ -139,10 +173,13 @@ public class QLearning extends Thread
 	{
 		for(int i = 0; i < nbreIteration; i++)
 		{
-			qGrid.resetAgent();
+			//qGrid.resetAgent();
+			reset();
 			this.startIteration();
 		}
 	}
+	
+	
 	
 	/**
 	 * Gets the next action.
