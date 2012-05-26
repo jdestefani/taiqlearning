@@ -137,6 +137,7 @@ public class QLearning extends Thread
 			MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Could not find the best path, it's cycling with the current QValues.");
 		}
 		MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Ok done");
+		this.reset();
 	}
 	
 	/* (non-Javadoc)
@@ -161,7 +162,6 @@ public class QLearning extends Thread
 
 		qGrid.resetBonus();
 		mainApp.getMapGUI().refreshMap(bonusCells);
-		System.out.println(bonusCells.size());
 	}
 	
 	/**
