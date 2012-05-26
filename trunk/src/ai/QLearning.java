@@ -94,12 +94,12 @@ public class QLearning extends Thread
 			qGrid.getVisitedCells().add(agent);
 			this.computeQValue();
 
-			mainApp.getMapGUI().refreshTwoCells(laststate, nextstate);
-			try {
-				this.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+//			mainApp.getMapGUI().refreshTwoCells(laststate, nextstate);
+//			try {
+//				this.sleep(10);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 			movesNumber++;
 		}
 		MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Iteration completed in "+movesNumber+" steps");

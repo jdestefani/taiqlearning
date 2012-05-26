@@ -903,10 +903,12 @@ public class MapGUI {
 	public void setQLearningResults(boolean aIsSet){
 		//Modify when QPath is ready!!!
 		//mainApp.getaQlearning().calculateBestPath();
-		QLearning QL = new QLearning(mainApp, mainApp.getqGridMap());
 		
 		if(!aIsSet)
+		{
+			QLearning QL = new QLearning(mainApp, mainApp.getqGridMap());
 			QL.calculateBestPath();
+		}
 		for(MapCell currCell : aIsSet?this.mainApp.getqGridMap().getVisitedCells():this.mainApp.getqGridMap().getHasBeenVisitedCells()){
 			if(aIsSet){
 				this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setQLearningSet(true);
@@ -1207,6 +1209,19 @@ public class MapGUI {
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
 		            	this.mainApp.getMapGUI().refreshPartialMapQ(this.mainApp.getqGridMap().getVisitedCells());
+		            	//this.mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT, QGrid.MAPWIDTH);
+		            	drawPaths();
+		            }
+		            
+		        }
+			
+		        if (e.getItemSelectable().equals(showQVisitedPath)) {
+		        	if(e.getStateChange() == ItemEvent.SELECTED){
+		        		drawPaths();
+		            }
+		            if(e.getStateChange() == ItemEvent.DESELECTED){
+		            	//this.mainApp.getMapGUI().refreshPartialMapQ(this.mainApp.getqGridMap().getVisitedCells());
+		            	this.mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT, QGrid.MAPWIDTH);
 		            	drawPaths();
 		            }
 		            
