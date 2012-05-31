@@ -32,7 +32,7 @@ public class AStarThread extends SwingWorker<Void, String> {
 	/** The a star set. */
 	private ArrayList<AStarCell> aStarSet;
 	
-	private static final int VISUALIZATIONDELAY = 100;
+	private static final int VISUALIZATIONDELAY = 1;
 	
 	/* (non-Javadoc)
 	 * @see javax.swing.SwingWorker#doInBackground()

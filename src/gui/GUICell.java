@@ -484,7 +484,9 @@ public class GUICell extends JButton {
 		this.setForeground(Color.WHITE);
 		
 		actionCommand = new String(this.rowIndex+ATTRIBUTEDELIMITER+this.columnIndex+ATTRIBUTEDELIMITER+(aDistance == Integer.MAX_VALUE ? "NR" : Integer.toString(aDistance)));
+		this.setBorder(BorderFactory.createEmptyBorder());
 		this.setBorderPainted(false);
+		this.resetCell();
 		this.setPreferredSize(iconDimension);
 		this.setContentAreaFilled(false);
 		this.setActionCommand(actionCommand);

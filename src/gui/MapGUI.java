@@ -214,6 +214,9 @@ public class MapGUI {
 	/** The is a star path learned. */
 	private boolean isAStarPathLearned;
 	
+	/** The is a star path learned. */
+	private boolean isQLearnPathLearned;
+	
 	/** The is end reachable. */
 	private boolean isEndReachable;
 
@@ -232,6 +235,7 @@ public class MapGUI {
 		
 		mainApp = aMainApp;
 		isAStarPathLearned = false;
+		isQLearnPathLearned = false;
 		isEndReachable = aIsEndReachable;
 		
 		contentPane = new JPanel();
@@ -315,6 +319,8 @@ public class MapGUI {
 		displayDistanceMap.setEnabled(isAStarPathLearned);
 		showAStarPath.setEnabled(isAStarPathLearned);
 		showAStarSet.setEnabled(isAStarPathLearned);
+		showQVisitedPath.setEnabled(isQLearnPathLearned);
+		showQVisitedSet.setEnabled(isQLearnPathLearned);
 
 		
 		mapActionPanel.add(generateMapButton);
@@ -422,6 +428,10 @@ public class MapGUI {
         refreshMap(QGrid.MAPHEIGHT,QGrid.MAPWIDTH);
 	}
 	
+	public JCheckBoxMenuItem getShowQVisitedPath() {
+		return showQVisitedPath;
+	}
+
 	/**
 	 * Setup display menu.
 	 */
@@ -926,17 +936,17 @@ public class MapGUI {
 	 * Draw paths.
 	 */
 	public void drawPaths(){
-		if(showAStarPath.isSelected()){
-			setAStarResults(false);
-		}
-		if(showAStarSet.isSelected()){
-			setAStarResults(true);
-		}
 		if(showQVisitedSet.isSelected()){
 			setQLearningResults(true);
 		}
 		if(showQVisitedPath.isSelected()){
 			setQLearningResults(false);
+		}
+		if(showAStarPath.isSelected()){
+			setAStarResults(false);
+		}
+		if(showAStarSet.isSelected()){
+			setAStarResults(true);
 		}
 		
 		for(int i=0; i<QGrid.MAPHEIGHT ; i++){
@@ -1065,17 +1075,24 @@ public class MapGUI {
 				}
 				
 				isAStarPathLearned = false;
+				isQLearnPathLearned = false;
 				learnAStarPathButton.setEnabled(isEndReachable);
 				showAStarPath.setEnabled(isAStarPathLearned);
 				showAStarPath.setSelected(false);
 				showAStarSet.setEnabled(isAStarPathLearned);
 				showAStarSet.setSelected(false);
+				showQVisitedPath.setEnabled(isQLearnPathLearned);
+				showQVisitedPath.setSelected(false);
+				showQVisitedSet.setEnabled(isQLearnPathLearned);
+				showQVisitedSet.setSelected(false);
 				displayDistanceMap.setEnabled(isAStarPathLearned);
 				displayDistanceMap.setSelected(false);
 				aStarConsole.setText("");
 				qLearnConsole.setText("");
-				aStarPathInfo.setText(PATHINFOTEXT);
-				aStarSetInfo.setText(SETINFOTEXT);
+				aStarPathInfo.setText(PATHINFOTEXT+"ND");
+				aStarSetInfo.setText(SETINFOTEXT+"ND");
+				qLearningPathInfo.setText(PATHINFOTEXT+"ND");
+				qLearningVisitedInfo.setText(SETINFOTEXT+"ND");
 				refreshMap(QGrid.MAPHEIGHT, QGrid.MAPWIDTH);
 			}
 			
@@ -1208,8 +1225,8 @@ public class MapGUI {
 		        		drawPaths();
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
-		            	this.mainApp.getMapGUI().refreshPartialMapQ(this.mainApp.getqGridMap().getVisitedCells());
-		            	//this.mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT, QGrid.MAPWIDTH);
+		            	//this.mainApp.getMapGUI().refreshPartialMapQ(this.mainApp.getqGridMap().getVisitedCells());
+		            	this.mainApp.getMapGUI().refreshMap(QGrid.MAPHEIGHT, QGrid.MAPWIDTH);
 		            	drawPaths();
 		            }
 		            
