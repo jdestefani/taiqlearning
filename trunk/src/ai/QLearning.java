@@ -103,6 +103,11 @@ public class QLearning extends Thread
 			movesNumber++;
 		}
 		MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Iteration completed in "+movesNumber+" steps");
+		this.mainApp.getMapGUI().getqLearningVisitedInfo().setText(MapGUI.SETINFOTEXT+qGrid.getVisitedCells().size());
+		if(!this.mainApp.getMapGUI().getShowQVisitedSet().isEnabled()){
+			this.mainApp.getMapGUI().getShowQVisitedSet().setEnabled(true);
+			this.mainApp.getMapGUI().getShowQVisitedPath().setEnabled(true);
+		}
 	}
 	
 	public void calculateBestPath()
@@ -130,13 +135,15 @@ public class QLearning extends Thread
 		}
 		if(movesNumber < 1000)
 		{
-			MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Iteration completed in "+movesNumber+" steps");
+			MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Best path found in "+movesNumber+" steps");
+			this.mainApp.getMapGUI().getqLearningPathInfo().setText(MapGUI.PATHINFOTEXT+movesNumber);
 		}
 		else
 		{
 			MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Could not find the best path, it's cycling with the current QValues.");
 		}
-		MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Ok done");
+		//MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Ok done");
+		
 		this.reset();
 	}
 	
