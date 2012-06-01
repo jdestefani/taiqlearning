@@ -110,7 +110,7 @@ public class QLearning extends Thread
 		}
 	}
 	
-	public void calculateBestPath()
+	public void calculateBestPath() throws QLearningLoopException
 	{
 		QGridCell laststate; QGridCell nextstate;
 		int movesNumber = 0;
@@ -141,6 +141,8 @@ public class QLearning extends Thread
 		else
 		{
 			MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Could not find the best path, it's cycling with the current QValues.");
+			throw new QLearningLoopException("Could not find the best path.\nAgent cycling with the current QValues.");
+			
 		}
 		//MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Ok done");
 		

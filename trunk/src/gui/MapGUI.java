@@ -39,6 +39,7 @@ import ai.AStarThread;
 import ai.QGrid;
 import ai.QLearnThread;
 import ai.QLearning;
+import ai.QLearningLoopException;
 import ai.UnreachableEndException;
 
 import data.AStarCell;
@@ -170,7 +171,6 @@ public class MapGUI {
 	
 	/** The q learning path info. */
 	private JLabel qLearningPathInfo;
-	
 	
 	/** The q trial label. */
 	private JLabel qTrialLabel;
@@ -314,8 +314,8 @@ public class MapGUI {
 		//Setting buttons initial state
 		learnAStarPathButton.setEnabled(isEndReachable);
 		displayQStartButton.setEnabled(isEndReachable);
-		displayQLearnStopButton.setEnabled(isEndReachable);
-		displayQResetButton.setEnabled(isEndReachable);
+		displayQLearnStopButton.setEnabled(isQLearnPathLearned);
+		displayQResetButton.setEnabled(isQLearnPathLearned);
 		displayDistanceMap.setEnabled(isAStarPathLearned);
 		showAStarPath.setEnabled(isAStarPathLearned);
 		showAStarSet.setEnabled(isAStarPathLearned);
@@ -914,11 +914,6 @@ public class MapGUI {
 		//Modify when QPath is ready!!!
 		//mainApp.getaQlearning().calculateBestPath();
 		
-		if(!aIsSet)
-		{
-			QLearning QL = new QLearning(mainApp, mainApp.getqGridMap());
-			QL.calculateBestPath();
-		}
 		for(MapCell currCell : aIsSet?this.mainApp.getqGridMap().getVisitedCells():this.mainApp.getqGridMap().getHasBeenVisitedCells()){
 			if(aIsSet){
 				this.map[currCell.getRowIndex()][currCell.getColumnIndex()].setQLearningSet(true);
@@ -1077,6 +1072,7 @@ public class MapGUI {
 				isAStarPathLearned = false;
 				isQLearnPathLearned = false;
 				learnAStarPathButton.setEnabled(isEndReachable);
+				displayQStartButton.setEnabled(isEndReachable);
 				showAStarPath.setEnabled(isAStarPathLearned);
 				showAStarPath.setSelected(false);
 				showAStarSet.setEnabled(isAStarPathLearned);
@@ -1234,6 +1230,12 @@ public class MapGUI {
 			
 		        if (e.getItemSelectable().equals(showQVisitedPath)) {
 		        	if(e.getStateChange() == ItemEvent.SELECTED){
+		        		QLearning QL = new QLearning(mainApp, mainApp.getqGridMap());
+		        		try {
+							QL.calculateBestPath();
+						} catch (QLearningLoopException ex) {
+							JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),ex.getMessage(),"Warning",JOptionPane.WARNING_MESSAGE);
+						}
 		        		drawPaths();
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
