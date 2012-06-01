@@ -83,6 +83,9 @@ public class QLearnThread extends Thread
 		repeating = true;
 		int count = repeat;
 		
+		this.mainApp.getMapGUI().getDisplayQLearnStopButton().setEnabled(true);
+		this.mainApp.getMapGUI().getDisplayQResetButton().setEnabled(true);
+		
 		MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"############## Q-Learning ##############");
 		
 		for(int i = 0; (i < count) && repeating; i++)
@@ -99,6 +102,9 @@ public class QLearnThread extends Thread
 			myThread.reset();
 			
 		}
+		
+		this.mainApp.getMapGUI().getDisplayQLearnStopButton().setEnabled(false);
+		this.mainApp.getMapGUI().getDisplayQResetButton().setEnabled(false);
 	}
 
 }
