@@ -337,6 +337,9 @@ public class MapCell {
 		this.hasBeenVisited = hasBeenVisited;
 	}
 
+	public boolean isPortal(){
+		return (this.cellType == CellType.PORTAL1 || this.cellType == CellType.PORTAL2 || this.cellType == CellType.PORTAL3 || this.cellType == CellType.PORTAL4); 
+	}
 	/**
 	 * Instantiates a new map cell.
 	 */

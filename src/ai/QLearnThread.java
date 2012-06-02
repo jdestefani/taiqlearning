@@ -105,6 +105,7 @@ public class QLearnThread extends Thread
 		
 		this.mainApp.getMapGUI().getDisplayQLearnStopButton().setEnabled(false);
 		this.mainApp.getMapGUI().getDisplayQResetButton().setEnabled(false);
+		this.mainApp.getMapGUI().getLearnQLearnPathButton().setEnabled(true);
 	}
 
 }

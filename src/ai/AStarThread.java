@@ -40,6 +40,10 @@ public class AStarThread extends SwingWorker<Void, String> {
 	@Override
 	protected Void doInBackground() throws Exception {
 		findAStarPath();
+		this.mainApp.getMapGUI().setAStarPathLearned(true);
+		this.mainApp.getMapGUI().getShowAStarPath().setEnabled(true);
+		this.mainApp.getMapGUI().getShowAStarSet().setEnabled(true);
+		this.mainApp.getMapGUI().getDisplayDistanceMap().setEnabled(true);
 		return null;
 	}
 	
@@ -207,6 +211,11 @@ public class AStarThread extends SwingWorker<Void, String> {
 					minHeuristic = iterCell.getDistanceFromAgent()+iterCell.getHeuristicDistanceFromGoal();
 					nextCell = iterCell;
 				}
+				if(iterCell.getDistanceFromAgent()+iterCell.getHeuristicDistanceFromGoal() == minHeuristic
+						&& iterCell.isPortal()){
+					minHeuristic = iterCell.getDistanceFromAgent()+iterCell.getHeuristicDistanceFromGoal();
+					nextCell = iterCell;
+				}	
 			}
 		}
 		
