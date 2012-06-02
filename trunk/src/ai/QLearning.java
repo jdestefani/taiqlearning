@@ -106,7 +106,6 @@ public class QLearning extends Thread
 		this.mainApp.getMapGUI().getqLearningVisitedInfo().setText(MapGUI.SETINFOTEXT+qGrid.getVisitedCells().size());
 		if(!this.mainApp.getMapGUI().getShowQVisitedSet().isEnabled()){
 			this.mainApp.getMapGUI().getShowQVisitedSet().setEnabled(true);
-			this.mainApp.getMapGUI().getShowQVisitedPath().setEnabled(true);
 		}
 	}
 	
@@ -137,6 +136,7 @@ public class QLearning extends Thread
 		{
 			MapGUI.printOnConsoleAndLog(this.mainApp.getMapGUI().getqLearnConsole(),"Best path found in "+movesNumber+" steps");
 			this.mainApp.getMapGUI().getqLearningPathInfo().setText(MapGUI.PATHINFOTEXT+movesNumber);
+			this.mainApp.getMapGUI().getShowQVisitedPath().setEnabled(true);
 		}
 		else
 		{
