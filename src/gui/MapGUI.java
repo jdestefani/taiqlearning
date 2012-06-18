@@ -121,6 +121,9 @@ public class MapGUI {
 	/** The display q learn stop button. */
 	private JButton displayQLearnStopButton;
 	
+	/** The learn a star path button. */
+	private JButton learnQLearnPathButton;
+	
 	/** The display menu bar. */
 	private JMenuBar displayMenuBar;
 	
@@ -278,6 +281,9 @@ public class MapGUI {
 		displayQResetButton.addActionListener(new ActionElementsListener(this.mainApp));
 		displayQLearnStopButton = new JButton("Stop learning");
 		displayQLearnStopButton.addActionListener(new ActionElementsListener(this.mainApp));
+		learnQLearnPathButton = new JButton("Compute Q-L Path");
+		learnQLearnPathButton.addActionListener(new ActionElementsListener(this.mainApp));
+		
 		
 		//	Menu items creation
 		saveMapMenuItem = new JMenuItem("Save Map");
@@ -298,7 +304,7 @@ public class MapGUI {
 		showAStarSet.addItemListener(new ActionElementsListener(mainApp));
 		showQVisitedSet = new JCheckBoxMenuItem("Show visited cells");
 		showQVisitedSet.addItemListener(new ActionElementsListener(mainApp));
-		showQVisitedPath = new JCheckBoxMenuItem("Show Q-Learning path");
+		showQVisitedPath = new JCheckBoxMenuItem("Show Q-L path");
 		showQVisitedPath.addItemListener(new ActionElementsListener(mainApp));
 		
 		//Slider creation
@@ -316,6 +322,7 @@ public class MapGUI {
 		displayQStartButton.setEnabled(isEndReachable);
 		displayQLearnStopButton.setEnabled(isQLearnPathLearned);
 		displayQResetButton.setEnabled(isQLearnPathLearned);
+		learnQLearnPathButton.setEnabled(isQLearnPathLearned);
 		displayDistanceMap.setEnabled(isAStarPathLearned);
 		showAStarPath.setEnabled(isAStarPathLearned);
 		showAStarSet.setEnabled(isAStarPathLearned);
@@ -330,6 +337,7 @@ public class MapGUI {
 		qLearningActionPanel.add(displayQStartButton);
 		qLearningActionPanel.add(displayQLearnStopButton);
 		qLearningActionPanel.add(displayQResetButton);
+		qLearningActionPanel.add(learnQLearnPathButton);
 		
 		//Info section construction
 		Border infoPanelBorder = BorderFactory.createTitledBorder("Information");
@@ -428,6 +436,10 @@ public class MapGUI {
         refreshMap(QGrid.MAPHEIGHT,QGrid.MAPWIDTH);
 	}
 	
+	public JButton getLearnQLearnPathButton() {
+		return learnQLearnPathButton;
+	}
+
 	public JCheckBoxMenuItem getShowQVisitedPath() {
 		return showQVisitedPath;
 	}
@@ -801,6 +813,18 @@ public class MapGUI {
 		return mainApp;
 	}
 
+	public JCheckBoxMenuItem getDisplayDistanceMap() {
+		return displayDistanceMap;
+	}
+
+	public void setAStarPathLearned(boolean isAStarPathLearned) {
+		this.isAStarPathLearned = isAStarPathLearned;
+	}
+
+	public void setQLearnPathLearned(boolean isQLearnPathLearned) {
+		this.isQLearnPathLearned = isQLearnPathLearned;
+	}
+
 	/**
 	 * Checks if is a star path learned.
 	 *
@@ -1123,12 +1147,26 @@ public class MapGUI {
 			
 			if(listenedCommand.equals("Compute A* Path")){
 				this.mainApp.getaStarPathfinder().execute();
+				
+			}
+			
+			/*if(listenedCommand.equals("Compute A* Path")){
+				this.mainApp.getaStarPathfinder().execute();
 				isAStarPathLearned = true;
 				showAStarPath.setEnabled(isAStarPathLearned);
 				showAStarSet.setEnabled(isAStarPathLearned);
 				displayDistanceMap.setEnabled(isAStarPathLearned);
-			}
+			}*/
 			
+			if(listenedCommand.equals("Compute Q-L Path")){
+				QLearning QL = new QLearning(mainApp, mainApp.getqGridMap());
+        		try {
+					QL.calculateBestPath();
+				} catch (QLearningLoopException ex) {
+					JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),ex.getMessage(),"Warning",JOptionPane.WARNING_MESSAGE);
+				}
+        		drawPaths();
+			}
 			
 			/*if(listenedCommand.equals("Start learning")){
 				if(QLThread != null)
@@ -1230,12 +1268,6 @@ public class MapGUI {
 			
 		        if (e.getItemSelectable().equals(showQVisitedPath)) {
 		        	if(e.getStateChange() == ItemEvent.SELECTED){
-		        		QLearning QL = new QLearning(mainApp, mainApp.getqGridMap());
-		        		try {
-							QL.calculateBestPath();
-						} catch (QLearningLoopException ex) {
-							JOptionPane.showMessageDialog(this.mainApp.getAppWindow(),ex.getMessage(),"Warning",JOptionPane.WARNING_MESSAGE);
-						}
 		        		drawPaths();
 		            }
 		            if(e.getStateChange() == ItemEvent.DESELECTED){
