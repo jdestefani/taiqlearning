@@ -1,0 +1,1 @@
+Project for the INFO-H-410 - Techniques of Artificial Intelligence Course
